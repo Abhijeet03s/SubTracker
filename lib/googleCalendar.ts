@@ -1,25 +1,32 @@
-import { google } from 'googleapis';
-import { OAuth2Client } from 'google-auth-library';
+import { google } from 'googleapis'
+import { OAuth2Client } from 'google-auth-library'
 
-const SCOPES = ['https://www.googleapis.com/auth/calendar.events'];
+const redirectUri = process.env.GOOGLE_REDIRECT_URI;
+console.log('Redirect URI:', redirectUri);
 
-const oauth2Client = new OAuth2Client(
+const oauth2Client = new google.auth.OAuth2(
    process.env.GOOGLE_CLIENT_ID,
    process.env.GOOGLE_CLIENT_SECRET,
-   process.env.GOOGLE_REDIRECT_URI
-);
+   redirectUri
+)
 
-export async function getAuthUrl() {
+export async function getGoogleAuthUrl() {
+   const scopes = [
+      'https://www.googleapis.com/auth/calendar.events',
+      'https://www.googleapis.com/auth/calendar'
+   ];
+
    const authUrl = oauth2Client.generateAuthUrl({
       access_type: 'offline',
-      scope: SCOPES,
+      scope: scopes,
    });
+
    return authUrl;
 }
 
 export async function getTokens(code: string) {
-   const { tokens } = await oauth2Client.getToken(code);
-   return tokens;
+   const { tokens } = await oauth2Client.getToken(code)
+   return tokens
 }
 
 export async function addEventToCalendar(
@@ -29,6 +36,7 @@ export async function addEventToCalendar(
    startDateTime: string,
    endDateTime: string
 ) {
+   const oauth2Client = new google.auth.OAuth2();
    oauth2Client.setCredentials({ access_token: accessToken });
 
    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
