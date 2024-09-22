@@ -11,7 +11,7 @@ export function GoogleConnectButton() {
    const handleConnect = () => {
       user?.createExternalAccount({ strategy: 'oauth_google' })
          .then(() => {
-            console.log('Google account connected successfully');
+            window.location.reload();
          })
          .catch((error) => {
             console.error('Error connecting Google account:', error);

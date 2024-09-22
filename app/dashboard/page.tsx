@@ -18,7 +18,7 @@ export default function DashboardPage() {
          const response = await fetch('/api/subscriptions')
          if (response.ok) {
             const data = await response.json()
-            console.log('Fetched subscriptions:', data)
+            // console.log('Fetched subscriptions:', data)
             setSubscriptions(data)
          } else {
             console.error('Failed to fetch subscriptions')
@@ -30,7 +30,7 @@ export default function DashboardPage() {
 
    const addSubscription = async (newSubscription: any) => {
       try {
-         console.log('Adding new subscription:', newSubscription);
+         // console.log('Adding new subscription:', newSubscription);
          const response = await fetch('/api/subscriptions', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -38,7 +38,7 @@ export default function DashboardPage() {
          })
          if (response.ok) {
             const data = await response.json();
-            console.log('Subscription added successfully:', data);
+            // console.log('Subscription added successfully:', data);
             fetchSubscriptions()
          } else {
             console.error('Failed to add subscription', await response.text())

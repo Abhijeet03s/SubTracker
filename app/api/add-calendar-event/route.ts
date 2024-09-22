@@ -5,7 +5,6 @@ import { addEventToCalendar } from '@/lib/googleCalendar';
 export async function POST(request: NextRequest) {
    try {
       const { userId } = auth();
-      console.log('User ID:', userId);
 
       if (!userId) {
          return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -20,10 +19,10 @@ export async function POST(request: NextRequest) {
       const googleAccessToken = tokens.data[0].token;
 
       const { summary, description, startDateTime, endDateTime } = await request.json();
-      console.log('Received event details:', { summary, description, startDateTime, endDateTime });
+      // console.log('Received event details:', { summary, description, startDateTime, endDateTime });
 
       const event = await addEventToCalendar(summary, description, startDateTime, endDateTime, googleAccessToken);
-      console.log('Event added successfully:', event);
+      // console.log('Event added successfully:', event);
 
       return NextResponse.json({ success: true, event });
    } catch (error) {
