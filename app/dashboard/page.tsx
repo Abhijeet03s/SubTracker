@@ -18,6 +18,7 @@ export default function DashboardPage() {
          const response = await fetch('/api/subscriptions')
          if (response.ok) {
             const data = await response.json()
+            console.log('Fetched subscriptions:', data)
             setSubscriptions(data)
          } else {
             console.error('Failed to fetch subscriptions')
@@ -29,22 +30,25 @@ export default function DashboardPage() {
 
    const addSubscription = async (newSubscription: any) => {
       try {
+         console.log('Adding new subscription:', newSubscription);
          const response = await fetch('/api/subscriptions', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newSubscription),
          })
          if (response.ok) {
+            const data = await response.json();
+            console.log('Subscription added successfully:', data);
             fetchSubscriptions()
          } else {
-            console.error('Failed to add subscription')
+            console.error('Failed to add subscription', await response.text())
          }
       } catch (error) {
          console.error('Error adding subscription:', error)
       }
    }
 
-   const updateSubscription = async (id: any, updatedData: any) => {
+   const updateSubscription = async (id: string, updatedData: any) => {
       try {
          const response = await fetch(`/api/subscriptions/${id}`, {
             method: 'PUT',
@@ -54,7 +58,8 @@ export default function DashboardPage() {
          if (response.ok) {
             fetchSubscriptions()
          } else {
-            console.error('Failed to update subscription')
+            const errorData = await response.json()
+            console.error('Failed to update subscription', errorData)
          }
       } catch (error) {
          console.error('Error updating subscription:', error)

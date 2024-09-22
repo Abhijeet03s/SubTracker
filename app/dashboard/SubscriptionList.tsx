@@ -20,12 +20,15 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete }: 
    const handleEdit = (subscription: Subscription) => {
       setEditId(subscription.id)
       setEditName(subscription.serviceName)
-      setEditDate(subscription.trialEndDate)
+      // Format the date to YYYY-MM-DD for the input field
+      setEditDate(new Date(subscription.trialEndDate).toISOString().split('T')[0])
    }
 
    const handleUpdate = () => {
       if (editId) {
-         onUpdate(editId, { serviceName: editName, trialEndDate: editDate })
+         // Convert the date to ISO format before sending
+         const isoDate = new Date(editDate).toISOString()
+         onUpdate(editId, { serviceName: editName, trialEndDate: isoDate })
          setEditId(null)
       }
    }

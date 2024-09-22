@@ -5,7 +5,9 @@ import { auth } from '@clerk/nextjs/server'
 
 const updateSubscriptionSchema = z.object({
    serviceName: z.string().min(1).optional(),
-   trialEndDate: z.string().datetime().optional(),
+   trialEndDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
+      message: "Invalid date string",
+   }).optional(),
 })
 
 export async function GET(
