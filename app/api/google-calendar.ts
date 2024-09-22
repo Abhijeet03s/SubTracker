@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
-import { getAuthUrl, getTokens, addEventToCalendar } from '@/lib/googleCalendar'
+import { getGoogleAuthUrl, getTokens, addEventToCalendar } from '@/lib/googleCalendar'
 
 export async function GET(request: NextRequest) {
    const { userId } = auth()
@@ -9,11 +9,12 @@ export async function GET(request: NextRequest) {
    }
 
    try {
-      const authUrl = await getAuthUrl()
+      const authUrl = await getGoogleAuthUrl()
+      // console.log('Generated Auth URL:', authUrl)
       return NextResponse.json({ authUrl })
    } catch (error) {
-      console.error('Error getting auth URL:', error)
-      return NextResponse.json({ error: 'Failed to get authorization URL' }, { status: 500 })
+      console.error('Error getting Google Calendar auth URL:', error)
+      return NextResponse.json({ error: 'Failed to get Google Calendar authorization URL' }, { status: 500 })
    }
 }
 
@@ -36,7 +37,7 @@ export async function POST(request: NextRequest) {
          `Free Trial Reminder: ${subscriptionDetails.serviceName}`,
          `Your free trial is ending soon. Remember to cancel if you don't want to continue.`,
          new Date(subscriptionDetails.trialEndDate).toISOString(),
-         new Date(new Date(subscriptionDetails.trialEndDate).getTime() + 24 * 60 * 60 * 1000).toISOString() // End date is 24 hours after start
+         new Date(new Date(subscriptionDetails.trialEndDate).getTime() + 24 * 60 * 60 * 1000).toISOString()
       )
 
       return NextResponse.json({ message: 'Event added successfully', event })

@@ -7,8 +7,6 @@ export default function CalendarConnected() {
    const router = useRouter()
 
    useEffect(() => {
-      // You can add any necessary logic here
-      // For example, you might want to show a success message for a few seconds
       const timer = setTimeout(() => {
          router.push('/dashboard')
       }, 3000)

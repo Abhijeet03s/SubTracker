@@ -20,13 +20,14 @@ export async function GET(request: NextRequest) {
       const { tokens } = await oauth2Client.getToken(code);
       oauth2Client.setCredentials(tokens);
 
-      // Add a test event to the calendar
+      // Added a test event to the calendar
       const eventAdded = await addEventToCalendar(
          tokens.access_token!,
          'Test Event',
          'This is a test event added by the application',
          new Date().toISOString(),
-         new Date(Date.now() + 3600000).toISOString() // 1 hour from now
+         // 1 hour from now
+         new Date(Date.now() + 3600000).toISOString()
       );
 
       console.log('Event added:', eventAdded);
