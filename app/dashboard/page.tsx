@@ -108,7 +108,6 @@ export default function DashboardPage() {
             subscriptions={subscriptions}
             onUpdate={updateSubscription}
             onDelete={deleteSubscription}
-            onAddToCalendar={handleAddToCalendar}
          />
       </div>
    )
