@@ -25,13 +25,13 @@ export async function POST(request: NextRequest) {
    }
 
    try {
-      const { code, subscriptionDetails } = await request.json()
+      const { authCode, subscriptionDetails } = await request.json()
 
-      if (typeof code !== 'string') {
+      if (typeof authCode !== 'string') {
          return NextResponse.json({ error: 'Invalid authorization code' }, { status: 400 })
       }
 
-      const tokens = await getTokens(code)
+      const tokens = await getTokens(authCode)
       const event = await addEventToCalendar(
          tokens.access_token!,
          `Free Trial Reminder: ${subscriptionDetails.serviceName}`,

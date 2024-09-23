@@ -6,6 +6,7 @@ import SubscriptionForm from './SubscriptionForm'
 import SubscriptionList from './SubscriptionList'
 
 export default function DashboardPage() {
+   // Will use to display the user's name, email, or other profile information within the Dashboard Page
    const { user } = useUser()
    const [subscriptions, setSubscriptions] = useState([])
 
@@ -81,7 +82,21 @@ export default function DashboardPage() {
       }
    }
 
-   if (!user) return <div>Please sign in to access this page.</div>
+   const handleAddToCalendar = async (subscription: any) => {
+      try {
+         const response = await fetch('/api/add-calendar-event', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(subscription),
+         })
+         if (!response.ok) {
+            throw new Error('Failed to add reminder to Google Calendar')
+         }
+      } catch (error) {
+         console.error('Error adding to calendar:', error)
+         throw error
+      }
+   }
 
    return (
       <div className="container mx-auto p-4">
@@ -93,6 +108,7 @@ export default function DashboardPage() {
             subscriptions={subscriptions}
             onUpdate={updateSubscription}
             onDelete={deleteSubscription}
+            onAddToCalendar={handleAddToCalendar}
          />
       </div>
    )

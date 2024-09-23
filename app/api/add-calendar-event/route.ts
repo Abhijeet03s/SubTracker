@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
          return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
 
-      const tokens = await clerkClient.users.getUserOauthAccessToken(userId, 'oauth_google');
+      const tokens = await clerkClient().users.getUserOauthAccessToken(userId, 'oauth_google');
 
       if (!tokens || tokens.data.length === 0) {
          return NextResponse.json({ error: 'No Google access token found' }, { status: 400 });
@@ -19,10 +19,8 @@ export async function POST(request: NextRequest) {
       const googleAccessToken = tokens.data[0].token;
 
       const { summary, description, startDateTime, endDateTime } = await request.json();
-      // console.log('Received event details:', { summary, description, startDateTime, endDateTime });
 
       const event = await addEventToCalendar(summary, description, startDateTime, endDateTime, googleAccessToken);
-      // console.log('Event added successfully:', event);
 
       return NextResponse.json({ success: true, event });
    } catch (error) {

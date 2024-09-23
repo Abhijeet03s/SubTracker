@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useAddToCalendar } from '../hooks/useAddToCalendar'
 
 interface Subscription {
    id: string
@@ -16,28 +17,39 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete }: 
    const [editId, setEditId] = useState<string | null>(null)
    const [editName, setEditName] = useState('')
    const [editDate, setEditDate] = useState('')
+   const { addToCalendar, isAddingToCalendar } = useAddToCalendar()
 
    const handleEdit = (subscription: Subscription) => {
       setEditId(subscription.id)
       setEditName(subscription.serviceName)
-      // Format the date to YYYY-MM-DD for the input field
       setEditDate(new Date(subscription.trialEndDate).toISOString().split('T')[0])
    }
 
    const handleUpdate = () => {
       if (editId) {
-         // Convert the date to ISO format before sending
-         const isoDate = new Date(editDate).toISOString()
-         onUpdate(editId, { serviceName: editName, trialEndDate: isoDate })
+         const isoDateFormatted = new Date(editDate).toISOString()
+         onUpdate(editId, { serviceName: editName, trialEndDate: isoDateFormatted })
          setEditId(null)
       }
    }
 
+   const handleAddToCalendar = async (subscription: Subscription) => {
+      try {
+         await addToCalendar({
+            serviceName: subscription.serviceName,
+            trialEndDate: subscription.trialEndDate
+         });
+      } catch (error) {
+         console.error('Error adding to calendar:', error);
+         alert('Failed to add event to calendar. Please try again later.');
+      }
+   }
+
    return (
-      <ul>
+      <div>
          {subscriptions.map((subscription) => (
-            <li key={subscription.id} className="border p-2 mb-2">
-               {editId === subscription.id ? (
+            <div key={subscription.id} className="subscription-item">
+               {subscription.id === editId ? (
                   <>
                      <input
                         type="text"
@@ -64,13 +76,20 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete }: 
                      <button onClick={() => handleEdit(subscription)} className="bg-yellow-500 text-white p-1 rounded ml-2 mr-2">
                         Edit
                      </button>
-                     <button onClick={() => onDelete(subscription.id)} className="bg-red-500 text-white p-1 rounded">
+                     <button onClick={() => onDelete(subscription.id)} className="bg-red-500 text-white p-1 rounded mr-2">
                         Delete
+                     </button>
+                     <button
+                        onClick={() => handleAddToCalendar(subscription)}
+                        disabled={isAddingToCalendar}
+                        className="bg-blue-500 text-white p-1 rounded"
+                     >
+                        {isAddingToCalendar ? 'Adding...' : 'Add to Calendar'}
                      </button>
                   </>
                )}
-            </li>
+            </div>
          ))}
-      </ul>
+      </div>
    )
-}  
+}
