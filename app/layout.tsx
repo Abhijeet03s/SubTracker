@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'SubTrack',
-  description: 'Track and manage your OTT subscriptions effortlessly. Get notified before your free trials end so you never get charged unexpectedly',
+  description: 'Track and manage your subscriptions effortlessly.',
 };
 
 export default function RootLayout({
