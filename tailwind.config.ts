@@ -8,7 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
-
+      fontFamily: {
+        plusJakartaSans: ['var(--font-plus-jakarta-sans)'],
+        zillaSlab: ['var(--font-zilla-slab)'],
+      },
     },
   },
   plugins: [],
