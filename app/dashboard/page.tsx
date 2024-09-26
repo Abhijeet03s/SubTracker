@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react'
 import { useUser } from '@clerk/nextjs'
 import SubscriptionForm from './SubscriptionForm'
 import SubscriptionList from './SubscriptionList'
+import { FaPlus, FaUserCircle } from 'react-icons/fa'
 
 export default function DashboardPage() {
-   // Will use to display the user's name, email, or other profile information within the Dashboard Page
    const { user } = useUser()
    const [subscriptions, setSubscriptions] = useState([])
+   const [showForm, setShowForm] = useState(false)
 
    useEffect(() => {
       fetchSubscriptions()
@@ -82,33 +83,40 @@ export default function DashboardPage() {
       }
    }
 
-   const handleAddToCalendar = async (subscription: any) => {
-      try {
-         const response = await fetch('/api/add-calendar-event', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(subscription),
-         })
-         if (!response.ok) {
-            throw new Error('Failed to add reminder to Google Calendar')
-         }
-      } catch (error) {
-         console.error('Error adding to calendar:', error)
-         throw error
-      }
-   }
-
    return (
-      <div className="container mx-auto p-4">
-         <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold">Subscription Management</h1>
+      <div className="container mx-auto p-6 bg-gray-50">
+         <div className="flex justify-between items-center mb-8">
+            <h1 className="text-3xl font-bold text-indigo-700">Subscription Dashboard</h1>
+            <div className="flex items-center space-x-4">
+               <button
+                  onClick={() => setShowForm(!showForm)}
+                  className="bg-indigo-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-indigo-700 transition duration-300"
+               >
+                  <FaPlus className="mr-2" />
+                  {showForm ? 'Hide Form' : 'Add Subscription'}
+               </button>
+               <div className="flex items-center text-gray-700">
+                  <FaUserCircle className="text-2xl mr-2" />
+                  <span>{user?.fullName || user?.username}</span>
+               </div>
+            </div>
          </div>
-         <SubscriptionForm onSubmit={addSubscription} />
-         <SubscriptionList
-            subscriptions={subscriptions}
-            onUpdate={updateSubscription}
-            onDelete={deleteSubscription}
-         />
+
+         {showForm && (
+            <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+               <h2 className="text-xl font-semibold mb-4 text-indigo-600">Add New Subscription</h2>
+               <SubscriptionForm onSubmit={addSubscription} />
+            </div>
+         )}
+
+         <div className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-4 text-indigo-600">Your Subscriptions</h2>
+            <SubscriptionList
+               subscriptions={subscriptions}
+               onUpdate={updateSubscription}
+               onDelete={deleteSubscription}
+            />
+         </div>
       </div>
    )
 }
