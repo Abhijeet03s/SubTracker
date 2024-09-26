@@ -2,49 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-/* .bg-grid {
+:root {
+  --rich-black: #030712;
+}
+
+.bg-rich-black {
+  background-color: var(--rich-black);
+}
+
+.bg-grid {
   background-image:
-    linear-gradient(to right, #1a1a2e 1px, transparent 1px),
-    linear-gradient(to bottom, #1a1a2e 1px, transparent 1px);
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
   background-size: 20px 20px;
 }
 
 .bg-grid-mask {
-  mask-image: radial-gradient(ellipse at center, black 40%, transparent 70%);
-} */
-
-.bg-noise-and-lines {
-  position: relative;
-  background-color: #0f0f0f;
-  overflow: hidden;
-}
-
-.bg-noise-and-lines::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  right: -50%;
-  bottom: -50%;
-  width: 200%;
-  height: 200%;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"),
-    linear-gradient(transparent 99%, rgba(255, 255, 255, 0.2) 99.5%, transparent 100%),
-    linear-gradient(transparent 96%, rgba(255, 255, 255, 0.1) 96.5%, transparent 97%),
-    linear-gradient(transparent 93%, rgba(255, 255, 255, 0.1) 93.5%, transparent 94%),
-    linear-gradient(transparent 89%, rgba(255, 255, 255, 0.1) 89.5%, transparent 90%);
-  background-repeat: repeat;
-  background-size: 100px 100px, 100% 150px, 100% 100px, 100% 200px, 100% 300px;
-  opacity: 0.12;
-  animation: bgAnimation 10s linear infinite;
-}
-
-@keyframes bgAnimation {
-  0% {
-    transform: translate(0, 0);
-  }
-
-  100% {
-    transform: translate(-50px, -50px);
-  }
+  mask-image: radial-gradient(ellipse at center, black 50%, transparent 90%);
 }
