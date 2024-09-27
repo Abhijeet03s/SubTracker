@@ -5,7 +5,7 @@ import Header from './components/Header';
 import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
-  title: 'SubTally',
+  title: 'SubTracker',
   description: 'Track and manage your subscriptions effortlessly.',
 };
 
