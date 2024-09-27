@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '@clerk/nextjs';
+import { toast } from 'sonner';
 
 interface AddToCalendarParams {
    serviceName: string;
@@ -55,13 +56,13 @@ export function useAddToCalendar() {
          }
 
          await response.json();
-         alert(`Successfully added ${serviceName} to your calendar!`);
+         toast.success(`Successfully added ${serviceName} to your calendar!`);
       } catch (error) {
          console.error('Error adding to calendar:', error);
          if (error instanceof Error) {
-            alert(`Failed to add reminder to Google Calendar: ${error.message}`);
+            toast.error(`Failed to add reminder to Google Calendar: ${error.message}`);
          } else {
-            alert('Failed to add reminder to Google Calendar. Please try again later.');
+            toast.error('Failed to add reminder to Google Calendar. Please try again later.');
          }
          throw error;
       } finally {
@@ -69,5 +70,73 @@ export function useAddToCalendar() {
       }
    };
 
-   return { addToCalendar, isAddingToCalendar };
+   const updateCalendarEvent = async ({ serviceName, trialEndDate }: AddToCalendarParams) => {
+      setIsAddingToCalendar(true);
+      try {
+         // Validate the date
+         const trialEndDateTime = new Date(trialEndDate);
+         if (isNaN(trialEndDateTime.getTime())) {
+            throw new Error('Invalid trial end date');
+         }
+
+         // Calculate the reminder date (7 days after trial end)
+         const reminderDateTime = new Date(trialEndDateTime.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+         // Set the time to noon UTC
+         reminderDateTime.setUTCHours(12, 0, 0, 0);
+
+         // Calculate the end time (1 hour after start time)
+         const endDateTime = new Date(reminderDateTime.getTime() + 60 * 60 * 1000);
+
+         // Get the Google OAuth token
+         const token = await getToken({ template: 'oauth_google' });
+         if (!token) {
+            throw new Error('No Google OAuth token available. Please try reconnecting your Google account.');
+         }
+
+         // console.log('Updating calendar event:', {
+         //    serviceName,
+         //    trialEndDate,
+         //    reminderDateTime: reminderDateTime.toISOString(),
+         //    endDateTime: endDateTime.toISOString(),
+         // });
+
+         const response = await fetch('/api/update-calendar-event', {
+            method: 'POST',
+            headers: {
+               'Content-Type': 'application/json',
+               Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+               summary: `Subscription Alert: ${serviceName} Trial Ended`,
+               description: `Your free trial for ${serviceName} has ended. Action required: Please review your subscription status and decide whether to cancel or upgrade your plan.`,
+               startDateTime: reminderDateTime.toISOString(),
+               endDateTime: endDateTime.toISOString(),
+            }),
+         });
+
+         if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Error response:', response.status, errorText);
+            throw new Error(`Failed to update event in calendar: ${response.status} ${errorText}`);
+         }
+
+         const result = await response.json();
+         console.log('Calendar update result:', result);
+
+         toast.success(`Successfully updated ${serviceName} in your calendar!`);
+      } catch (error) {
+         console.error('Error updating calendar:', error);
+         if (error instanceof Error) {
+            toast.error(`Failed to update reminder in Google Calendar: ${error.message}`);
+         } else {
+            toast.error('Failed to update reminder in Google Calendar. Please try again later.');
+         }
+         throw error;
+      } finally {
+         setIsAddingToCalendar(false);
+      }
+   };
+
+   return { addToCalendar, updateCalendarEvent, isAddingToCalendar };
 }

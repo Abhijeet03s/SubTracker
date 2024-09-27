@@ -2,9 +2,10 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
 import Header from './components/Header';
+import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
-  title: 'SubTrack',
+  title: 'SubTally',
   description: 'Track and manage your subscriptions effortlessly.',
 };
 
@@ -27,6 +28,7 @@ export default function RootLayout({
         >
           <Header />
           {children}
+          <Toaster />
         </ClerkProvider>
       </body>
     </html>
