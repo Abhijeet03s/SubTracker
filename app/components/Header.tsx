@@ -17,8 +17,15 @@ export default async function Header() {
                <nav>
                   {userId ? (
                      <div className='flex gap-4 sm:gap-6 items-center'>
-                        <Link href='/dashboard' className='hover:text-gray-300 transition-colors font-semibold text-sm sm:text-base'>Dashboard</Link>
-                        <UserButton />
+                        <Link href='/dashboard' className='bg-purple-700 text-white px-3 py-1 sm:px-4 sm:py-1.5 rounded-full hover:bg-purple-800 transition-colors font-semibold text-sm sm:text-base'>Dashboard</Link>
+                        <UserButton
+                           appearance={{
+                              elements: {
+                                 avatarBox: "w-10 h-10",
+                                 userButtonAvatarBox: "w-10 h-10 rounded-full border-2 border-purple-500 hover:border-purple-600 transition-colors",
+                              },
+                           }}
+                        />
                      </div>
                   ) : (
                      <Link href='/sign-in' className={`${plusJakartaSans.className} bg-purple-700 text-white px-3 py-1 sm:px-4 sm:py-2 rounded-full hover:bg-purple-800 transition-colors font-semibold text-sm sm:text-base`}>

@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useAddToCalendar } from '../hooks/useAddToCalendar'
-import { FaEdit, FaTrash, FaCalendarPlus, FaSave, FaTimes } from 'react-icons/fa'
+import { FaEdit, FaTrash, FaSave, FaTimes } from 'react-icons/fa'
+import { Loader } from '../components/ui/loader'
 
 interface Subscription {
    id: string
@@ -12,13 +12,16 @@ interface SubscriptionListProps {
    subscriptions: Subscription[]
    onUpdate: (id: string, data: Partial<Subscription>) => void
    onDelete: (id: string) => void
+   onSubscriptionsChange: (updatedSubscriptions: Subscription[]) => void
+   onCalendarUpdate: (subscription: Subscription) => void
 }
 
-export default function SubscriptionList({ subscriptions, onUpdate, onDelete }: Readonly<SubscriptionListProps>) {
+export default function SubscriptionList({ subscriptions, onUpdate, onDelete, onSubscriptionsChange, onCalendarUpdate }: Readonly<SubscriptionListProps>) {
    const [editId, setEditId] = useState<string | null>(null)
    const [editName, setEditName] = useState('')
    const [editDate, setEditDate] = useState('')
-   const { addToCalendar, isAddingToCalendar } = useAddToCalendar()
+   const [isUpdating, setIsUpdating] = useState(false)
+   const [isDeleting, setIsDeleting] = useState<string | null>(null)
 
    const handleEdit = (subscription: Subscription) => {
       setEditId(subscription.id)
@@ -26,23 +29,33 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete }: 
       setEditDate(new Date(subscription.trialEndDate).toISOString().split('T')[0])
    }
 
-   const handleUpdate = () => {
+   const handleUpdate = async () => {
       if (editId) {
-         const isoDateFormatted = new Date(editDate).toISOString()
-         onUpdate(editId, { serviceName: editName, trialEndDate: isoDateFormatted })
-         setEditId(null)
+         setIsUpdating(true)
+         try {
+            const isoDateFormatted = new Date(editDate).toISOString()
+            const updatedSubscription = { id: editId, serviceName: editName, trialEndDate: isoDateFormatted }
+            await onUpdate(editId, updatedSubscription)
+            const updatedSubscriptions = subscriptions.map(sub =>
+               sub.id === editId ? { ...sub, ...updatedSubscription } : sub
+            )
+            onSubscriptionsChange(updatedSubscriptions)
+            onCalendarUpdate(updatedSubscription as Subscription)
+            setEditId(null)
+         } finally {
+            setIsUpdating(false)
+         }
       }
    }
 
-   const handleAddToCalendar = async (subscription: Subscription) => {
+   const handleDelete = async (id: string) => {
+      setIsDeleting(id)
       try {
-         await addToCalendar({
-            serviceName: subscription.serviceName,
-            trialEndDate: subscription.trialEndDate
-         });
-      } catch (error) {
-         console.error('Error adding to calendar:', error);
-         alert('Failed to add event to calendar. Please try again later.');
+         await onDelete(id)
+         const updatedSubscriptions = subscriptions.filter(sub => sub.id !== id)
+         onSubscriptionsChange(updatedSubscriptions)
+      } finally {
+         setIsDeleting(null)
       }
    }
 
@@ -65,7 +78,8 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete }: 
                               type="text"
                               value={editName}
                               onChange={(e) => setEditName(e.target.value)}
-                              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                              className="w-full px-3 py-2 border border-indigo-300 rounded-md shadow-sm focus:ring-1 focus:ring-indigo-300 focus:border-indigo-300 sm:text-sm transition duration-150 ease-in-out"
+                              autoFocus
                            />
                         ) : (
                            <span className="text-sm font-medium text-gray-900">{subscription.serviceName}</span>
@@ -77,7 +91,7 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete }: 
                               type="date"
                               value={editDate}
                               onChange={(e) => setEditDate(e.target.value)}
-                              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                              className="w-full px-3 py-2 border border-indigo-300 rounded-md shadow-sm focus:ring-1 focus:ring-indigo-300 focus:border-indigo-300 sm:text-sm transition duration-150 ease-in-out"
                            />
                         ) : (
                            <span className="text-sm text-gray-500">{new Date(subscription.trialEndDate).toLocaleDateString()}</span>
@@ -88,14 +102,20 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete }: 
                            <div className="flex justify-end space-x-2">
                               <button
                                  onClick={handleUpdate}
-                                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                 disabled={isUpdating}
+                                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
                               >
-                                 <FaSave className="w-4 h-4 mr-2" />
+                                 {isUpdating ? (
+                                    <Loader size="small" color="#E0E7FF" className="mr-2" />
+                                 ) : (
+                                    <FaSave className="w-4 h-4 mr-2" />
+                                 )}
                                  Save
                               </button>
                               <button
                                  onClick={() => setEditId(null)}
-                                 className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                 disabled={isUpdating}
+                                 className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
                               >
                                  <FaTimes className="w-4 h-4 mr-2" />
                                  Cancel
@@ -111,19 +131,16 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete }: 
                                  Edit
                               </button>
                               <button
-                                 onClick={() => onDelete(subscription.id)}
-                                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-red-600 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                                 onClick={() => handleDelete(subscription.id)}
+                                 disabled={isDeleting === subscription.id}
+                                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-red-600 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
                               >
-                                 <FaTrash className="w-4 h-4 mr-2" />
+                                 {isDeleting === subscription.id ? (
+                                    <Loader size="small" color="#DC2626" className="mr-2" />
+                                 ) : (
+                                    <FaTrash className="w-4 h-4 mr-2" />
+                                 )}
                                  Delete
-                              </button>
-                              <button
-                                 onClick={() => handleAddToCalendar(subscription)}
-                                 disabled={isAddingToCalendar}
-                                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-green-600 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                              >
-                                 <FaCalendarPlus className="w-4 h-4 mr-2" />
-                                 {isAddingToCalendar ? 'Adding...' : 'Calendar'}
                               </button>
                            </div>
                         )}

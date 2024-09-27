@@ -14,7 +14,7 @@ export default function Hero({ userId }: HeroProps) {
                <div className="bg-grid bg-grid-mask flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 relative overflow-hidden py-20">
                   <div className="max-w-7xl mx-autow-full text-center relative z-10">
                      <h1 className={`${zillaSlab.className} text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 text-transparent bg-clip-text bg-gradient-to-r from-[#00ffff] to-[#ff00ff]`}>
-                        SubTrack
+                        SubTally
                      </h1>
                      <p className={`${plusJakartaSans.className} text-lg sm:text-xl md:text-2xl mb-6 sm:mb-8 text-gray-300 max-w-3xl mx-auto`}>
                         Never miss a subscription renewal again. Track, manage, and optimize your subscriptions with ease.
@@ -31,7 +31,7 @@ export default function Hero({ userId }: HeroProps) {
                      </div>
                      <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                         {userId ? (
-                           <Link href="/dashboard" className={`${plusJakartaSans.className} bg-purple-400 hover:bg-purple-700 text-white font-semibold py-2 sm:py-3 px-6 sm:px-8 rounded-full transition duration-300 ease-in-out transform hover:scale-105 text-sm sm:text-base`}>
+                           <Link href="/dashboard" className={`${plusJakartaSans.className} bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 sm:py-3 px-6 sm:px-8 rounded-full transition duration-300 ease-in-out transform hover:scale-105 text-sm sm:text-base`}>
                               Go to Dashboard
                            </Link>
                         ) : (
