@@ -22,17 +22,17 @@ export default function Hero({ userId }: HeroProps) {
                </p>
                <div className="flex flex-row justify-center items-center gap-4 mb-8 sm:mb-10 md:mb-12">
                   {userId ? (
-                     <Link href="/dashboard" className={`${plusJakartaSans.className} bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 px-4 sm:px-6 rounded-full transition duration-300 ease-in-out text-sm sm:text-base flex items-center justify-center group`}>
+                     <Link href="/dashboard" className={`${plusJakartaSans.className} bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 px-4 sm:px-8 rounded-full transition duration-300 ease-in-out text-sm sm:text-lg flex items-center justify-center group`}>
                         Dashboard
-                        <FaArrowRight className="ml-2 transform translate-x-0 group-hover:translate-x-1 transition-transform duration-300 ease-in-out" />
+                        <FaArrowRight className="ml-3 transform translate-x-0 group-hover:translate-x-1 transition-transform duration-300 ease-in-out" />
                      </Link>
                   ) : (
-                     <Link href="/sign-up" className={`${plusJakartaSans.className} bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 px-4 sm:px-6 rounded-full transition duration-300 ease-in-out text-sm sm:text-base flex items-center justify-center group`}>
+                     <Link href="/sign-up" className={`${plusJakartaSans.className} bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 px-4 sm:px-8 rounded-full transition duration-300 ease-in-out text-sm sm:text-lg flex items-center justify-center group`}>
                         Start Now
-                        <FaArrowRight className="ml-2 transform translate-x-0 group-hover:translate-x-1 transition-transform duration-300 ease-in-out" />
+                        <FaArrowRight className="ml-3 transform translate-x-0 group-hover:translate-x-1 transition-transform duration-300 ease-in-out" />
                      </Link>
                   )}
-                  <Link href="#demo" className={`${plusJakartaSans.className} bg-white hover:bg-gray-100 text-black font-semibold py-2 px-4 sm:px-6 rounded-full border border-black transition duration-300 ease-in-out text-sm sm:text-base flex items-center justify-center`}>
+                  <Link href="#demo" className={`${plusJakartaSans.className} bg-white hover:bg-gray-100 text-black font-semibold py-2 px-4 sm:px-8 rounded-full border border-black transition duration-300 ease-in-out text-sm sm:text-lg flex items-center justify-center`}>
                      Learn More
                   </Link>
                </div>
