@@ -28,7 +28,7 @@ export default function Hero({ userId }: HeroProps) {
                      </Link>
                   ) : (
                      <Link href="/sign-up" className={`${plusJakartaSans.className} bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 px-4 sm:px-8 rounded-full transition duration-300 ease-in-out text-sm sm:text-lg flex items-center justify-center group`}>
-                        Start Now
+                        Start Tracking
                         <FaArrowRight className="ml-3 transform translate-x-0 group-hover:translate-x-1 transition-transform duration-300 ease-in-out" />
                      </Link>
                   )}

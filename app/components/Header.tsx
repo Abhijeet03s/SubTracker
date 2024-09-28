@@ -28,8 +28,8 @@ export default async function Header() {
                      />
                   </div>
                ) : (
-                  <Link href='/sign-in' className={`${plusJakartaSans.className} bg-purple-700 text-white px-2 py-1 sm:px-3 sm:py-2 rounded-full hover:bg-purple-800 transition-colors font-semibold text-xs sm:text-sm`}>
-                     Start Tracking
+                  <Link href='/sign-in' className={`${plusJakartaSans.className} bg-purple-700 text-white px-3 py-2 rounded-md hover:bg-purple-800 transition-colors font-semibold text-xs sm:text-sm`}>
+                     Get Started
                   </Link>
                )}
             </nav>
