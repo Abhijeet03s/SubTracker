@@ -11,7 +11,7 @@ const config: Config = {
       fontFamily: {
         plusJakartaSans: ['var(--font-plus-jakarta-sans)'],
         zillaSlab: ['var(--font-zilla-slab)'],
-      },
+      }
     },
   },
   plugins: [],
