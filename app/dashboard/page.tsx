@@ -5,11 +5,15 @@ import { useUser } from '@clerk/nextjs'
 import SubscriptionForm from './SubscriptionForm'
 import SubscriptionList from './SubscriptionList'
 import { useAddToCalendar } from '../hooks/useAddToCalendar'
+import SubscriptionAnalytics from '../components/SubscriptionAnalytic'
+import SubscriptionComparison from '../components/SubscriptionComparison'
 
 interface Subscription {
    id: string;
    serviceName: string;
    trialEndDate: string;
+   category: string;
+   cost: number;
 }
 
 export default function DashboardPage() {
@@ -111,8 +115,7 @@ export default function DashboardPage() {
                <h2 className="text-xl font-semibold mb-4 text-indigo-600">Add New Subscription</h2>
                <SubscriptionForm onSubmit={addSubscription} />
             </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="bg-white p-6 rounded-lg shadow-md mt-8">
                <h2 className="text-xl font-semibold mb-4 text-indigo-600">Your Subscriptions</h2>
                <SubscriptionList
                   subscriptions={subscriptions}
@@ -121,6 +124,10 @@ export default function DashboardPage() {
                   onSubscriptionsChange={onSubscriptionsChange}
                   onCalendarUpdate={handleCalendarUpdate}
                />
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-md mt-8">
+               <SubscriptionAnalytics subscriptions={subscriptions as any} />
+               <SubscriptionComparison subscriptions={subscriptions as any} />
             </div>
          </div>
       </div>
