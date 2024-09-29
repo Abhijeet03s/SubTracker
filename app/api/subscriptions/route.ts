@@ -8,6 +8,8 @@ const subscriptionSchema = z.object({
    trialEndDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
       message: "Invalid date string",
    }),
+   category: z.string().min(1),
+   cost: z.number().min(0),
 });
 
 export async function GET(request: NextRequest) {
@@ -44,6 +46,8 @@ export async function POST(request: NextRequest) {
             userId,
             serviceName: validatedData.serviceName,
             trialEndDate: new Date(validatedData.trialEndDate),
+            category: validatedData.category,
+            cost: validatedData.cost,
          },
       });
 

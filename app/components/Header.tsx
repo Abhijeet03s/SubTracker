@@ -17,7 +17,7 @@ export default async function Header() {
             <nav>
                {userId ? (
                   <div className='flex gap-3 sm:gap-4 items-center'>
-                     <Link href='/dashboard' className=' text-white p-2 sm:px-4 sm:py-2 font-semibold text-xs sm:text-base'>Dashboard</Link>
+                     <Link href='/dashboard' className={`${plusJakartaSans.className} text-white p-2 sm:px-4 sm:py-2 font-semibold text-xs sm:text-base`}>Dashboard</Link>
                      <UserButton
                         appearance={{
                            elements: {

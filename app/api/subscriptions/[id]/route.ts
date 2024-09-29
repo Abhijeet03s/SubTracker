@@ -8,6 +8,8 @@ const updateSubscriptionSchema = z.object({
    trialEndDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
       message: "Invalid date string",
    }).optional(),
+   category: z.string().min(1).optional(),
+   cost: z.number().min(0).optional(),
 })
 
 export async function GET(
@@ -51,6 +53,8 @@ export async function PUT(
          data: {
             serviceName: validatedData.serviceName,
             trialEndDate: validatedData.trialEndDate ? new Date(validatedData.trialEndDate) : undefined,
+            category: validatedData.category,
+            cost: validatedData.cost,
          },
       })
       return NextResponse.json(updatedSubscription)
@@ -79,11 +83,8 @@ export async function DELETE(
       await prisma.subscription.delete({
          where: { id: params.id, userId },
       })
-      return new NextResponse(null, { status: 204 })
+      return NextResponse.json({ message: 'Subscription deleted successfully' })
    } catch (error) {
-      if (error instanceof Error && error.message.includes("Record to delete does not exist")) {
-         return NextResponse.json({ error: 'Subscription not found' }, { status: 404 })
-      }
       console.error(error)
       return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
    }
