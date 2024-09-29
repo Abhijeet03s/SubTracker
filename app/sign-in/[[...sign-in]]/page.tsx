@@ -1,20 +1,39 @@
 import { SignIn } from '@clerk/nextjs'
 import { plusJakartaSans } from '@/app/fonts/fonts';
 
-export default function signin() {
+export default function SignInPage() {
    return (
-      <div className={`${plusJakartaSans.className} flex flex-col items-center justify-center min-h-screen bg-rich-black`}>
-         <div className='w-full max-w-md p-6 bg-gray-900 rounded-lg shadow-xl'>
-            <SignIn appearance={{
-               elements: {
-                  card: 'bg-gray-800',
-                  headerTitle: 'text-white',
-                  headerSubtitle: 'text-gray-300',
-                  socialButtonsBlockButton: 'border-white text-white',
-                  footerActionLink: 'text-purple-400 hover:text-purple-300',
+      <div className={`${plusJakartaSans.className} flex flex-col items-center justify-center h-[90vh] bg-gradient-to-br from-rich-black to-gray-900`}>
+         <SignIn appearance={{
+            elements: {
+               formButtonPrimary: {
+                  fontSize: 16,
+                  fontWeight: 600,
+                  textTransform: 'none',
+                  backgroundColor: '#611BBD',
+                  '&:hover, &:focus, &:active': {
+                     backgroundColor: '#49247A',
+                  },
                },
-            }} />
-         </div>
+               formFieldInput: {
+                  borderColor: '#E2E8F0',
+                  '&:focus': {
+                     borderColor: '#611BBD',
+                     boxShadow: '0 0 0 1px #611BBD',
+                  },
+               },
+               card: {
+                  boxShadow: 'none',
+               },
+               oauthButtonPrimary: {
+                  backgroundColor: '#1A1A1A',
+                  color: '#FFFFFF',
+                  '&:hover, &:focus, &:active': {
+                     backgroundColor: '#000000',
+                  },
+               },
+            },
+         }} />
       </div>
    )
 }

@@ -17,7 +17,7 @@ export default async function Header() {
             <nav>
                {userId ? (
                   <div className='flex gap-3 sm:gap-4 items-center'>
-                     <Link href='/dashboard' className='bg-purple-700 text-white p-2 sm:px-4 sm:py-2 rounded-full hover:bg-purple-800 transition-colors font-semibold text-xs sm:text-sm'>Dashboard</Link>
+                     <Link href='/dashboard' className=' text-white p-2 sm:px-4 sm:py-2 font-semibold text-xs sm:text-base'>Dashboard</Link>
                      <UserButton
                         appearance={{
                            elements: {
