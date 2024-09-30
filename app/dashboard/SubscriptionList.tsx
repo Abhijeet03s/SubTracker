@@ -183,7 +183,7 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete, on
                   <tbody>
                      {filteredSubscriptions.map((subscription, index) => (
                         <tr key={subscription.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} border-b`}>
-                           <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap overflow-hidden text-center">
+                           <td className="px-6 py-4 font-medium text-gray-700 whitespace-nowrap overflow-hidden text-center">
                               {subscription.id === editId ? (
                                  <input
                                     type="text"
@@ -196,7 +196,7 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete, on
                                  subscription.serviceName
                               )}
                            </td>
-                           <td className="px-6 py-4 overflow-hidden text-center">
+                           <td className="px-6 py-4 font-medium text-gray-700 whitespace-nowrap overflow-hidden text-center">
                               {subscription.id === editId ? (
                                  <input
                                     type="text"
@@ -208,7 +208,7 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete, on
                                  subscription.category
                               )}
                            </td>
-                           <td className="px-6 py-4 text-center">
+                           <td className="px-6 py-4 font-medium text-gray-700 whitespace-nowrap overflow-hidden text-center">
                               {subscription.id === editId ? (
                                  <input
                                     type="number"
