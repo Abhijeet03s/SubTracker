@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { UserButton } from '@clerk/nextjs';
 import { auth } from '@clerk/nextjs/server';
 import { plusJakartaSans, zillaSlab } from '@/app/fonts/fonts';
+import { UserButton } from '@clerk/nextjs';
 
 export default async function Header() {
    const { userId } = auth();

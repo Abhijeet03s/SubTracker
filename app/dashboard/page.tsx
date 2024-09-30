@@ -1,12 +1,17 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useUser } from '@clerk/nextjs'
-import SubscriptionForm from './SubscriptionForm'
-import SubscriptionList from './SubscriptionList'
+import { plusJakartaSans } from '@/app/fonts/fonts';
 import { useAddToCalendar } from '../hooks/useAddToCalendar'
+import dynamic from 'next/dynamic'
 import SubscriptionAnalytics from '../components/SubscriptionAnalytic'
 import SubscriptionComparison from '../components/SubscriptionComparison'
+import Modal from '../components/Modal'
+import { FaPlus } from 'react-icons/fa'
+
+const SubscriptionList = dynamic(() => import('./SubscriptionList'), { ssr: false })
+const SubscriptionForm = dynamic(() => import('./SubscriptionForm'), { ssr: false })
 
 interface Subscription {
    id: string;
@@ -20,14 +25,11 @@ export default function DashboardPage() {
    const { user } = useUser()
    const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
    const { addToCalendar, updateCalendarEvent } = useAddToCalendar()
+   const [isModalOpen, setIsModalOpen] = useState(false)
 
-   useEffect(() => {
-      fetchSubscriptions()
-   }, [])
-
-   const fetchSubscriptions = async () => {
+   const fetchSubscriptions = useCallback(async () => {
       try {
-         const response = await fetch('/api/subscriptions')
+         const response = await fetch(`/api/subscriptions?userId=${user?.id}`)
          if (response.ok) {
             const data: Subscription[] = await response.json()
             setSubscriptions(data)
@@ -37,7 +39,13 @@ export default function DashboardPage() {
       } catch (error) {
          console.error('Error fetching subscriptions:', error)
       }
-   }
+   }, [user?.id])
+
+   useEffect(() => {
+      if (user) {
+         fetchSubscriptions()
+      }
+   }, [user, fetchSubscriptions])
 
    const addSubscription = async (newSubscription: Omit<Subscription, 'id'>) => {
       try {
@@ -48,6 +56,7 @@ export default function DashboardPage() {
          })
          if (response.ok) {
             await fetchSubscriptions()
+            setIsModalOpen(false)
          } else {
             console.error('Failed to add subscription', await response.text())
          }
@@ -105,30 +114,55 @@ export default function DashboardPage() {
    }
 
    return (
-      <div className='min-h-screen bg-gray-50'>
-         <div className="container mx-auto p-6">
-            <div className="flex justify-between items-center mb-8">
-               <h1 className="text-3xl font-bold text-indigo-700">Subscription Dashboard</h1>
+      <div className='min-h-screen bg-gray-100 font-sans'>
+         <div className={`${plusJakartaSans.className} container mx-auto p-6`}>
+            <div className="flex justify-between items-center mb-6">
+               <div>
+                  <h1 className="text-3xl font-bold text-gray-800">Subscription Dashboard</h1>
+               </div>
+               <div className="flex items-center space-x-4">
+                  {user && (
+                     <div className="flex items-center bg-white rounded-full px-4 py-2 shadow-sm">
+                        <p className="text-gray-800 font-semibold">
+                           Welcome, <span className="text-indigo-600">{user?.firstName || user?.username}</span>!
+                        </p>
+                     </div>
+                  )}
+                  <button
+                     onClick={() => setIsModalOpen(true)}
+                     className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-150 ease-in-out"
+                  >
+                     <FaPlus className="mr-2" />
+                     Add Sub
+                  </button>
+               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-               <h2 className="text-xl font-semibold mb-4 text-indigo-600">Add New Subscription</h2>
+            <div className="space-y-6">
+               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <SubscriptionAnalytics subscriptions={subscriptions as any} />
+               </div>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-white rounded-lg shadow p-6">
+                     <h2 className="text-xl font-semibold mb-4">Subscriptions by Category</h2>
+                     <SubscriptionComparison subscriptions={subscriptions as any} />
+                  </div>
+                  <div className="bg-white rounded-lg shadow p-6">
+                     <h2 className="text-xl font-semibold mb-4">Your Subscriptions</h2>
+                     <SubscriptionList
+                        subscriptions={subscriptions}
+                        onUpdate={updateSubscription}
+                        onDelete={deleteSubscription}
+                        onSubscriptionsChange={setSubscriptions}
+                        onCalendarUpdate={handleCalendarUpdate}
+                     />
+                  </div>
+               </div>
+            </div>
+
+            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                <SubscriptionForm onSubmit={addSubscription} />
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-md mt-8">
-               <h2 className="text-xl font-semibold mb-4 text-indigo-600">Your Subscriptions</h2>
-               <SubscriptionList
-                  subscriptions={subscriptions}
-                  onUpdate={updateSubscription}
-                  onDelete={deleteSubscription}
-                  onSubscriptionsChange={onSubscriptionsChange}
-                  onCalendarUpdate={handleCalendarUpdate}
-               />
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-md mt-8">
-               <SubscriptionAnalytics subscriptions={subscriptions as any} />
-               <SubscriptionComparison subscriptions={subscriptions as any} />
-            </div>
+            </Modal>
          </div>
       </div>
    )

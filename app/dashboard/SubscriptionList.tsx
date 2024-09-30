@@ -1,5 +1,7 @@
-import React, { useState, useMemo } from 'react'
-import { FaEdit, FaTrash, FaSave, FaTimes } from 'react-icons/fa'
+'use client'
+
+import { useState, useMemo, useEffect } from 'react'
+import { FaSearch } from 'react-icons/fa'
 import { Loader } from '../components/ui/loader'
 
 interface Subscription {
@@ -19,6 +21,7 @@ interface SubscriptionListProps {
 }
 
 export default function SubscriptionList({ subscriptions, onUpdate, onDelete, onSubscriptionsChange, onCalendarUpdate }: Readonly<SubscriptionListProps>) {
+   const [isClient, setIsClient] = useState(false);
    const [editId, setEditId] = useState<string | null>(null)
    const [editName, setEditName] = useState('')
    const [editDate, setEditDate] = useState('')
@@ -30,14 +33,10 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete, on
    const [categoryFilter, setCategoryFilter] = useState('')
    const [costFilter, setCostFilter] = useState('')
 
-   const categories = useMemo(() => {
-      return Array.from(new Set(subscriptions.map(sub => sub.category)));
-   }, [subscriptions]);
-
    const filteredSubscriptions = useMemo(() => {
       return subscriptions.filter(sub => {
          const matchesSearch = sub.serviceName.toLowerCase().includes(searchTerm.toLowerCase());
-         const matchesCategory = categoryFilter === '' || sub.category === categoryFilter;
+         const matchesCategory = categoryFilter === '' || sub.category.toLowerCase() === categoryFilter.toLowerCase();
          const matchesCost = costFilter === '' ||
             (costFilter === 'low' && sub.cost < 10) ||
             (costFilter === 'medium' && sub.cost >= 10 && sub.cost < 50) ||
@@ -46,6 +45,10 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete, on
          return matchesSearch && matchesCategory && matchesCost;
       });
    }, [subscriptions, searchTerm, categoryFilter, costFilter]);
+
+   useEffect(() => {
+      setIsClient(true);
+   }, []);
 
    const handleEdit = (subscription: Subscription) => {
       setEditId(subscription.id)
@@ -101,156 +104,171 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete, on
       }
    }
 
+   if (!isClient) {
+      return null;
+   }
+
    return (
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-         <div className="mb-4 flex flex-wrap gap-4">
-            <input
-               type="text"
-               placeholder="Search subscriptions..."
-               value={searchTerm}
-               onChange={(e) => setSearchTerm(e.target.value)}
-               className="p-2 border rounded"
-            />
-            <select
-               value={categoryFilter}
-               onChange={(e) => setCategoryFilter(e.target.value)}
-               className="p-2 border rounded"
-            >
-               <option value="">All Categories</option>
-               {categories.map(category => (
-                  <option key={category} value={category}>{category}</option>
-               ))}
-            </select>
-            <select
-               value={costFilter}
-               onChange={(e) => setCostFilter(e.target.value)}
-               className="p-2 border rounded"
-            >
-               <option value="">All Costs</option>
-               <option value="low">Low (&lt; $10)</option>
-               <option value="medium">Medium ($10 - $50)</option>
-               <option value="high">High (&gt; $50)</option>
-            </select>
+      <>
+         <div className="flex flex-col md:flex-row justify-between items-center mb-6 space-y-4 md:space-y-0 md:space-x-4">
+            <div className="w-full md:w-1/2 relative">
+               <input
+                  type="text"
+                  placeholder="Search subscriptions..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full p-2 pl-8 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
+               />
+               <FaSearch className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm" />
+            </div>
+
+            <div className="w-full md:w-1/2 flex space-x-4">
+               <div className="relative w-1/2">
+                  <div className="relative">
+                     <select
+                        value={categoryFilter}
+                        onChange={(e) => setCategoryFilter(e.target.value)}
+                        className="w-full p-2 pr-8 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200 appearance-none text-center cursor-pointer"
+                     >
+                        <option value="" className="text-center">All Categories</option>
+                        <option value="ecommerce">Ecommerce</option>
+                        <option value="streaming">Streaming</option>
+                        <option value="music">Music</option>
+                        <option value="other">Other</option>
+                     </select>
+                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                           <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                        </svg>
+                     </div>
+                  </div>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                     <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                     </svg>
+                  </div>
+               </div>
+               <div className="relative w-1/2">
+                  <select
+                     value={costFilter}
+                     onChange={(e) => setCostFilter(e.target.value)}
+                     className="w-full p-2 pr-8 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200 appearance-none text-center"
+                  >
+                     <option value="" className="text-center">All Costs</option>
+                     <option value="low">Low (&lt; $10)</option>
+                     <option value="medium">Medium ($10 - $50)</option>
+                     <option value="high">High (&gt; $50)</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                     <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                     </svg>
+                  </div>
+               </div>
+            </div>
          </div>
 
          {filteredSubscriptions.length === 0 ? (
-            <p>No subscriptions found matching your criteria.</p>
+            <p className="text-center py-8 text-gray-500">No subscriptions found matching your criteria.</p>
          ) : (
-            <table className="w-full border-collapse">
-               <thead className="bg-gray-50">
-                  <tr>
-                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-r">Service</th>
-                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-r">Trial End Date</th>
-                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-r">Category</th>
-                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-r">Cost</th>
-                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider border-b">Actions</th>
-                  </tr>
-               </thead>
-               <tbody className="divide-y divide-gray-200">
-                  {filteredSubscriptions.map((subscription) => (
-                     <tr key={subscription.id}>
-                        <td className="px-6 py-4 whitespace-nowrap border-r">
-                           {subscription.id === editId ? (
-                              <input
-                                 type="text"
-                                 value={editName}
-                                 onChange={(e) => setEditName(e.target.value)}
-                                 className="w-full px-3 py-2 border border-indigo-300 rounded-md shadow-sm focus:ring-1 focus:ring-indigo-300 focus:border-indigo-300 sm:text-sm transition duration-150 ease-in-out"
-                                 autoFocus
-                              />
-                           ) : (
-                              <span className="text-sm font-medium text-gray-900">{subscription.serviceName}</span>
-                           )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap border-r">
-                           {subscription.id === editId ? (
-                              <input
-                                 type="date"
-                                 value={editDate}
-                                 onChange={(e) => setEditDate(e.target.value)}
-                                 className="w-full px-3 py-2 border border-indigo-300 rounded-md shadow-sm focus:ring-1 focus:ring-indigo-300 focus:border-indigo-300 sm:text-sm transition duration-150 ease-in-out"
-                              />
-                           ) : (
-                              <span className="text-sm text-gray-500">{new Date(subscription.trialEndDate).toLocaleDateString()}</span>
-                           )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap border-r">
-                           {subscription.id === editId ? (
-                              <input
-                                 type="text"
-                                 value={editCategory}
-                                 onChange={(e) => setEditCategory(e.target.value)}
-                                 className="w-full px-3 py-2 border border-indigo-300 rounded-md shadow-sm focus:ring-1 focus:ring-indigo-300 focus:border-indigo-300 sm:text-sm transition duration-150 ease-in-out"
-                              />
-                           ) : (
-                              <span className="text-sm text-gray-500">{subscription.category}</span>
-                           )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap border-r">
-                           {subscription.id === editId ? (
-                              <input
-                                 type="number"
-                                 value={editCost}
-                                 onChange={(e) => setEditCost(e.target.value)}
-                                 className="w-full px-3 py-2 border border-indigo-300 rounded-md shadow-sm focus:ring-1 focus:ring-indigo-300 focus:border-indigo-300 sm:text-sm transition duration-150 ease-in-out"
-                              />
-                           ) : (
-                              <span className="text-sm text-gray-500">${subscription.cost.toFixed(2)}</span>
-                           )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                           {subscription.id === editId ? (
-                              <div className="flex justify-end space-x-2">
-                                 <button
-                                    onClick={handleUpdate}
-                                    disabled={isUpdating}
-                                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-                                 >
-                                    {isUpdating ? (
-                                       <Loader size="small" color="#E0E7FF" className="mr-2" />
-                                    ) : (
-                                       <FaSave className="w-4 h-4 mr-2" />
-                                    )}
-                                    Save
-                                 </button>
-                                 <button
-                                    onClick={() => setEditId(null)}
-                                    disabled={isUpdating}
-                                    className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-                                 >
-                                    <FaTimes className="w-4 h-4 mr-2" />
-                                    Cancel
-                                 </button>
-                              </div>
-                           ) : (
-                              <div className="flex justify-end space-x-2">
-                                 <button
-                                    onClick={() => handleEdit(subscription)}
-                                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-indigo-600 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                                 >
-                                    <FaEdit className="w-4 h-4 mr-2" />
-                                    Edit
-                                 </button>
-                                 <button
-                                    onClick={() => handleDelete(subscription.id)}
-                                    disabled={isDeleting === subscription.id}
-                                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-red-600 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
-                                 >
-                                    {isDeleting === subscription.id ? (
-                                       <Loader size="small" color="#DC2626" className="mr-2" />
-                                    ) : (
-                                       <FaTrash className="w-4 h-4 mr-2" />
-                                    )}
-                                    Delete
-                                 </button>
-                              </div>
-                           )}
-                        </td>
+            <div className="overflow-x-auto rounded-t">
+               <table className="w-full text-sm text-gray-500 table-fixed">
+                  <thead className="text-xs text-gray-700 uppercase bg-gray-100">
+                     <tr>
+                        {['Service', 'Category', 'Cost', 'Actions'].map((header) => (
+                           <th key={header} scope="col" className="px-6 py-3 text-center w-1/4">{header}</th>
+                        ))}
                      </tr>
-                  ))}
-               </tbody>
-            </table>
-         )}
-      </div>
+                  </thead>
+                  <tbody>
+                     {filteredSubscriptions.map((subscription, index) => (
+                        <tr key={subscription.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} border-b`}>
+                           <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap overflow-hidden text-center">
+                              {subscription.id === editId ? (
+                                 <input
+                                    type="text"
+                                    value={editName}
+                                    onChange={(e) => setEditName(e.target.value)}
+                                    className="w-full p-2 bg-slate-50 border-b-2 border-slate-300 focus:outline-none focus:border-slate-500 transition-colors duration-300 text-center"
+                                    autoFocus
+                                 />
+                              ) : (
+                                 subscription.serviceName
+                              )}
+                           </td>
+                           <td className="px-6 py-4 overflow-hidden text-center">
+                              {subscription.id === editId ? (
+                                 <input
+                                    type="text"
+                                    value={editCategory}
+                                    onChange={(e) => setEditCategory(e.target.value)}
+                                    className="w-full p-2 bg-slate-50 border-b-2 border-slate-300 focus:outline-none focus:border-slate-500 transition-colors duration-300 text-center"
+                                 />
+                              ) : (
+                                 subscription.category
+                              )}
+                           </td>
+                           <td className="px-6 py-4 text-center">
+                              {subscription.id === editId ? (
+                                 <input
+                                    type="number"
+                                    value={editCost}
+                                    onChange={(e) => setEditCost(e.target.value)}
+                                    className="w-full p-2 bg-slate-50 border-b-2 border-slate-300 focus:outline-none focus:border-slate-500 transition-colors duration-300 text-center [&::-webkit-inner-spin-button]:appearance-none"
+                                 />
+                              ) : (
+                                 `$${subscription.cost.toFixed(2)}`
+                              )}
+                           </td>
+                           <td className="px-6 py-4">
+                              <div className="flex justify-center space-x-2">
+                                 {subscription.id === editId ? (
+                                    <>
+                                       <button
+                                          onClick={handleUpdate}
+                                          disabled={isUpdating}
+                                          className="px-3 py-2 text-xs font-medium text-white bg-green-600 rounded hover:bg-green-700 focus:ring-2 focus:outline-none focus:ring-green-300"
+                                       >
+                                          {isUpdating ? <Loader size="small" className="animate-spin" /> : 'Save'}
+                                       </button>
+                                       <button
+                                          onClick={() => setEditId(null)}
+                                          disabled={isUpdating}
+                                          className="px-3 py-2 text-xs font-medium text-gray-900 bg-white rounded border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-gray-200"
+                                       >
+                                          Cancel
+                                       </button>
+                                    </>
+                                 ) : (
+                                    <>
+                                       <button
+                                          onClick={() => handleEdit(subscription)}
+                                          className="px-3 py-2 text-xs font-medium text-white bg-blue-700 rounded hover:bg-blue-800 focus:ring-2 focus:outline-none focus:ring-blue-300"
+                                       >
+                                          Edit
+                                       </button>
+                                       <button
+                                          onClick={() => handleDelete(subscription.id)}
+                                          disabled={isDeleting === subscription.id}
+                                          className="px-3 py-2 text-xs font-medium text-white bg-red-600 rounded hover:bg-red-700 focus:ring-2 focus:outline-none focus:ring-red-300"
+                                       >
+                                          {isDeleting === subscription.id ? (
+                                             <Loader size="small" className="animate-spin" />
+                                          ) : (
+                                             'Delete'
+                                          )}
+                                       </button>
+                                    </>
+                                 )}
+                              </div>
+                           </td>
+                        </tr>
+                     ))}
+                  </tbody>
+               </table>
+            </div>
+         )
+         }
+      </>
    )
 }

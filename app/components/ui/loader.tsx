@@ -19,7 +19,7 @@ export const Loader: React.FC<LoaderProps> = ({ size = 'medium', color = 'curren
          viewBox="0 0 24 24"
       >
          <circle
-            className="opacity-25"
+            className="opacity-25 mr-2"
             cx="12"
             cy="12"
             r="10"
