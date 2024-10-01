@@ -141,12 +141,11 @@ export default function DashboardPage() {
             </div>
 
             <div className="space-y-6">
-               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+               <div className="my-10">
                   <SubscriptionAnalytics subscriptions={subscriptions as any} />
                </div>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="bg-white rounded-lg shadow p-6">
-
                      <SubscriptionComparison subscriptions={subscriptions as any} />
                   </div>
                   <div className="bg-white rounded-lg shadow p-6">
