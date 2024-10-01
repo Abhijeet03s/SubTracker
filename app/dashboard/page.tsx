@@ -24,7 +24,7 @@ interface Subscription {
 export default function DashboardPage() {
    const { user } = useUser()
    const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
-   const { addToCalendar, updateCalendarEvent } = useAddToCalendar()
+   const { updateCalendarEvent } = useAddToCalendar()
    const [isModalOpen, setIsModalOpen] = useState(false)
 
    const fetchSubscriptions = useCallback(async () => {
@@ -98,9 +98,9 @@ export default function DashboardPage() {
       }
    }
 
-   const onSubscriptionsChange = (updatedSubscriptions: Subscription[]) => {
-      setSubscriptions(updatedSubscriptions)
-   }
+   // const onSubscriptionsChange = (updatedSubscriptions: Subscription[]) => {
+   //    setSubscriptions(updatedSubscriptions)
+   // }
 
    const handleCalendarUpdate = async (subscription: Subscription) => {
       try {
@@ -114,8 +114,8 @@ export default function DashboardPage() {
    }
 
    return (
-      <div className='min-h-screen bg-gray-100 font-sans'>
-         <div className={`${plusJakartaSans.className} container mx-auto p-6`}>
+      <div className='min-h-screen bg-gray-100'>
+         <div className={`${plusJakartaSans.className} container max-w-7xl mx-auto py-6`}>
             <div className="flex justify-between items-center mb-6">
                <div>
                   <h1 className="text-4xl font-extrabold text-indigo-700 tracking-tight leading-none">

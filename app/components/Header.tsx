@@ -10,7 +10,7 @@ export default async function Header() {
       <header className='bg-gray-900 text-white sticky top-0 z-50'>
          <div className='container mx-auto flex items-center justify-between py-3 px-4 sm:py-4 sm:px-6 lg:px-8'>
             <Link href='/' className="flex items-center">
-               <h1 className={`${zillaSlab.className} text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-[#00ffff] to-[#ff00ff] bg-clip-text text-transparent`}>
+               <h1 className={`${zillaSlab.className} text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-purple-500`}>
                   SubTracker
                </h1>
             </Link>

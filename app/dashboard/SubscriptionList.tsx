@@ -132,7 +132,7 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete, on
                      >
                         <option value="" className="text-center">All Categories</option>
                         <option value="ecommerce">Ecommerce</option>
-                        <option value="streaming">Streaming</option>
+                        <option value="entertainment">Entertainment</option>
                         <option value="music">Music</option>
                         <option value="other">Other</option>
                      </select>

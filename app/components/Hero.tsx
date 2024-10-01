@@ -38,7 +38,7 @@ export default function Hero({ userId }: HeroProps) {
                </div>
                <div className="relative w-full max-w-4xl mx-auto">
                   <Image
-                     src="/dashboard-mockup.png"
+                     src="/subtracker-dashboard.png"
                      alt="SubTrack Dashboard"
                      width={1200}
                      height={675}
