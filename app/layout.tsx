@@ -1,4 +1,5 @@
 import './globals.css';
+import { Analytics } from "@vercel/analytics/react"
 import type { Metadata } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
 import Header from './components/Header';
@@ -28,6 +29,7 @@ export default function RootLayout({
           <Header />
           {children}
           <Toaster />
+          <Analytics />
         </ClerkProvider>
       </body>
     </html>
