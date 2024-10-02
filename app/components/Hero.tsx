@@ -18,7 +18,7 @@ export default function Hero({ userId }: HeroProps) {
                   <span className="block mt-2">Again <span className="inline-block animate-ring text-2xl sm:text-3xl md:text-4xl lg:text-5xl">🔔</span></span>
                </h1>
                <p className={`${plusJakartaSans.className} text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl mb-6 sm:mb-8 md:mb-10 text-gray-400 max-w-3xl mx-auto`}>
-                  Track, manage, and optimize your subscriptions with ease. SubTracker helps you stay on top of your recurring expenses.
+                  Track, manage, and optimize your subscriptions with ease. SubTracker helps you stay on top of your recurring expenses
                </p>
                <div className="flex flex-row justify-center items-center gap-4 mb-8 sm:mb-10 md:mb-12">
                   {userId ? (

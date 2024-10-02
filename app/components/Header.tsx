@@ -1,10 +1,13 @@
-import Link from 'next/link';
-import { auth } from '@clerk/nextjs/server';
-import { plusJakartaSans, zillaSlab } from '@/app/fonts/fonts';
-import { UserButton } from '@clerk/nextjs';
+'use client'
 
-export default async function Header() {
-   const { userId } = auth();
+import Link from 'next/link';
+import { plusJakartaSans, zillaSlab } from '@/app/fonts/fonts';
+import { UserButton, useAuth } from '@clerk/nextjs';
+import { usePathname } from 'next/navigation';
+
+export default function Header() {
+   const { isSignedIn } = useAuth();
+   const pathname = usePathname();
 
    return (
       <header className='bg-gray-900 text-white sticky top-0 z-50'>
@@ -15,9 +18,11 @@ export default async function Header() {
                </h1>
             </Link>
             <nav>
-               {userId ? (
+               {isSignedIn ? (
                   <div className='flex gap-3 sm:gap-4 items-center'>
-                     <Link href='/dashboard' className={`${plusJakartaSans.className} text-white p-2 sm:px-4 sm:py-2 font-semibold text-xs sm:text-base `}>Dashboard</Link>
+                     <Link href={pathname === '/dashboard' ? '/' : '/dashboard'} className={`${plusJakartaSans.className} text-white p-2 sm:px-4 sm:py-2 font-semibold text-xs sm:text-base`}>
+                        {pathname === '/dashboard' ? 'Home' : 'Dashboard'}
+                     </Link>
                      <UserButton
                         appearance={{
                            elements: {
