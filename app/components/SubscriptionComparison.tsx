@@ -1,7 +1,6 @@
-import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-import { CSVLink } from "react-csv";
+import { ArrowDownTrayIcon } from '@heroicons/react/20/solid';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -14,11 +13,23 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
    const currentMonth = new Date().getMonth();
    const currentYear = new Date().getFullYear();
 
-   // Process subscriptions data
    const monthlyTotal = subscriptions.reduce((total, sub) => {
       const monthlyCost = sub.billingCycle === 'yearly' ? sub.cost / 12 : sub.cost;
       return total + monthlyCost;
    }, 0);
+
+   const handleExport = () => {
+      const csvContent = "data:text/csv;charset=utf-8,"
+         + "Month,Cost\n"
+         + `${months[currentMonth]},${monthlyTotal}`;
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `subscription-costs-${currentYear}-${months[currentMonth]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+   };
 
    const barChartData = {
       labels: months,
@@ -83,24 +94,17 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
       },
    };
 
-   const csvData = [
-      {
-         Month: months[currentMonth],
-         'Total Cost': monthlyTotal.toFixed(2),
-      }
-   ];
-
    return (
       <>
          <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold text-gray-700">Subscription Monthly Costs</h2>
-            <CSVLink
-               data={csvData}
-               filename={`subscription-costs-${currentYear}-${months[currentMonth]}.csv`}
-               className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium"
+            <button
+               onClick={handleExport}
+               className="px-2 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-xs font-medium inline-flex items-center group"
             >
+               <ArrowDownTrayIcon className="h-4 w-4 mr-1 transition-transform duration-300 ease-in-out group-hover:translate-y-0.5" />
                Export as CSV
-            </CSVLink>
+            </button>
          </div>
          <div className="h-96 w-full p-2 mt-4">
             <Bar data={barChartData} options={barChartOptions as any} />
