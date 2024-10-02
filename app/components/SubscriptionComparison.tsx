@@ -1,64 +1,38 @@
 import React from 'react';
-import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { CSVLink } from "react-csv";
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 interface SubscriptionComparisonProps {
-   subscriptions: any[];
+   subscriptions: Array<{ name: string; cost: number; billingCycle: string }>;
 }
 
 export default function SubscriptionComparison({ subscriptions }: SubscriptionComparisonProps) {
-   const dummyData = [
-      { month: 'Jan', cost: 450 },
-      { month: 'Feb', cost: 500 },
-      { month: 'Mar', cost: 550 },
-      { month: 'Apr', cost: 480 },
-      { month: 'May', cost: 520 },
-      { month: 'Jun', cost: 600 },
-      { month: 'Jul', cost: 580 },
-      { month: 'Aug', cost: 620 },
-      { month: 'Sep', cost: 590 },
-      { month: 'Oct', cost: 628 },
-      { month: 'Nov', cost: 610 },
-      { month: 'Dec', cost: 650 },
-   ];
+   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+   const currentMonth = new Date().getMonth();
+   const currentYear = new Date().getFullYear();
 
-   const currentMonthIndex = 9;
+   // Process subscriptions data
+   const monthlyTotal = subscriptions.reduce((total, sub) => {
+      const monthlyCost = sub.billingCycle === 'yearly' ? sub.cost / 12 : sub.cost;
+      return total + monthlyCost;
+   }, 0);
 
-   const lineChartData = {
-      labels: dummyData.map(item => item.month),
-      datasets: [
-         {
-            label: 'Subscription Cost',
-            data: dummyData.map(item => item.cost),
-            borderColor: (context: any) => {
-               const chart = context.chart;
-               const { ctx, chartArea } = chart;
-               if (!chartArea) {
-                  return;
-               }
-               const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-               gradient.addColorStop(0, 'rgba(75, 192, 192, 0)');
-               gradient.addColorStop(1, 'rgba(75, 192, 192, 1)');
-               return gradient;
-            },
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            tension: 0.4,
-            fill: true,
-            pointBackgroundColor: (context: any) =>
-               context.dataIndex === currentMonthIndex ? 'rgba(75, 192, 192, 1)' : 'transparent',
-            pointBorderColor: (context: any) =>
-               context.dataIndex === currentMonthIndex ? 'rgba(75, 192, 192, 1)' : 'transparent',
-            pointRadius: (context: any) =>
-               context.dataIndex === currentMonthIndex ? 5 : 0,
-            pointHoverRadius: 0,
-         },
-      ],
+   const barChartData = {
+      labels: months,
+      datasets: [{
+         data: months.map((_, index) => index === currentMonth ? monthlyTotal : null),
+         backgroundColor: 'rgba(59, 130, 246, 0.8)',
+         borderColor: 'rgba(37, 99, 235, 1)',
+         borderWidth: 1,
+         borderRadius: 8,
+         maxBarThickness: 60,
+      }],
    };
 
-   const lineChartOptions = {
+   const barChartOptions = {
       responsive: true,
       maintainAspectRatio: false,
       scales: {
@@ -66,17 +40,24 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
             grid: {
                display: false,
             },
+            ticks: {
+               color: 'rgba(55, 65, 81, 1)',
+            },
          },
          y: {
             beginAtZero: true,
             grid: {
-               display: false,
-            },
-            title: {
-               display: false,
+               color: 'rgba(243, 244, 246, 0.8)',
+               drawBorder: false,
             },
             ticks: {
-               display: true,
+               color: 'rgba(107, 114, 128, 1)',
+               font: {
+                  family: "'Inter', sans-serif",
+                  weight: '500',
+               },
+               callback: (value: number) => `$${value.toLocaleString()}`,
+               maxTicksLimit: 5,
             },
          },
       },
@@ -85,56 +66,45 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
             display: false,
          },
          tooltip: {
-            enabled: false,
-         },
-         annotation: {
-            annotations: {
-               currentMonth: {
-                  type: 'point',
-                  xValue: currentMonthIndex,
-                  yValue: dummyData[currentMonthIndex].cost,
-                  backgroundColor: 'transparent',
-                  borderColor: 'transparent',
-                  radius: 0,
-                  label: {
-                     content: `$${dummyData[currentMonthIndex].cost.toFixed(2)}`,
-                     enabled: true,
-                     position: 'top',
-                     yAdjust: -15,
-                     backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                     color: 'white',
-                     padding: 8,
-                     borderRadius: 4,
-                     font: {
-                        weight: 'bold',
-                     },
-                  },
-               },
+            backgroundColor: 'rgba(17, 24, 39, 0.8)',
+            titleColor: 'rgba(243, 244, 246, 1)',
+            bodyColor: 'rgba(243, 244, 246, 1)',
+            cornerRadius: 4,
+            padding: 10,
+            titleFont: {
+               family: "'Inter', sans-serif",
+               size: 14,
+               weight: '600',
+            },
+            callbacks: {
+               label: (context: any) => `Total: $${context.parsed.y.toFixed(2)}`,
             },
          },
       },
    };
 
-   const csvData = dummyData.map(item => ({
-      Month: item.month,
-      Cost: item.cost,
-   }));
+   const csvData = [
+      {
+         Month: months[currentMonth],
+         'Total Cost': monthlyTotal.toFixed(2),
+      }
+   ];
 
    return (
-      <div className="">
-         <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-semibold text-gray-800">Subscription Cost Distribution</h2>
+      <>
+         <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold text-gray-700">Subscription Monthly Costs</h2>
             <CSVLink
                data={csvData}
-               filename={"subscriptions-by-month.csv"}
+               filename={`subscription-costs-${currentYear}-${months[currentMonth]}.csv`}
                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium"
             >
                Export as CSV
             </CSVLink>
          </div>
-         <div className="h-80 w-full">
-            <Line data={lineChartData} options={lineChartOptions} />
+         <div className="h-96 w-full p-2 mt-4">
+            <Bar data={barChartData} options={barChartOptions as any} />
          </div>
-      </div>
+      </>
    );
 }
