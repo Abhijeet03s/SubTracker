@@ -3,20 +3,21 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { plusJakartaSans } from '@/app/fonts/fonts';
-import { useAddToCalendar } from '../hooks/useAddToCalendar'
+import { useAddToCalendar } from '../hooks/useAddToCalendar';
 import dynamic from 'next/dynamic'
-import SubscriptionAnalytics from '../components/SubscriptionAnalytic'
-import SubscriptionComparison from '../components/SubscriptionComparison'
-import Modal from '../components/Modal'
+import SubscriptionAnalytics from './SubscriptionAnalytic'
+import SubscriptionComparison from './SubscriptionComparison'
 import { FaPlus } from 'react-icons/fa'
+import Modal from '@/app/components/Modal'
 
 const SubscriptionList = dynamic(() => import('./SubscriptionList'), { ssr: false })
-const SubscriptionForm = dynamic(() => import('./SubscriptionForm'), { ssr: false })
+const SubscriptionForm = dynamic(() => import('../components/AddSubscriptionForm'), { ssr: false })
 
 interface Subscription {
    id: string;
    serviceName: string;
-   trialEndDate: string;
+   startDate: string;
+   trialEndDate: string | null;
    category: string;
    cost: number;
 }
@@ -24,7 +25,6 @@ interface Subscription {
 export default function DashboardPage() {
    const { user } = useUser()
    const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
-   const { updateCalendarEvent } = useAddToCalendar()
    const [isModalOpen, setIsModalOpen] = useState(false)
 
    const fetchSubscriptions = useCallback(async () => {
@@ -98,20 +98,21 @@ export default function DashboardPage() {
       }
    }
 
-   // const onSubscriptionsChange = (updatedSubscriptions: Subscription[]) => {
-   //    setSubscriptions(updatedSubscriptions)
-   // }
+   const { upsertCalendarEvent } = useAddToCalendar();
 
    const handleCalendarUpdate = async (subscription: Subscription) => {
       try {
-         await updateCalendarEvent({
+         await upsertCalendarEvent({
             serviceName: subscription.serviceName,
+            startDate: subscription.startDate,
             trialEndDate: subscription.trialEndDate,
-         })
+            category: subscription.category,
+            cost: subscription.cost,
+         });
       } catch (error) {
-         console.error('Error updating calendar event:', error)
+         console.error('Error upserting calendar event:', error);
       }
-   }
+   };
 
    return (
       <div className='min-h-screen bg-gray-100'>
@@ -151,18 +152,18 @@ export default function DashboardPage() {
                   <div className="bg-white rounded-lg shadow p-6">
                      <h2 className="text-xl font-semibold mb-4">Your Subscriptions</h2>
                      <SubscriptionList
-                        subscriptions={subscriptions}
+                        subscriptions={subscriptions as any}
                         onUpdate={updateSubscription}
                         onDelete={deleteSubscription}
-                        onSubscriptionsChange={setSubscriptions}
-                        onCalendarUpdate={handleCalendarUpdate}
+                        onSubscriptionsChange={setSubscriptions as any}
+                        onCalendarUpdate={handleCalendarUpdate as any}
                      />
                   </div>
                </div>
             </div>
 
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-               <SubscriptionForm onSubmit={addSubscription} />
+               <SubscriptionForm onSubmit={addSubscription as any} />
             </Modal>
          </div>
       </div>

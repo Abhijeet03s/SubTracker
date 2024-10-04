@@ -100,9 +100,9 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
             <h2 className="text-2xl font-bold text-gray-700">Subscription Monthly Costs</h2>
             <button
                onClick={handleExport}
-               className="px-2 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-xs font-medium inline-flex items-center group"
+               className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium inline-flex items-center group"
             >
-               <ArrowDownTrayIcon className="h-4 w-4 mr-1 transition-transform duration-300 ease-in-out group-hover:translate-y-0.5" />
+               <ArrowDownTrayIcon className="h-4 w-4 mr-1" />
                Export as CSV
             </button>
          </div>

@@ -31,7 +31,7 @@ export async function getTokens(code: string) {
    }
 }
 
-export async function addEventToCalendar(
+export async function upsertEventInCalendar(
    summary: string,
    description: string,
    startDateTime: string,
@@ -64,38 +64,7 @@ export async function addEventToCalendar(
    };
 
    try {
-      const response = await calendar.events.insert({
-         calendarId: 'primary',
-         requestBody: event,
-      });
-      return response.data;
-   } catch (error) {
-      console.error('Error adding event to calendar:', error);
-      throw error;
-   }
-}
-
-export async function updateEventInCalendar(summary: string, description: string, startDateTime: string, endDateTime: string, accessToken: string) {
-   const oauth2Client = new google.auth.OAuth2();
-   oauth2Client.setCredentials({ access_token: accessToken });
-
-   const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
-
-   const event = {
-      summary,
-      description,
-      start: {
-         dateTime: startDateTime,
-         timeZone: 'UTC',
-      },
-      end: {
-         dateTime: endDateTime,
-         timeZone: 'UTC',
-      },
-   };
-
-   try {
-      // First, find the existing event
+      // Find the existing event
       const existingEvents = await calendar.events.list({
          calendarId: 'primary',
          q: summary,
@@ -104,8 +73,6 @@ export async function updateEventInCalendar(summary: string, description: string
          singleEvents: true,
          orderBy: 'startTime',
       });
-
-      console.log('Existing events:', existingEvents.data.items);
 
       if (existingEvents.data.items && existingEvents.data.items.length > 0) {
          const existingEvent = existingEvents.data.items[0];
@@ -127,11 +94,11 @@ export async function updateEventInCalendar(summary: string, description: string
          return response.data;
       }
    } catch (error) {
-      console.error('Error updating/creating event in calendar:', error);
+      console.error('Error upserting event in calendar:', error);
       if (error instanceof Error) {
-         throw new Error(`Failed to update/create calendar event: ${error.message}`);
+         throw new Error(`Failed to upsert calendar event: ${error.message}`);
       } else {
-         throw new Error('Failed to update/create calendar event: Unknown error');
+         throw new Error('Failed to upsert calendar event: Unknown error');
       }
    }
 }

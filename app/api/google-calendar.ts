@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
-import { getGoogleAuthUrl, getTokens, addEventToCalendar } from '@/lib/googleCalendar'
+import { getGoogleAuthUrl, getTokens, upsertEventInCalendar } from '@/lib/googleCalendar'
 
 export async function GET(request: NextRequest) {
    const { userId } = auth()
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
       }
 
       const tokens = await getTokens(authCode)
-      const event = await addEventToCalendar(
+      const event = await upsertEventInCalendar(
          tokens.access_token!,
          `Free Trial Reminder: ${subscriptionDetails.serviceName}`,
          `Your free trial is ending soon. Remember to cancel if you don't want to continue.`,
