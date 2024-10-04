@@ -17,9 +17,17 @@
   background-size: 30px 30px;
 }
 
-.bg-grid-mask {
-  mask-image: radial-gradient(circle at center, black 70%, transparent 100%);
-  -webkit-mask-image: radial-gradient(circle at center, black 70%, transparent 100%);
+.bg-grid::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom,
+      transparent 0%,
+      transparent 80%,
+      var(--rich-black) 100%);
 }
 
 @keyframes ring {

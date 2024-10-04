@@ -3,7 +3,7 @@ import { plusJakartaSans } from '@/app/fonts/fonts';
 
 export default function SignInPage() {
    return (
-      <div className={`${plusJakartaSans.className} flex flex-col items-center justify-center h-[90vh] bg-gradient-to-br from-rich-black to-gray-900`}>
+      <div className={`${plusJakartaSans.className} flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white overflow-hidden`}>
          <SignIn appearance={{
             elements: {
                formButtonPrimary: {

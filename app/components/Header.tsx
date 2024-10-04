@@ -1,7 +1,8 @@
 'use client'
 
+import Image from 'next/image';
 import Link from 'next/link';
-import { plusJakartaSans, zillaSlab } from '@/app/fonts/fonts';
+import { plusJakartaSans } from '@/app/fonts/fonts';
 import { UserButton, useAuth } from '@clerk/nextjs';
 import { usePathname } from 'next/navigation';
 
@@ -10,12 +11,17 @@ export default function Header() {
    const pathname = usePathname();
 
    return (
-      <header className='bg-gray-900 text-white sticky top-0 z-50'>
+      <header className='bg-rich-black text-white sticky top-0 z-50 shadow-sm shadow-white/5'>
          <div className='container mx-auto flex items-center justify-between py-3 px-4 sm:py-3 sm:px-4 lg:py-4 lg:px-8'>
             <Link href='/' className="flex items-center">
-               <h1 className={`${zillaSlab.className} text-2xl sm:text-3xl lg:text-4xl font-bold text-purple-500`}>
-                  SubTracker
-               </h1>
+               <Image
+                  src="/subtrack-logo.png"
+                  alt="SubTracker Logo"
+                  width={100}
+                  height={100}
+                  className="h-10 w-auto sm:h-10 md:h-12 lg:h-14"
+               />
+               <span className="sr-only">SubTracker</span>
             </Link>
             <nav>
                {isSignedIn ? (
@@ -39,7 +45,7 @@ export default function Header() {
                   <div className="flex items-center">
                      <Link
                         href='/sign-up'
-                        className={`${plusJakartaSans.className} bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-5 py-2 sm:px-6 sm:py-2.5 lg:px-6 lg:py-3 rounded-full hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 ease-in-out font-medium text-sm sm:text-base lg:text-base flex items-center justify-center shadow-lg hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-purple-300`}
+                        className={`${plusJakartaSans.className} bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-5 py-2 sm:px-6 sm:py-2.5 lg:px-5.5 lg:py-2.5 rounded-full hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 ease-in-out font-medium text-sm sm:text-base lg:text-base flex items-center justify-center shadow-lg hover:shadow-2xl`}
                      >
                         Get Started
                      </Link>
