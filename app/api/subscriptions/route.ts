@@ -5,7 +5,10 @@ import { auth } from '@clerk/nextjs/server';
 
 const subscriptionSchema = z.object({
    serviceName: z.string().min(1),
-   trialEndDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
+   startDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
+      message: "Invalid date string",
+   }),
+   trialEndDate: z.string().nullable().refine((date) => date === null || !isNaN(Date.parse(date)), {
       message: "Invalid date string",
    }),
    category: z.string().min(1),
@@ -45,7 +48,8 @@ export async function POST(request: NextRequest) {
          data: {
             userId,
             serviceName: validatedData.serviceName,
-            trialEndDate: new Date(validatedData.trialEndDate),
+            startDate: new Date(validatedData.startDate),
+            trialEndDate: validatedData.trialEndDate ? new Date(validatedData.trialEndDate) : null,
             category: validatedData.category,
             cost: validatedData.cost,
          },
