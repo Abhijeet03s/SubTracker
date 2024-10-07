@@ -17,9 +17,9 @@ export default function Header() {
                <Image
                   src="/subtrack-logo.png"
                   alt="SubTracker Logo"
-                  width={100}
-                  height={100}
-                  className="h-10 w-auto sm:h-10 md:h-12 lg:h-14"
+                  width={48}
+                  height={48}
+                  className="h-10 w-auto md:h-12"
                />
                <span className="sr-only">SubTracker</span>
             </Link>
