@@ -41,8 +41,8 @@ export function useAddToCalendar() {
                Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-               summary: `Subscription Alert: ${serviceName} Trial Ended`,
-               description: `Your free trial for ${serviceName} ends tomorrow. Action required: Please review your subscription status and decide whether to cancel or upgrade your plan.\n\nCategory: ${category}\nMonthly Cost: $${cost.toFixed(2)}\n\nRemember to make your decision before the trial ends to avoid any unexpected charges.`,
+               summary: `Subscription Alert: ${serviceName} Trial Ending Soon`,
+               description: `Your free trial for ${serviceName} ends tomorrow. Please review your subscription status and decide whether to cancel or upgrade your plan.\n\nCategory: ${category}\nMonthly Cost: $${cost.toFixed(2)}\n\nRemember to make your decision before the trial ends to avoid any unexpected charges.`,
                startDateTime: reminderDateTime.toISOString(),
                endDateTime: endDateTime.toISOString(),
             }),
@@ -53,11 +53,8 @@ export function useAddToCalendar() {
             console.error('Error response:', response.status, errorText);
             throw new Error(`Failed to upsert event in calendar: ${response.status} ${errorText}`);
          }
+         toast.success(`Successfully added ${serviceName} to your calendar!`);
 
-         const result = await response.json();
-         console.log('Calendar upsert result:', result);
-
-         toast.success(`Successfully updated ${serviceName} in your calendar!`);
       } catch (error) {
          console.error('Error upserting calendar event:', error);
          if (error instanceof Error) {

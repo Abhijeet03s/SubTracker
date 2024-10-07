@@ -20,9 +20,9 @@ export function getGoogleAuthUrl() {
    return url;
 }
 
-export async function getTokens(code: string) {
+export async function getTokens(authCode: string) {
    try {
-      const { tokens } = await oauth2Client.getToken(code);
+      const { tokens } = await oauth2Client.getToken(authCode);
       oauth2Client.setCredentials(tokens);
       return tokens;
    } catch (error) {
