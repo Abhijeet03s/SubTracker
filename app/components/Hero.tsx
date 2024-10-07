@@ -25,17 +25,17 @@ export default function Hero({ userId }: HeroProps) {
                </p>
                <div className="flex flex-col sm:flex-row justify-center items-center gap-6 sm:gap-4 mb-12 sm:mb-14 md:mb-16">
                   {userId ? (
-                     <Link href="/dashboard" className={`${plusJakartaSans.className} bg-purple-700 hover:bg-purple-800 text-white text-base sm:text-lg font-medium rounded-full transition duration-300 ease-in-out flex items-center justify-center group h-14 w-full sm:w-52`}>
+                     <Link href="/dashboard" className={`${plusJakartaSans.className} bg-purple-700 hover:bg-purple-800 text-white text-base font-medium rounded-full transition duration-300 ease-in-out flex items-center justify-center group h-14 w-full sm:w-52`}>
                         Dashboard
                         <FaArrowRight className="ml-3 transform translate-x-0 group-hover:translate-x-1 transition-transform duration-300 ease-in-out" />
                      </Link>
                   ) : (
-                     <Link href="/sign-up" className={`${plusJakartaSans.className} bg-purple-700 hover:bg-purple-800 text-white text-base sm:text-lg font-medium rounded-full transition duration-300 ease-in-out flex items-center justify-center group h-14 w-full sm:w-52`}>
+                     <Link href="/sign-up" className={`${plusJakartaSans.className} bg-purple-700 hover:bg-purple-800 text-white text-base font-medium rounded-full transition duration-300 ease-in-out flex items-center justify-center group h-14 w-full sm:w-52`}>
                         Start Tracking
                         <FaArrowRight className="ml-2 transform translate-x-0 group-hover:translate-x-0.5 transition-transform duration-300 ease-in-out" />
                      </Link>
                   )}
-                  <Link href="#demo" className={`${plusJakartaSans.className} bg-white hover:bg-gray-100 text-black text-base sm:text-lg font-medium rounded-full border border-black transition duration-300 ease-in-out flex items-center justify-center group h-14 w-full sm:w-52`}>
+                  <Link href="#demo" className={`${plusJakartaSans.className} bg-white hover:bg-gray-100 text-black text-base font-medium rounded-full border border-black transition duration-300 ease-in-out flex items-center justify-center group h-14 w-full sm:w-52`}>
                      Learn More
                      <HiMiniArrowDownTray className="ml-2 transform translate-y-0 group-hover:translate-x-0.5 transition-transform duration-300 ease-in-out -rotate-90" />
                   </Link>
