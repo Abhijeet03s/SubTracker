@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
          return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
 
-      const tokens = await clerkClient.users.getUserOauthAccessToken(userId, 'oauth_google');
+      const tokens = await clerkClient().users.getUserOauthAccessToken(userId, 'oauth_google');
 
       if (!tokens || tokens.data.length === 0) {
          return NextResponse.json({ error: 'No Google access token found' }, { status: 400 });
@@ -23,7 +23,8 @@ export async function POST(request: NextRequest) {
       const event = await upsertEventInCalendar(summary, description, startDateTime, endDateTime, googleAccessToken);
 
       return NextResponse.json({ success: true, event });
-   } catch (error) {
+   }
+   catch (error) {
       console.error('Error in upsert-calendar-event route:', error);
       if (error instanceof Error) {
          return NextResponse.json({ error: error.message }, { status: 500 });

@@ -5,11 +5,15 @@ import { auth } from '@clerk/nextjs/server'
 
 const updateSubscriptionSchema = z.object({
    serviceName: z.string().min(1).optional(),
-   trialEndDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
+   startDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
+      message: "Invalid date string",
+   }).optional(),
+   endDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
       message: "Invalid date string",
    }).optional(),
    category: z.string().min(1).optional(),
    cost: z.number().min(0).optional(),
+   subscriptionType: z.enum(['trial', 'monthly']).optional(),
 })
 
 export async function GET(
@@ -51,19 +55,16 @@ export async function PUT(
       const updatedSubscription = await prisma.subscription.update({
          where: { id: params.id, userId },
          data: {
-            serviceName: validatedData.serviceName,
-            trialEndDate: validatedData.trialEndDate ? new Date(validatedData.trialEndDate) : undefined,
-            category: validatedData.category,
-            cost: validatedData.cost,
+            ...validatedData,
+            startDate: validatedData.startDate ? new Date(validatedData.startDate) : undefined,
+            endDate: validatedData.endDate ? new Date(validatedData.endDate) : undefined,
          },
       })
       return NextResponse.json(updatedSubscription)
+
    } catch (error) {
       if (error instanceof z.ZodError) {
          return NextResponse.json({ error: error.errors }, { status: 400 })
-      }
-      if (error instanceof Error && error.message.includes("Record to update not found")) {
-         return NextResponse.json({ error: 'Subscription not found' }, { status: 404 })
       }
       console.error(error)
       return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

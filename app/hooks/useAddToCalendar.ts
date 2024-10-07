@@ -5,25 +5,25 @@ import { toast } from 'sonner';
 interface AddToCalendarParams {
    serviceName: string;
    startDate: string;
-   trialEndDate: string | null;
+   endDate: string;
    category: string;
    cost: number;
+   subscriptionType: string;
 }
 
 export function useAddToCalendar() {
    const [isAddingToCalendar, setIsAddingToCalendar] = useState(false);
    const { getToken } = useAuth();
 
-   const upsertCalendarEvent = async ({ serviceName, startDate, trialEndDate, category, cost }: AddToCalendarParams) => {
+   const upsertCalendarEvent = async ({ serviceName, startDate, category, cost, subscriptionType }: AddToCalendarParams) => {
       setIsAddingToCalendar(true);
       try {
-
          const startDateTime = new Date(startDate);
          if (isNaN(startDateTime.getTime())) {
             throw new Error('Invalid start date');
          }
 
-         const trialEndDate = new Date(startDateTime.getTime() + 7 * 24 * 60 * 60 * 1000);
+         const trialEndDate = new Date(startDateTime.getTime() + (subscriptionType === 'trial' ? 7 : 30) * 24 * 60 * 60 * 1000);
          const reminderDateTime = new Date(trialEndDate.getTime() - 24 * 60 * 60 * 1000);
          reminderDateTime.setUTCHours(12, 0, 0, 0);
 
@@ -41,8 +41,8 @@ export function useAddToCalendar() {
                Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-               summary: `Subscription Alert: ${serviceName} Trial Ending Soon`,
-               description: `Your free trial for ${serviceName} ends tomorrow. Please review your subscription status and decide whether to cancel or upgrade your plan.\n\nCategory: ${category}\nMonthly Cost: $${cost.toFixed(2)}\n\nRemember to make your decision before the trial ends to avoid any unexpected charges.`,
+               summary: `Subscription Alert: ${serviceName} ${subscriptionType === 'trial' ? 'Trial' : 'Subscription'} Ending Soon`,
+               description: `Your ${subscriptionType === 'trial' ? 'free trial' : 'subscription'} for ${serviceName} ends tomorrow. Please review your subscription status and decide whether to cancel or continue your plan.\n\nCategory: ${category}\nMonthly Cost: $${cost.toFixed(2)}\n\nRemember to make your decision before the ${subscriptionType === 'trial' ? 'trial' : 'subscription'} ends to avoid any unexpected charges.`,
                startDateTime: reminderDateTime.toISOString(),
                endDateTime: endDateTime.toISOString(),
             }),

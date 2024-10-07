@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Loader } from './ui/loader';
 import { FaTimes } from 'react-icons/fa';
 import { formatDate, parseDate } from '../utils/dateUtils';
@@ -7,9 +7,9 @@ interface Subscription {
    id: string;
    serviceName: string;
    startDate: string;
-   trialEndDate: string | null;
    category: string;
    cost: number;
+   subscriptionType: string;
 }
 
 interface EditSubscriptionsModalProps {
@@ -27,19 +27,20 @@ export const EditSubscriptionsModal: React.FC<EditSubscriptionsModalProps> = ({
    onUpdate,
    onDelete,
 }) => {
-   const [editingSubscription, setEditingSubscription] = React.useState<Subscription | null>(null);
-   const [isUpdating, setIsUpdating] = React.useState(false);
-   const [isDeleting, setIsDeleting] = React.useState(false);
+   const [editingSubscription, setEditingSubscription] = useState<Subscription | null>(null);
+   const [isUpdating, setIsUpdating] = useState(false);
+   const [isDeleting, setIsDeleting] = useState(false);
+   const [error, setError] = useState<string | null>(null);
 
-   React.useEffect(() => {
+   useEffect(() => {
       setEditingSubscription(subscription);
+      setError(null);
    }, [subscription]);
 
-   if (!isOpen || !editingSubscription) return null;
-
-   const handleUpdate = async () => {
+   const handleUpdate = useCallback(async () => {
       if (editingSubscription) {
          setIsUpdating(true);
+         setError(null);
          try {
             const updatedSubscription = {
                ...editingSubscription,
@@ -49,25 +50,30 @@ export const EditSubscriptionsModal: React.FC<EditSubscriptionsModalProps> = ({
             onClose();
          } catch (error) {
             console.error('Error updating subscription:', error);
+            setError('Failed to update subscription. Please try again.');
          } finally {
             setIsUpdating(false);
          }
       }
-   };
+   }, [editingSubscription, onUpdate, onClose]);
 
-   const handleDelete = async () => {
+   const handleDelete = useCallback(async () => {
       if (editingSubscription) {
          setIsDeleting(true);
+         setError(null);
          try {
             await onDelete(editingSubscription.id);
             onClose();
          } catch (error) {
             console.error('Error deleting subscription:', error);
+            setError('Failed to delete subscription. Please try again.');
          } finally {
             setIsDeleting(false);
          }
       }
-   };
+   }, [editingSubscription, onDelete, onClose]);
+
+   if (!isOpen || !editingSubscription) return null;
 
    return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -77,6 +83,7 @@ export const EditSubscriptionsModal: React.FC<EditSubscriptionsModalProps> = ({
             </button>
             <div className="overflow-visible">
                <h2 className="text-2xl font-bold mb-6">Edit Subscription</h2>
+               {error && <p className="text-red-500 mb-4">{error}</p>}
                <div className="space-y-6">
                   <div>
                      <label htmlFor="serviceName" className="block text-sm font-medium text-gray-700">Service Name</label>
@@ -110,7 +117,7 @@ export const EditSubscriptionsModal: React.FC<EditSubscriptionsModalProps> = ({
                         type="number"
                         id="cost"
                         value={editingSubscription.cost}
-                        onChange={(e) => setEditingSubscription({ ...editingSubscription, cost: parseFloat(e.target.value) })}
+                        onChange={(e) => setEditingSubscription({ ...editingSubscription, cost: parseFloat(e.target.value) || 0 })}
                         className="w-full p-2 bg-slate-50 rounded-t border-b border-gray-300 focus:outline-none focus:border-blue-500 transition-colors duration-300 [&::-webkit-inner-spin-button]:appearance-none"
                      />
                   </div>
@@ -122,32 +129,32 @@ export const EditSubscriptionsModal: React.FC<EditSubscriptionsModalProps> = ({
                         value={formatDate(editingSubscription.startDate)}
                         onChange={(e) => {
                            const newStartDate = parseDate(e.target.value);
-                           const newTrialEndDate = new Date(new Date(newStartDate).getTime() + 7 * 24 * 60 * 60 * 1000);
                            setEditingSubscription({
                               ...editingSubscription,
                               startDate: newStartDate,
-                              trialEndDate: newTrialEndDate.toISOString()
                            });
                         }}
                         className="w-full p-2 bg-slate-50 rounded-t border-b border-gray-300 focus:outline-none focus:border-blue-500 transition-colors duration-300"
                      />
                   </div>
                   <div>
-                     <label htmlFor="trialEndDate" className="block text-sm font-medium text-gray-700">Trial End Date</label>
-                     <input
-                        type="date"
-                        id="trialEndDate"
-                        value={editingSubscription.trialEndDate ? formatDate(editingSubscription.trialEndDate) : ''}
-                        onChange={(e) => setEditingSubscription({ ...editingSubscription, trialEndDate: e.target.value ? parseDate(e.target.value) : null })}
+                     <label htmlFor="subscriptionType" className="block text-sm font-medium text-gray-700">Subscription Type</label>
+                     <select
+                        id="subscriptionType"
+                        value={editingSubscription.subscriptionType}
+                        onChange={(e) => setEditingSubscription({ ...editingSubscription, subscriptionType: e.target.value })}
                         className="w-full p-2 bg-slate-50 rounded-t border-b border-gray-300 focus:outline-none focus:border-blue-500 transition-colors duration-300"
-                     />
+                     >
+                        <option value="trial">7 Days Trial</option>
+                        <option value="monthly">1 Month Subscription</option>
+                     </select>
                   </div>
                </div>
                <div className="mt-6 flex justify-end space-x-3">
                   <button
                      onClick={handleUpdate}
                      disabled={isUpdating}
-                     className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 "
+                     className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center"
                   >
                      {isUpdating ? <Loader size="small" className="animate-spin" /> : 'Update'}
                   </button>

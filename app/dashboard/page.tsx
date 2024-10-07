@@ -17,9 +17,10 @@ interface Subscription {
    id: string;
    serviceName: string;
    startDate: string;
-   trialEndDate: string | null;
+   endDate: string;
    category: string;
    cost: number;
+   subscriptionType: string;
 }
 
 export default function DashboardPage() {
@@ -105,9 +106,10 @@ export default function DashboardPage() {
          await upsertCalendarEvent({
             serviceName: subscription.serviceName,
             startDate: subscription.startDate,
-            trialEndDate: subscription.trialEndDate,
+            endDate: subscription.endDate,
             category: subscription.category,
             cost: subscription.cost,
+            subscriptionType: subscription.subscriptionType,
          });
       } catch (error) {
          console.error('Error upserting calendar event:', error);

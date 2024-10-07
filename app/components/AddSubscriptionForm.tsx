@@ -6,7 +6,7 @@ import { Loader } from '@/app/components/ui/loader';
 import { safeFormatDate } from '@/app/utils/dateUtils';
 
 interface SubscriptionFormProps {
-   onSubmit: (subscription: { serviceName: string; trialEndDate: string; category: string; cost: number }) => void
+   onSubmit: (subscription: { serviceName: string; startDate: string; endDate: string; category: string; cost: number; subscriptionType: string }) => void
 }
 
 export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
@@ -14,31 +14,40 @@ export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
    const [startDate, setStartDate] = useState<Date | null>(null)
    const [category, setCategory] = useState('')
    const [cost, setCost] = useState('')
+   const [subscriptionType, setSubscriptionType] = useState('trial')
    const { upsertCalendarEvent, isAddingToCalendar } = useAddToCalendar()
 
    const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
       if (!startDate) return;
-      const trialEndDate = new Date(startDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+      const endDate = new Date(startDate);
+      if (subscriptionType === 'trial') {
+         endDate.setDate(endDate.getDate() + 7);
+      } else {
+         endDate.setMonth(endDate.getMonth() + 1);
+      }
       const newSubscription = {
          serviceName,
          startDate: startDate.toISOString(),
-         trialEndDate: trialEndDate.toISOString(),
+         endDate: endDate.toISOString(),
          category: category.charAt(0).toUpperCase() + category.slice(1),
          cost: parseFloat(cost) || 0,
+         subscriptionType,
       }
-      await onSubmit(newSubscription as any)
+      await onSubmit(newSubscription)
       setServiceName('')
       setStartDate(null)
       setCategory('')
       setCost('')
+      setSubscriptionType('trial')
       try {
          await upsertCalendarEvent({
             serviceName,
             startDate: newSubscription.startDate,
-            trialEndDate: newSubscription.trialEndDate,
+            endDate: newSubscription.endDate,
             category,
-            cost: parseFloat(cost) || 0
+            cost: parseFloat(cost) || 0,
+            subscriptionType,
          })
          console.log('Subscription added and calendar event created!')
       } catch (error) {
@@ -111,13 +120,26 @@ export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
                className="w-full mt-2 p-2 bg-slate-50 rounded-t border-b border-gray-300 focus:outline-none focus:border-blue-500 transition-colors duration-300"
             />
          </div>
+         <div>
+            <label htmlFor="subscriptionType" className="block text-sm font-medium text-gray-700">Subscription Type</label>
+            <select
+               id="subscriptionType"
+               value={subscriptionType}
+               onChange={(e) => setSubscriptionType(e.target.value)}
+               required
+               className="w-full mt-2 p-2 pr-8 bg-slate-50 rounded-t border-b border-gray-300 focus:outline-none focus:border-blue-500 transition-colors duration-300 appearance-none"
+            >
+               <option value="trial">7 Days Trial</option>
+               <option value="monthly">1 Month Subscription</option>
+            </select>
+         </div>
          <div className="mt-6 flex justify-end">
             <button
                type="submit"
                disabled={isAddingToCalendar}
-               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:ring-offset-1"
             >
-               {isAddingToCalendar ? <Loader size="small" className="animate-spin" /> : 'Add to Calendar'}
+               {isAddingToCalendar ? <Loader size="small" className="animate-spin" /> : 'Add To Calendar'}
             </button>
          </div>
       </form>

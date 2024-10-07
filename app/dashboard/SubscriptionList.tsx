@@ -5,12 +5,13 @@ import { FaSearch, FaEllipsisH, FaChevronDown } from 'react-icons/fa'
 import { EditSubscriptionsModal } from '../components/EditSubscriptionsModal'
 
 interface Subscription {
-   id: string
-   serviceName: string
-   startDate: string
-   trialEndDate: string | null
-   category: string
-   cost: number
+   id: string;
+   serviceName: string;
+   startDate: string;
+   endDate: string;
+   category: string;
+   cost: number;
+   subscriptionType: string;
 }
 
 interface SubscriptionListProps {
@@ -43,8 +44,6 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete, on
 
       return filtered;
    }, [subscriptions, searchTerm, categoryFilter, costFilter]);
-
-   ;
 
    const handleOpenModal = (subscription: Subscription) => {
       setEditingSubscription(subscription)
@@ -169,7 +168,7 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete, on
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-center">
                               <div className="text-sm text-gray-500">
-                                 {subscription.trialEndDate ? new Date(subscription.trialEndDate).toLocaleDateString() : 'N/A'}
+                                 {subscription.endDate ? new Date(new Date(subscription.endDate).setDate(new Date(subscription.endDate).getDate() - 1)).toLocaleDateString() : 'N/A'}
                               </div>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
@@ -191,7 +190,7 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete, on
             isOpen={isModalOpen}
             onClose={handleCloseModal}
             subscription={editingSubscription}
-            onUpdate={handleUpdate}
+            onUpdate={handleUpdate as any}
             onDelete={handleDelete}
          />
       </div>

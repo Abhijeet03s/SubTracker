@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import prisma from '@/lib/prisma';
+import { z } from 'zod';
 import { auth } from '@clerk/nextjs/server';
 
 const subscriptionSchema = z.object({
@@ -8,17 +8,17 @@ const subscriptionSchema = z.object({
    startDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
       message: "Invalid date string",
    }),
-   trialEndDate: z.string().nullable().refine((date) => date === null || !isNaN(Date.parse(date)), {
+   endDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
       message: "Invalid date string",
    }),
    category: z.string().min(1),
    cost: z.number().min(0),
+   subscriptionType: z.enum(['trial', 'monthly']),
 });
 
 export async function GET(request: NextRequest) {
    try {
       const { userId } = auth()
-      // console.log('Fetching subscriptions for user:', userId);
       if (!userId) {
          return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
       }
@@ -26,7 +26,6 @@ export async function GET(request: NextRequest) {
       const subscriptions = await prisma.subscription.findMany({
          where: { userId },
       })
-      // console.log('Found subscriptions:', subscriptions);
       return NextResponse.json(subscriptions)
    } catch (error) {
       console.error('Error in GET /api/subscriptions:', error)
@@ -49,9 +48,10 @@ export async function POST(request: NextRequest) {
             userId,
             serviceName: validatedData.serviceName,
             startDate: new Date(validatedData.startDate),
-            trialEndDate: validatedData.trialEndDate ? new Date(validatedData.trialEndDate) : null,
+            endDate: new Date(validatedData.endDate),
             category: validatedData.category,
             cost: validatedData.cost,
+            subscriptionType: validatedData.subscriptionType,
          },
       });
 
