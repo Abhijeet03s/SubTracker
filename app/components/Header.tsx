@@ -12,7 +12,7 @@ export default function Header() {
 
    return (
       <header className='bg-rich-black text-white sticky top-0 z-50 shadow-sm shadow-white/5'>
-         <div className='container mx-auto flex items-center justify-between py-3 px-4 sm:py-3 sm:px-4 lg:py-4 lg:px-8'>
+         <div className='container mx-auto max-w-7xl flex items-center justify-between py-3  sm:py-3  lg:py-4'>
             <Link href='/' className="flex items-center">
                <Image
                   src="/subtrack-logo.png"

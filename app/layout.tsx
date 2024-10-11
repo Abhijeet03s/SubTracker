@@ -5,6 +5,7 @@ import type { Metadata } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
 import Header from './components/Header';
 import { Toaster } from 'sonner';
+import Footer from './components/Footer';
 
 export const metadata: Metadata = {
   title: 'SubTracker',
@@ -29,6 +30,7 @@ export default function RootLayout({
         >
           <Header />
           {children}
+          <Footer />
           <Toaster />
           <Analytics />
           <SpeedInsights />

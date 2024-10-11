@@ -10,6 +10,10 @@
   background-color: var(--rich-black);
 }
 
+/* .bg-gradient-dark {
+  background-image: linear-gradient(to bottom, #111827, #1f2937);
+} */
+
 .bg-grid {
   background-image:
     linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 2px),
