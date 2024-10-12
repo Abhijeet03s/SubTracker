@@ -77,11 +77,11 @@ const FeatureCard = ({ icon: Icon, title, description, details }: { icon: React.
 
 function getIconColor(title: string) {
    switch (title) {
-      case 'Smart Subscription Tracking': return '#9333ea'; // Purple
-      case 'Insightful Analytics': return '#22c55e'; // Green
-      case 'Smart Notifications': return '#eab308'; // Yellow
-      case 'Responsive Design': return '#3b82f6'; // Blue
-      default: return '#6b7280'; // Gray
+      case 'Smart Subscription Tracking': return '#9333ea';
+      case 'Insightful Analytics': return '#22c55e';
+      case 'Smart Notifications': return '#eab308';
+      case 'Responsive Design': return '#3b82f6';
+      default: return '#6b7280';
    }
 }
 
@@ -96,9 +96,9 @@ export default function Features() {
                className="text-center mb-10 sm:mb-16"
             >
                <h2 className={`${zillaSlab.className} text-3xl sm:text-4xl font-bold text-gray-900 mb-4`}>
-                  Powerful Features to Manage Your Subscriptions
+                  Features to Manage Your Subscriptions
                </h2>
-               <p className={`${plusJakartaSans.className} text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto`}>
+               <p className={`${plusJakartaSans.className} text-sm md:text-xl mb-10 sm:mb-12 md:mb-14 text-gray-600`}>
                   SubTracker offers a comprehensive set of tools to help you stay on top of your subscriptions and save money.
                </p>
             </motion.div>

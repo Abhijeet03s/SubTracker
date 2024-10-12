@@ -5,10 +5,10 @@ export default function Footer() {
    return (
       <footer className="bg-rich-black text-white py-8 sm:py-12 md:py-16">
          <div className="container mx-auto px-4 max-w-7xl">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8 sm:mb-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb- sm:mb-12">
                <div className="text-center sm:text-left">
-                  <h3 className={`${zillaSlab.className} text-xl sm:text-2xl font-semibold mb-2`}>SubTracker</h3>
-                  <p className={`${plusJakartaSans.className} text-xs sm:text-sm text-gray-400 max-w-xs mx-auto sm:mx-0`}>
+                  <h3 className={`${zillaSlab.className} text-3xl sm:text-2xl font-semibold mb-2`}>SubTracker</h3>
+                  <p className={`${plusJakartaSans.className} text-base sm:text-sm text-gray-400 max-w-xs mx-auto sm:mx-0`}>
                      Manage your subscriptions effortlessly.
                   </p>
                </div>
@@ -17,7 +17,7 @@ export default function Footer() {
                   <ul className={`${plusJakartaSans.className} space-y-2`}>
                      <li><Link href="/" className="text-gray-400 hover:text-white transition-colors">Home</Link></li>
                      <li><Link href="/about" className="text-gray-400 hover:text-white transition-colors">About Us</Link></li>
-                     <li><Link href="/pricing" className="text-gray-400 hover:text-white transition-colors">Pricing</Link></li>
+                     <li><Link href="/features" className="text-gray-400 hover:text-white transition-colors">Features</Link></li>
                   </ul>
                </div>
                <div>

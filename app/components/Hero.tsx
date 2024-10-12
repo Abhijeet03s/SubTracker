@@ -36,7 +36,7 @@ export default function Hero({ userId }: HeroProps) {
                   </motion.span>
                </motion.h1>
                <motion.p
-                  className={`${plusJakartaSans.className} text-sm md:text-xl mb-10 sm:mb-12 md:mb-14 sm:max-w-3xl text-gray-300 mx-auto`}
+                  className={`${plusJakartaSans.className} text-sm md:text-xl sm:max-w-3xl mb-10 sm:mb-12 md:mb-14 text-gray-300 mx-auto`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 1.2, delay: 1.8 }}
