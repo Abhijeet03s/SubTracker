@@ -53,6 +53,7 @@ const FeatureCard = ({ icon: Icon, title, description, details }: { icon: React.
       className="bg-white p-4 sm:p-6 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.5 }}
    >
       <div className="flex items-center mb-4">
@@ -92,6 +93,7 @@ export default function Features() {
             <motion.div
                initial={{ opacity: 0, y: 20 }}
                whileInView={{ opacity: 1, y: 0 }}
+               viewport={{ once: true, margin: "-100px" }}
                transition={{ duration: 0.5 }}
                className="text-center mb-10 sm:mb-16"
             >
