@@ -10,10 +10,6 @@
   background-color: var(--rich-black);
 }
 
-/* .bg-gradient-dark {
-  background-image: linear-gradient(to bottom, #111827, #1f2937);
-} */
-
 .bg-grid {
   background-image:
     linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 2px),
@@ -135,4 +131,20 @@
 .animate-ring {
   animation: ring 20s 0.7s ease-in-out infinite;
   transform-origin: 50% 4px;
+}
+
+.animatePulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: .5;
+  }
 }

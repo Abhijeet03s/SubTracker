@@ -118,28 +118,30 @@ export default function DashboardPage() {
 
    return (
       <div className='min-h-screen bg-gray-100'>
-         <div className={`${plusJakartaSans.className} container max-w-7xl mx-auto py-6`}>
-            <div className="flex justify-between items-center mb-6">
+         <div className={`${plusJakartaSans.className} container max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8`}>
+            <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0">
                <div>
-                  <h1 className="text-4xl font-extrabold text-indigo-700 tracking-tight leading-none">
+                  <h1 className="text-2xl sm:text-4xl font-extrabold text-indigo-700 tracking-tight leading-none">
                      Subscription Dashboard
                   </h1>
                </div>
-               <div className="flex items-center space-x-4">
-                  {user && (
-                     <div className="flex items-center bg-white rounded-full px-4 py-2 shadow-sm">
-                        <p className="text-gray-800 font-semibold">
-                           Welcome, <span className="text-indigo-600">{user?.firstName || user?.username}</span>!
-                        </p>
-                     </div>
-                  )}
-                  <button
-                     onClick={() => setIsModalOpen(true)}
-                     className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-150 ease-in-out"
-                  >
-                     <FaPlus className="mr-2" />
-                     Add Sub
-                  </button>
+               <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full">
+                  <div className="flex flex-row w-full justify-between items-center">
+                     {user && (
+                        <div className="flex items-center bg-white rounded-full px-4 py-2 shadow-sm">
+                           <p className="text-gray-800 font-semibold">
+                              Welcome, <span className="text-indigo-600">{user?.firstName || user?.username}</span>!
+                           </p>
+                        </div>
+                     )}
+                     <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-150 ease-in-out"
+                     >
+                        <FaPlus className="mr-2" />
+                        Add Sub
+                     </button>
+                  </div>
                </div>
             </div>
 
@@ -147,12 +149,12 @@ export default function DashboardPage() {
                <div className="my-10">
                   <SubscriptionAnalytics subscriptions={subscriptions as any} />
                </div>
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-white rounded-lg shadow p-6">
+               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="bg-white rounded-lg shadow p-4 sm:p-6">
                      <SubscriptionComparison subscriptions={subscriptions as any} />
                   </div>
-                  <div className="bg-white rounded-lg shadow p-6">
-                     <h2 className="text-xl font-semibold mb-4">Your Subscriptions</h2>
+                  <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+                     <h2 className="text-xl sm:text-2xl font-semibold mb-4">Your Subscriptions</h2>
                      <SubscriptionList
                         subscriptions={subscriptions as any}
                         onUpdate={updateSubscription}

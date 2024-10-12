@@ -95,20 +95,21 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
    };
 
    return (
-      <>
-         <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-gray-700">Subscription Monthly Costs</h2>
+      <div className="w-full h-full flex flex-col">
+         <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Monthly Costs</h2>
             <button
                onClick={handleExport}
-               className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium inline-flex items-center group"
+               className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium inline-flex items-center group shadow-sm hover:shadow-md"
             >
-               <ArrowDownTrayIcon className="h-4 w-4 mr-1" />
-               Export as CSV
+               <ArrowDownTrayIcon className="h-5 w-5 mr-2" />
+               Export CSV
+               <span className="ml-1 text-green-200 group-hover:translate-x-1 transition-transform duration-150">→</span>
             </button>
          </div>
-         <div className="h-96 w-full p-2 mt-4">
+         <div className="flex-grow h-72 sm:h-96 w-full">
             <Bar data={barChartData} options={barChartOptions as any} />
          </div>
-      </>
+      </div>
    );
 }

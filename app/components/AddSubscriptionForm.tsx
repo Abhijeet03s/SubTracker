@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAddToCalendar } from '../hooks/useAddToCalendar';
-import { FaChevronDown } from 'react-icons/fa';
+import { FaChevronDown, FaPlus } from 'react-icons/fa';
 import { toast } from 'sonner';
 import { Loader } from '@/app/components/ui/loader';
 import { safeFormatDate } from '@/app/utils/dateUtils';
@@ -58,7 +58,7 @@ export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
 
    return (
       <form onSubmit={handleSubmit} className="space-y-6">
-         <h2 className="text-xl font-semibold mb-4">Add Subscription</h2>
+         <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">Add Subscription</h2>
          <div>
             <label htmlFor="serviceName" className="block text-sm font-medium text-gray-700">Service Name</label>
             <input
@@ -133,13 +133,14 @@ export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
                <option value="monthly">1 Month Subscription</option>
             </select>
          </div>
-         <div className="mt-6 flex justify-end">
+         <div className="mt-8">
             <button
                type="submit"
                disabled={isAddingToCalendar}
-               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:ring-offset-1"
+               className="w-full px-6 py-3 bg-blue-600 text-white text-base font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center"
             >
-               {isAddingToCalendar ? <Loader size="small" className="animate-spin" /> : 'Add To Calendar'}
+               {isAddingToCalendar ? <Loader size="small" className="animate-spin mr-2" /> : <FaPlus className="mr-2" />}
+               {isAddingToCalendar ? 'Adding to Calendar...' : 'Add Subscription'}
             </button>
          </div>
       </form>

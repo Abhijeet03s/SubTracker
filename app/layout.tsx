@@ -31,7 +31,7 @@ export default function RootLayout({
           <Header />
           {children}
           <Footer />
-          <Toaster />
+          <Toaster position="top-center" />
           <Analytics />
           <SpeedInsights />
         </ClerkProvider>

@@ -76,13 +76,13 @@ export const EditSubscriptionsModal: React.FC<EditSubscriptionsModalProps> = ({
    if (!isOpen || !editingSubscription) return null;
 
    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-         <div className="bg-white rounded-lg p-6 max-w-lg w-full">
-            <button onClick={onClose} className="float-right text-gray-500 hover:text-gray-700">
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
+         <div className="bg-white rounded-lg p-4 sm:p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            <button onClick={onClose} className="float-right text-gray-500 hover:text-gray-700 transition-colors duration-200">
                <FaTimes />
             </button>
             <div className="overflow-visible">
-               <h2 className="text-2xl font-bold mb-6">Edit Subscription</h2>
+               <h2 className="text-2xl sm:text-3xl font-bold mb-6">Edit Subscription</h2>
                {error && <p className="text-red-500 mb-4">{error}</p>}
                <div className="space-y-6">
                   <div>
@@ -150,18 +150,18 @@ export const EditSubscriptionsModal: React.FC<EditSubscriptionsModalProps> = ({
                      </select>
                   </div>
                </div>
-               <div className="mt-6 flex justify-end space-x-3">
+               <div className="mt-8 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3">
                   <button
                      onClick={handleUpdate}
                      disabled={isUpdating}
-                     className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center"
+                     className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white text-sm sm:text-base rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center"
                   >
                      {isUpdating ? <Loader size="small" className="animate-spin" /> : 'Update'}
                   </button>
                   <button
                      onClick={handleDelete}
                      disabled={isDeleting}
-                     className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                     className="w-full sm:w-auto px-4 py-2 bg-red-600 text-white text-sm sm:text-base rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors duration-200"
                   >
                      {isDeleting ? <Loader size="small" className="animate-spin" /> : 'Delete'}
                   </button>

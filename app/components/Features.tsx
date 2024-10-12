@@ -98,9 +98,9 @@ export default function Features() {
                className="text-center mb-10 sm:mb-16"
             >
                <h2 className={`${zillaSlab.className} text-3xl sm:text-4xl font-bold text-gray-900 mb-4`}>
-                  Features to Manage Your Subscriptions
+                  Manage Your Subscriptions
                </h2>
-               <p className={`${plusJakartaSans.className} text-sm md:text-xl mb-10 sm:mb-12 md:mb-14 text-gray-600`}>
+               <p className={`${plusJakartaSans.className} max-w-2xl mx-auto text-sm md:text-xl mb-10 sm:mb-12 md:mb-14 text-gray-600`}>
                   SubTracker offers a comprehensive set of tools to help you stay on top of your subscriptions and save money.
                </p>
             </motion.div>
