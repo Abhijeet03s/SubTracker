@@ -70,11 +70,11 @@ export default function Hero({ userId }: HeroProps) {
             >
                <div className="relative w-full aspect-video">
                   <Image
-                     src="/subtracker-dashboard.png"
+                     src="/assets/subtracker-dashboard.png"
                      alt="SubTrack Dashboard"
-                     fill
                      className="rounded-lg shadow-2xl object-cover object-center"
                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1200px"
+                     fill
                      priority
                   />
                </div>

@@ -15,7 +15,7 @@ export default function Header() {
          <div className='container mx-auto max-w-7xl flex items-center justify-between px-4 sm:px-0 py-3 sm:py-3 lg:py-4'>
             <Link href='/' className="flex items-center">
                <Image
-                  src="/subtrack-logo.png"
+                  src="/assets/subtrack-logo.png"
                   alt="SubTracker Logo"
                   width={48}
                   height={48}

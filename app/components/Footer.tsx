@@ -5,7 +5,7 @@ export default function Footer() {
    return (
       <footer className="bg-rich-black text-white py-8 sm:py-12 md:pt-14 md:pb-8">
          <div className="container mx-auto px-4 max-w-7xl">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8 sm:mb-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-8 sm:mb-12">
                <div className="text-center sm:text-left">
                   <h3 className={`${zillaSlab.className} text-2xl font-semibold mb-2`}>SubTracker</h3>
                   <p className={`${plusJakartaSans.className} text-sm text-gray-400 max-w-xs mx-auto sm:mx-0`}>
@@ -14,7 +14,7 @@ export default function Footer() {
                </div>
                <div>
                   <h4 className={`${zillaSlab.className} text-lg font-semibold mb-4`}>Quick Links</h4>
-                  <ul className={`${plusJakartaSans.className} space-y-2`}>
+                  <ul className={`${plusJakartaSans.className} text-sm space-y-2`}>
                      <li><Link href="/" className="text-gray-400 hover:text-white transition-colors">Home</Link></li>
                      <li><Link href="/about" className="text-gray-400 hover:text-white transition-colors">About Us</Link></li>
                      <li><Link href="/features" className="text-gray-400 hover:text-white transition-colors">Features</Link></li>
@@ -22,7 +22,7 @@ export default function Footer() {
                </div>
                <div>
                   <h4 className={`${zillaSlab.className} text-lg font-semibold mb-4`}>Legal</h4>
-                  <ul className={`${plusJakartaSans.className} space-y-2`}>
+                  <ul className={`${plusJakartaSans.className} text-sm space-y-2`}>
                      <li><Link href="/privacy-policy" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</Link></li>
                      <li><Link href="/terms-of-service" className="text-gray-400 hover:text-white transition-colors">Terms of Service</Link></li>
                      <li><Link href="/cookie-policy" className="text-gray-400 hover:text-white transition-colors">Cookie Policy</Link></li>
@@ -30,10 +30,10 @@ export default function Footer() {
                </div>
                <div>
                   <h4 className={`${zillaSlab.className} text-lg font-semibold mb-4`}>Connect</h4>
-                  <ul className={`${plusJakartaSans.className} space-y-2`}>
-                     <li><a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">Twitter</a></li>
+                  <ul className={`${plusJakartaSans.className} text-sm space-y-2`}>
+                     <li><a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">GitHub</a></li>
                      <li><a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">LinkedIn</a></li>
-                     <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">Instagram</a></li>
+                     <li><a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">Twitter</a></li>
                   </ul>
                </div>
             </div>
