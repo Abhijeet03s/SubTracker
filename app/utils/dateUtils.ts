@@ -13,3 +13,9 @@ export const safeFormatDate = (date: string) => {
    const parsedDate = new Date(date);
    return isNaN(parsedDate.getTime()) ? '' : formatDate(date);
 };
+
+export const addDaysToDate = (date: Date, days: number) => {
+   const newDate = new Date(date);
+   newDate.setDate(newDate.getDate() + days);
+   return newDate;
+};

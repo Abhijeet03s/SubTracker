@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { toast } from 'sonner';
+import { addDaysToDate } from '../utils/dateUtils';
 
 interface AddToCalendarParams {
    serviceName: string;
@@ -23,8 +24,8 @@ export function useAddToCalendar() {
             throw new Error('Invalid start date');
          }
 
-         const trialEndDate = new Date(startDateTime.getTime() + (subscriptionType === 'trial' ? 7 : 30) * 24 * 60 * 60 * 1000);
-         const reminderDateTime = new Date(trialEndDate.getTime() - 24 * 60 * 60 * 1000);
+         const trialEndDate = addDaysToDate(startDateTime, subscriptionType === 'trial' ? 7 : 30);
+         const reminderDateTime = addDaysToDate(trialEndDate, -1);
          reminderDateTime.setUTCHours(12, 0, 0, 0);
 
          const endDateTime = new Date(reminderDateTime.getTime() + 60 * 60 * 1000);
@@ -62,7 +63,6 @@ export function useAddToCalendar() {
          } else {
             toast.error('Failed to upsert reminder in Google Calendar. Please try again later.');
          }
-         throw error;
       } finally {
          setIsAddingToCalendar(false);
       }

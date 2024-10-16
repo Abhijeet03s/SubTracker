@@ -3,7 +3,7 @@ import { useAddToCalendar } from '../hooks/useAddToCalendar';
 import { FaChevronDown, FaPlus } from 'react-icons/fa';
 import { toast } from 'sonner';
 import { Loader } from '@/app/components/ui/loader';
-import { safeFormatDate } from '@/app/utils/dateUtils';
+import { safeFormatDate, addDaysToDate } from '@/app/utils/dateUtils';
 
 interface SubscriptionFormProps {
    onSubmit: (subscription: { serviceName: string; startDate: string; endDate: string; category: string; cost: number; subscriptionType: string }) => void
@@ -20,12 +20,7 @@ export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
    const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
       if (!startDate) return;
-      const endDate = new Date(startDate);
-      if (subscriptionType === 'trial') {
-         endDate.setDate(endDate.getDate() + 7);
-      } else {
-         endDate.setMonth(endDate.getMonth() + 1);
-      }
+      const endDate = addDaysToDate(startDate, subscriptionType === 'trial' ? 6 : 29);
       const newSubscription = {
          serviceName,
          startDate: startDate.toISOString(),

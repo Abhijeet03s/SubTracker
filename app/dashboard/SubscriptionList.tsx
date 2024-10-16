@@ -167,9 +167,7 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete, on
                               <div className="text-sm text-gray-500">${subscription.cost.toFixed(2)}</div>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                              <div className="text-sm text-gray-500">
-                                 {subscription.endDate ? new Date(new Date(subscription.endDate).setDate(new Date(subscription.endDate).getDate() - 1)).toLocaleDateString() : 'N/A'}
-                              </div>
+                              <div className="text-sm text-gray-500">{new Date(subscription.endDate).toLocaleDateString()}</div>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
                               <button

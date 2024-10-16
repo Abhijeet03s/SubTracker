@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Loader } from './ui/loader';
 import { FaTimes } from 'react-icons/fa';
-import { formatDate, parseDate } from '../utils/dateUtils';
+import { formatDate, parseDate, addDaysToDate } from '../utils/dateUtils';
 
 interface Subscription {
    id: string;
    serviceName: string;
    startDate: string;
+   endDate: string;
    category: string;
    cost: number;
    subscriptionType: string;
@@ -129,9 +130,11 @@ export const EditSubscriptionsModal: React.FC<EditSubscriptionsModalProps> = ({
                         value={formatDate(editingSubscription.startDate)}
                         onChange={(e) => {
                            const newStartDate = parseDate(e.target.value);
+                           const newEndDate = addDaysToDate(new Date(newStartDate), editingSubscription.subscriptionType === 'trial' ? 6 : 29).toISOString();
                            setEditingSubscription({
                               ...editingSubscription,
                               startDate: newStartDate,
+                              endDate: newEndDate,
                            });
                         }}
                         className="w-full p-2 bg-slate-50 rounded-t border-b border-gray-300 focus:outline-none focus:border-blue-500 transition-colors duration-300"
