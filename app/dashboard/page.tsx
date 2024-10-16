@@ -21,12 +21,15 @@ interface Subscription {
    category: string;
    cost: number;
    subscriptionType: string;
+   calendarEventId?: string;
 }
 
 export default function DashboardPage() {
    const { user } = useUser()
    const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
    const [isModalOpen, setIsModalOpen] = useState(false)
+
+   const { upsertCalendarEvent } = useAddToCalendar();
 
    const fetchSubscriptions = useCallback(async () => {
       try {
@@ -48,7 +51,7 @@ export default function DashboardPage() {
       }
    }, [user, fetchSubscriptions])
 
-   const addSubscription = async (newSubscription: Omit<Subscription, 'id'>) => {
+   const addSubscription = async (newSubscription: Omit<Subscription, 'id' | 'calendarEventId'>) => {
       try {
          const response = await fetch('/api/subscriptions', {
             method: 'POST',
@@ -56,7 +59,8 @@ export default function DashboardPage() {
             body: JSON.stringify(newSubscription),
          })
          if (response.ok) {
-            await fetchSubscriptions()
+            const createdSubscription: Subscription = await response.json();
+            setSubscriptions([...subscriptions, createdSubscription]);
             setIsModalOpen(false)
          } else {
             console.error('Failed to add subscription', await response.text())
@@ -74,7 +78,11 @@ export default function DashboardPage() {
             body: JSON.stringify(updatedData),
          })
          if (response.ok) {
-            await fetchSubscriptions()
+            const updatedSubscription: Subscription = await response.json();
+            const updatedSubscriptions = subscriptions.map(sub =>
+               sub.id === updatedSubscription.id ? updatedSubscription : sub
+            );
+            setSubscriptions(updatedSubscriptions);
          } else {
             const errorData = await response.json()
             console.error('Failed to update subscription', errorData)
@@ -90,27 +98,30 @@ export default function DashboardPage() {
             method: 'DELETE',
          })
          if (response.ok) {
-            await fetchSubscriptions()
+            const updatedSubscriptions = subscriptions.filter(sub => sub.id !== id);
+            setSubscriptions(updatedSubscriptions);
          } else {
-            console.error('Failed to delete subscription')
+            console.error('Failed to delete subscription', await response.text())
          }
       } catch (error) {
          console.error('Error deleting subscription:', error)
       }
    }
 
-   const { upsertCalendarEvent } = useAddToCalendar();
-
    const handleCalendarUpdate = async (subscription: Subscription) => {
       try {
-         await upsertCalendarEvent({
+         const eventId = await upsertCalendarEvent({
             serviceName: subscription.serviceName,
             startDate: subscription.startDate,
             endDate: subscription.endDate,
             category: subscription.category,
             cost: subscription.cost,
             subscriptionType: subscription.subscriptionType,
+            calendarEventId: subscription.calendarEventId,
          });
+         if (eventId && eventId !== subscription.calendarEventId) {
+            await updateSubscription(subscription.id, { calendarEventId: eventId });
+         }
       } catch (error) {
          console.error('Error upserting calendar event:', error);
       }

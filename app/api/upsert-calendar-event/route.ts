@@ -10,6 +10,17 @@ export async function POST(request: NextRequest) {
          return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
 
+      const { summary, description, startDateTime, endDateTime, eventId } = await request.json();
+
+      if (
+         typeof summary !== 'string' ||
+         typeof description !== 'string' ||
+         typeof startDateTime !== 'string' ||
+         typeof endDateTime !== 'string'
+      ) {
+         return NextResponse.json({ error: 'Invalid parameters' }, { status: 400 });
+      }
+
       const tokens = await clerkClient().users.getUserOauthAccessToken(userId, 'oauth_google');
 
       if (!tokens || tokens.data.length === 0) {
@@ -18,13 +29,17 @@ export async function POST(request: NextRequest) {
 
       const googleAccessToken = tokens.data[0].token;
 
-      const { summary, description, startDateTime, endDateTime } = await request.json();
+      const googleEvent = await upsertEventInCalendar(
+         summary,
+         description,
+         startDateTime,
+         endDateTime,
+         googleAccessToken,
+         eventId
+      );
 
-      const event = await upsertEventInCalendar(summary, description, startDateTime, endDateTime, googleAccessToken);
-
-      return NextResponse.json({ success: true, event });
-   }
-   catch (error) {
+      return NextResponse.json({ success: true, event: googleEvent, eventId: googleEvent.id });
+   } catch (error) {
       console.error('Error in upsert-calendar-event route:', error);
       if (error instanceof Error) {
          return NextResponse.json({ error: error.message }, { status: 500 });

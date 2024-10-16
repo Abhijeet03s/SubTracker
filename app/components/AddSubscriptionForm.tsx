@@ -15,7 +15,7 @@ export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
    const [category, setCategory] = useState('')
    const [cost, setCost] = useState('')
    const [subscriptionType, setSubscriptionType] = useState('trial')
-   const { upsertCalendarEvent, isAddingToCalendar } = useAddToCalendar()
+   const { isAddingToCalendar } = useAddToCalendar()
 
    const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
@@ -36,20 +36,6 @@ export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
       setCategory('')
       setCost('')
       setSubscriptionType('trial')
-      try {
-         await upsertCalendarEvent({
-            serviceName,
-            startDate: startDateISO,
-            endDate: endDateISO,
-            category,
-            cost: parseFloat(cost) || 0,
-            subscriptionType,
-         })
-         console.log('Subscription added and calendar event created!')
-      } catch (error) {
-         console.error('Error adding to calendar:', error)
-         toast.error('Failed to create calendar event. Please try again.')
-      }
    }
 
    return (

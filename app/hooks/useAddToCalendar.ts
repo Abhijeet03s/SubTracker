@@ -9,13 +9,21 @@ interface AddToCalendarParams {
    category: string;
    cost: number;
    subscriptionType: string;
+   calendarEventId?: string;
 }
 
-export function useAddToCalendar() {
+export const useAddToCalendar = () => {
    const [isAddingToCalendar, setIsAddingToCalendar] = useState(false);
    const { getToken } = useAuth();
 
-   const upsertCalendarEvent = async ({ serviceName, startDate, category, cost, subscriptionType }: AddToCalendarParams) => {
+   const upsertCalendarEvent = async ({
+      serviceName,
+      startDate,
+      category,
+      cost,
+      subscriptionType,
+      calendarEventId,
+   }: AddToCalendarParams): Promise<string> => {
       setIsAddingToCalendar(true);
       try {
          const startDateTime = new Date(Date.parse(startDate));
@@ -47,22 +55,29 @@ export function useAddToCalendar() {
                description: `Your ${subscriptionType === 'trial' ? 'free trial' : 'subscription'} for ${serviceName} ends tomorrow. Please review your subscription status and decide whether to cancel or continue your plan.\n\nCategory: ${category}\nMonthly Cost: $${cost.toFixed(2)}\n\nRemember to make your decision before the ${subscriptionType === 'trial' ? 'trial' : 'subscription'} ends to avoid any unexpected charges.`,
                startDateTime: reminderDateTime.toISOString(),
                endDateTime: endDateTime.toISOString(),
+               eventId: calendarEventId,
             }),
          });
 
-         if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error response:', response.status, errorText);
-            throw new Error(`Failed to upsert event in calendar: ${response.status} ${errorText}`);
-         }
-         toast.success(`Successfully added ${serviceName} to your calendar!`);
+         const data = await response.json();
 
+         if (!response.ok) {
+            console.error('Error upserting calendar event:', data.error);
+            toast.error(`Failed to upsert event in calendar: ${data.error}`);
+            throw new Error(`Failed to upsert event in calendar: ${data.error}`);
+         }
+
+         toast.success(`Successfully upserted calendar event for ${serviceName}!`);
+
+         return data.eventId;
       } catch (error) {
          console.error('Error upserting calendar event:', error);
          if (error instanceof Error) {
             toast.error(`Failed to upsert reminder in Google Calendar: ${error.message}`);
+            throw error;
          } else {
             toast.error('Failed to upsert reminder in Google Calendar. Please try again later.');
+            throw new Error('Failed to upsert reminder in Google Calendar.');
          }
       } finally {
          setIsAddingToCalendar(false);
@@ -70,4 +85,4 @@ export function useAddToCalendar() {
    };
 
    return { upsertCalendarEvent, isAddingToCalendar };
-}
+};

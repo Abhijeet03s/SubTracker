@@ -13,6 +13,7 @@ interface Subscription {
    category: string;
    cost: number;
    subscriptionType: string;
+   calendarEventId?: string;
 }
 
 interface SubscriptionListProps {
