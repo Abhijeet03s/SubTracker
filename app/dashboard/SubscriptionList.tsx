@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react'
 import { FaSearch, FaEllipsisH, FaChevronDown } from 'react-icons/fa'
 import { EditSubscriptionsModal } from '../components/EditSubscriptionsModal'
+import { formatDate } from '../utils/dateUtils'
 
 interface Subscription {
    id: string;
@@ -167,7 +168,9 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete, on
                               <div className="text-sm text-gray-500">${subscription.cost.toFixed(2)}</div>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                              <div className="text-sm text-gray-500">{new Date(subscription.endDate).toLocaleDateString()}</div>
+                              <div className="text-sm text-gray-500">
+                                 {subscription.endDate ? formatDate(subscription.endDate) : 'N/A'}
+                              </div>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
                               <button

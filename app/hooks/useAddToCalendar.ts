@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { toast } from 'sonner';
-import { addDaysToDate } from '../utils/dateUtils';
 
 interface AddToCalendarParams {
    serviceName: string;
@@ -19,13 +18,15 @@ export function useAddToCalendar() {
    const upsertCalendarEvent = async ({ serviceName, startDate, category, cost, subscriptionType }: AddToCalendarParams) => {
       setIsAddingToCalendar(true);
       try {
-         const startDateTime = new Date(startDate);
+         const startDateTime = new Date(Date.parse(startDate));
          if (isNaN(startDateTime.getTime())) {
             throw new Error('Invalid start date');
          }
 
-         const trialEndDate = addDaysToDate(startDateTime, subscriptionType === 'trial' ? 7 : 30);
-         const reminderDateTime = addDaysToDate(trialEndDate, -1);
+         const daysToAdd = subscriptionType === 'trial' ? 7 : 30;
+         const trialEndDate = new Date(startDateTime.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
+
+         const reminderDateTime = new Date(trialEndDate.getTime() - 24 * 60 * 60 * 1000);
          reminderDateTime.setUTCHours(12, 0, 0, 0);
 
          const endDateTime = new Date(reminderDateTime.getTime() + 60 * 60 * 1000);

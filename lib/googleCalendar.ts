@@ -64,7 +64,6 @@ export async function upsertEventInCalendar(
    };
 
    try {
-      // Find the existing event
       const existingEvents = await calendar.events.list({
          calendarId: 'primary',
          q: summary,
@@ -77,7 +76,6 @@ export async function upsertEventInCalendar(
       if (existingEvents.data.items && existingEvents.data.items.length > 0) {
          const existingEvent = existingEvents.data.items[0];
          console.log('Updating existing event:', existingEvent.id);
-         // Update the existing event
          const response = await calendar.events.update({
             calendarId: 'primary',
             eventId: existingEvent.id!,
@@ -86,7 +84,6 @@ export async function upsertEventInCalendar(
          return response.data;
       } else {
          console.log('Creating new event');
-         // If no existing event found, create a new one
          const response = await calendar.events.insert({
             calendarId: 'primary',
             requestBody: event,

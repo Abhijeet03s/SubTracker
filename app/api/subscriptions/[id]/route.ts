@@ -50,14 +50,22 @@ export async function PUT(
       }
 
       const body = await request.json()
-      const validatedData = updateSubscriptionSchema.parse(body)
+      const validatedData = updateSubscriptionSchema.parse(body);
+
+      let startDate = validatedData.startDate ? new Date(validatedData.startDate) : undefined;
+      let endDate = validatedData.endDate ? new Date(validatedData.endDate) : undefined;
+
+      if (startDate && validatedData.subscriptionType) {
+         const daysToAdd = validatedData.subscriptionType === 'trial' ? 6 : 29;
+         endDate = new Date(startDate.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
+      }
 
       const updatedSubscription = await prisma.subscription.update({
          where: { id: params.id, userId },
          data: {
             ...validatedData,
-            startDate: validatedData.startDate ? new Date(validatedData.startDate) : undefined,
-            endDate: validatedData.endDate ? new Date(validatedData.endDate) : undefined,
+            startDate,
+            endDate,
          },
       })
       return NextResponse.json(updatedSubscription)

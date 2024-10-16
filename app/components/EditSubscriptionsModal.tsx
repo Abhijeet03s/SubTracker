@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Loader } from './ui/loader';
 import { FaTimes } from 'react-icons/fa';
-import { formatDate, parseDate, addDaysToDate } from '../utils/dateUtils';
+import { formatDate, parseDate } from '../utils/dateUtils';
 
 interface Subscription {
    id: string;
@@ -43,9 +43,19 @@ export const EditSubscriptionsModal: React.FC<EditSubscriptionsModalProps> = ({
          setIsUpdating(true);
          setError(null);
          try {
+            const startDate = new Date(editingSubscription.startDate);
+            let endDate = new Date(startDate);
+
+            if (startDate && editingSubscription.subscriptionType) {
+               const daysToAdd = editingSubscription.subscriptionType === 'trial' ? 6 : 29;
+               endDate = new Date(startDate.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
+            }
+
             const updatedSubscription = {
                ...editingSubscription,
-               category: editingSubscription.category.charAt(0).toUpperCase() + editingSubscription.category.slice(1)
+               category: editingSubscription.category.charAt(0).toUpperCase() + editingSubscription.category.slice(1),
+               startDate: startDate.toISOString(),
+               endDate: endDate.toISOString(),
             };
             await onUpdate(updatedSubscription);
             onClose();
@@ -130,11 +140,9 @@ export const EditSubscriptionsModal: React.FC<EditSubscriptionsModalProps> = ({
                         value={formatDate(editingSubscription.startDate)}
                         onChange={(e) => {
                            const newStartDate = parseDate(e.target.value);
-                           const newEndDate = addDaysToDate(new Date(newStartDate), editingSubscription.subscriptionType === 'trial' ? 6 : 29).toISOString();
                            setEditingSubscription({
                               ...editingSubscription,
                               startDate: newStartDate,
-                              endDate: newEndDate,
                            });
                         }}
                         className="w-full p-2 bg-slate-50 rounded-t border-b border-gray-300 focus:outline-none focus:border-blue-500 transition-colors duration-300"
@@ -149,7 +157,7 @@ export const EditSubscriptionsModal: React.FC<EditSubscriptionsModalProps> = ({
                         className="w-full p-2 bg-slate-50 rounded-t border-b border-gray-300 focus:outline-none focus:border-blue-500 transition-colors duration-300"
                      >
                         <option value="trial">7 Days Trial</option>
-                        <option value="monthly">1 Month Subscription</option>
+                        <option value="monthly">30 Days Subscription</option>
                      </select>
                   </div>
                </div>
