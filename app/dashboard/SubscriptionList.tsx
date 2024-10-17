@@ -18,13 +18,19 @@ interface Subscription {
 
 interface SubscriptionListProps {
    subscriptions: Subscription[]
-   onUpdate: (id: string, data: Partial<Subscription>) => void
-   onDelete: (id: string) => void
+   onUpdate: (id: string, data: Partial<Subscription>) => Promise<void>
+   onDelete: (id: string) => Promise<void>
    onSubscriptionsChange: (updatedSubscriptions: Subscription[]) => void
-   onCalendarUpdate: (subscription: Subscription) => void
+   onCalendarUpdate: (subscription: Subscription) => Promise<void>
 }
 
-export default function SubscriptionList({ subscriptions, onUpdate, onDelete, onSubscriptionsChange, onCalendarUpdate }: Readonly<SubscriptionListProps>) {
+export default function SubscriptionList({
+   subscriptions,
+   onUpdate,
+   onDelete,
+   onSubscriptionsChange,
+   onCalendarUpdate
+}: SubscriptionListProps) {
    const [editingSubscription, setEditingSubscription] = useState<Subscription | null>(null)
    const [isModalOpen, setIsModalOpen] = useState(false)
    const [searchTerm, setSearchTerm] = useState('')
@@ -64,7 +70,7 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete, on
             sub.id === updatedSubscription.id ? updatedSubscription : sub
          );
          onSubscriptionsChange(updatedSubscriptions);
-         onCalendarUpdate(updatedSubscription);
+         await onCalendarUpdate(updatedSubscription);
       } catch (error) {
          console.error('Error updating subscription:', error);
       }
@@ -100,7 +106,7 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete, on
                      <select
                         value={categoryFilter}
                         onChange={(e) => setCategoryFilter(e.target.value)}
-                        className="w-full p-2 pr-8 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500  focus:border-blue-400 transition-all duration-200 appearance-none text-center cursor-pointer"
+                        className="w-full p-2 pr-8 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-400 transition-all duration-200 appearance-none text-center cursor-pointer"
                      >
                         <option value="" className="text-center">All Categories</option>
                         <option value="ecommerce">Ecommerce</option>
@@ -119,7 +125,7 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete, on
                   <select
                      value={costFilter}
                      onChange={(e) => setCostFilter(e.target.value)}
-                     className="w-full p-2 pr-8 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500  focus:border-blue-400 transition-all duration-200 appearance-none text-center cursor-pointer"
+                     className="w-full p-2 pr-8 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-400 transition-all duration-200 appearance-none text-center cursor-pointer"
                   >
                      <option value="" className="text-center">All Costs</option>
                      <option value="lowToHigh">Low to High</option>
@@ -192,7 +198,7 @@ export default function SubscriptionList({ subscriptions, onUpdate, onDelete, on
             isOpen={isModalOpen}
             onClose={handleCloseModal}
             subscription={editingSubscription}
-            onUpdate={handleUpdate as any}
+            onUpdate={handleUpdate}
             onDelete={handleDelete}
          />
       </div>

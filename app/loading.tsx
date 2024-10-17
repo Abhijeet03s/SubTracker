@@ -1,6 +1,4 @@
-import React from 'react'
 import Image from 'next/image'
-import './globals.css'
 
 export default function Loading() {
    return (
@@ -9,8 +7,8 @@ export default function Loading() {
             <Image
                src="/subtrack-logo.png"
                alt="Website Logo"
-               width={100}
-               height={100}
+               width={48}
+               height={48}
                className="mb-4"
             />
          </div>

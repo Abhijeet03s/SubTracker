@@ -1,15 +1,27 @@
-import { Subscription } from '@prisma/client';
 import { CurrencyDollarIcon, UsersIcon, ChartBarIcon, TrophyIcon } from '@heroicons/react/24/solid';
 
 interface SubscriptionAnalyticsProps {
    subscriptions: Subscription[];
 }
 
+interface Subscription {
+   id: string;
+   serviceName: string;
+   startDate: string;
+   endDate: string;
+   category: string;
+   cost: number;
+   subscriptionType: string;
+   calendarEventId?: string;
+}
+
 export default function SubscriptionAnalytics({ subscriptions }: SubscriptionAnalyticsProps) {
    const totalMonthlyCost = subscriptions.reduce((total, sub) => total + sub.cost, 0);
    const activeSubscriptions = subscriptions.length;
-   const mostExpensiveSub = subscriptions.reduce((max, sub) => sub.cost > max.cost ? sub : max, subscriptions[0]);
-   const averageCost = totalMonthlyCost / activeSubscriptions || 0;
+   const mostExpensiveSub = subscriptions.length > 0
+      ? subscriptions.reduce((max, sub) => sub.cost > max.cost ? sub : max, subscriptions[0])
+      : null;
+   const averageCost = activeSubscriptions > 0 ? totalMonthlyCost / activeSubscriptions : 0;
 
    const analyticsItems = [
       { title: 'Total Monthly Cost', value: `$${totalMonthlyCost.toFixed(2)}`, subtext: '+2.1% from last month', icon: CurrencyDollarIcon, color: 'bg-purple-200', iconColor: 'text-purple-600' },

@@ -1,9 +1,15 @@
 import { google } from 'googleapis';
 
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI } = process.env;
+
+if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET || !GOOGLE_REDIRECT_URI) {
+   throw new Error('Missing one or more Google OAuth environment variables (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI)');
+}
+
 const oauth2Client = new google.auth.OAuth2(
-   process.env.GOOGLE_CLIENT_ID,
-   process.env.GOOGLE_CLIENT_SECRET,
-   process.env.GOOGLE_REDIRECT_URI
+   GOOGLE_CLIENT_ID,
+   GOOGLE_CLIENT_SECRET,
+   GOOGLE_REDIRECT_URI
 );
 
 export function getGoogleAuthUrl() {
@@ -42,25 +48,28 @@ export async function upsertEventInCalendar(
    oauth2Client.setCredentials({ access_token: accessToken });
 
    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
-
-   const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
    const event = {
       summary,
       description,
       start: {
          dateTime: startDateTime,
-         timeZone: userTimeZone,
+         timeZone: 'UTC',
       },
       end: {
          dateTime: endDateTime,
-         timeZone: userTimeZone,
+         timeZone: 'UTC',
+      },
+      reminders: {
+         useDefault: false,
+         overrides: [
+            { method: 'email', minutes: 24 * 60 },
+            { method: 'popup', minutes: 10 },
+         ],
       },
    };
 
    try {
       if (eventId) {
-         // Update existing event
          const response = await calendar.events.update({
             calendarId: 'primary',
             eventId,
@@ -68,7 +77,6 @@ export async function upsertEventInCalendar(
          });
          return response.data;
       } else {
-         // Create new event
          const response = await calendar.events.insert({
             calendarId: 'primary',
             requestBody: event,

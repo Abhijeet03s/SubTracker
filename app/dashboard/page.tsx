@@ -176,7 +176,6 @@ export default function DashboardPage() {
                   </div>
                </div>
             </div>
-
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                <SubscriptionForm onSubmit={addSubscription as any} />
             </Modal>

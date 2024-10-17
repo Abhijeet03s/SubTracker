@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { plusJakartaSans, zillaSlab } from '../fonts/fonts';
+import { plusJakartaSans, zillaSlab } from '@/app/fonts/fonts';
 
 export default function Footer() {
    return (

@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
    }
 
    try {
-      const authUrl = await getGoogleAuthUrl()
+      const authUrl = getGoogleAuthUrl()
       return NextResponse.json({ authUrl })
    } catch (error) {
       console.error('Error getting Google Calendar auth URL:', error)
@@ -32,11 +32,12 @@ export async function POST(request: NextRequest) {
 
       const tokens = await getTokens(authCode)
       const event = await upsertEventInCalendar(
-         tokens.access_token!,
          `Free Trial Reminder: ${subscriptionDetails.serviceName}`,
          `Your free trial is ending soon. Remember to cancel if you don't want to continue.`,
          new Date(subscriptionDetails.trialEndDate).toISOString(),
-         new Date(new Date(subscriptionDetails.trialEndDate).getTime() + 24 * 60 * 60 * 1000).toISOString()
+         new Date(new Date(subscriptionDetails.trialEndDate).getTime() + 24 * 60 * 60 * 1000).toISOString(),
+         tokens.access_token!,
+         subscriptionDetails.calendarEventId
       )
 
       return NextResponse.json({ message: 'Event added successfully', event })

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Loader } from './ui/loader';
 import { FaTimes } from 'react-icons/fa';
-import { formatDate, parseDate } from '../utils/dateUtils';
+import { formatDate, parseDate } from '@/app/utils/dateUtils';
 
 interface Subscription {
    id: string;

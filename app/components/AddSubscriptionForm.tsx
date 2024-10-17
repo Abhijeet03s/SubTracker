@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useAddToCalendar } from '../hooks/useAddToCalendar';
 import { FaChevronDown, FaPlus } from 'react-icons/fa';
-import { toast } from 'sonner';
 import { Loader } from '@/app/components/ui/loader';
 import { parseDate } from '@/app/utils/dateUtils';
 

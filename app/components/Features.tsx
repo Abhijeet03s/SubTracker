@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { FaClock, FaChartLine, FaBell, FaDesktop } from 'react-icons/fa';
-import { plusJakartaSans, zillaSlab } from '../fonts/fonts';
+import { plusJakartaSans, zillaSlab } from '@/app/fonts/fonts';
 
 const features = [
    {

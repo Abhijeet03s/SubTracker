@@ -11,7 +11,6 @@ export async function POST(request: NextRequest) {
       }
 
       const { summary, description, startDateTime, endDateTime, eventId } = await request.json();
-
       if (
          typeof summary !== 'string' ||
          typeof description !== 'string' ||
@@ -39,6 +38,7 @@ export async function POST(request: NextRequest) {
       );
 
       return NextResponse.json({ success: true, event: googleEvent, eventId: googleEvent.id });
+
    } catch (error) {
       console.error('Error in upsert-calendar-event route:', error);
       if (error instanceof Error) {
