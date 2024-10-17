@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAddToCalendar } from '../hooks/useAddToCalendar';
-import { FaChevronDown, FaPlus } from 'react-icons/fa';
+import { FaCalendarPlus, FaChevronDown, FaPlus } from 'react-icons/fa';
 import { Loader } from '@/app/components/ui/loader';
 import { parseDate } from '@/app/utils/dateUtils';
 
@@ -87,7 +87,7 @@ export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
                }}
                required
                className="w-full mt-2 p-2 bg-slate-50 rounded-t border-b border-gray-300 focus:outline-none focus:border-blue-500 transition-colors duration-300 [&::-webkit-inner-spin-button]:appearance-none"
-               placeholder="0.00"
+               placeholder="₹ 0.00"
             />
          </div>
          <div>
@@ -120,7 +120,7 @@ export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
                disabled={isAddingToCalendar}
                className="w-full px-6 py-3 bg-blue-600 text-white text-base font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center"
             >
-               {isAddingToCalendar ? <Loader size="small" className="animate-spin mr-2" /> : <FaPlus className="mr-2" />}
+               {isAddingToCalendar ? <Loader size="small" className="animate-spin mr-2" /> : <FaCalendarPlus className="mr-2" />}
                {isAddingToCalendar ? 'Adding to Calendar...' : 'Add Subscription'}
             </button>
          </div>

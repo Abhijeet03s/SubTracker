@@ -158,22 +158,20 @@ export default function DashboardPage() {
 
             <div className="space-y-6">
                <div className="my-10">
-                  <SubscriptionAnalytics subscriptions={subscriptions as any} />
+                  <SubscriptionAnalytics subscriptions={subscriptions} />
                </div>
-               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="bg-white rounded-lg shadow p-4 sm:p-6">
-                     <SubscriptionComparison subscriptions={subscriptions as any} />
-                  </div>
-                  <div className="bg-white rounded-lg shadow p-4 sm:p-6">
-                     <h2 className="text-xl sm:text-2xl font-semibold mb-4">Your Subscriptions</h2>
-                     <SubscriptionList
-                        subscriptions={subscriptions as any}
-                        onUpdate={updateSubscription}
-                        onDelete={deleteSubscription}
-                        onSubscriptionsChange={setSubscriptions as any}
-                        onCalendarUpdate={handleCalendarUpdate as any}
-                     />
-                  </div>
+               <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+                  <SubscriptionComparison subscriptions={subscriptions as any} />
+               </div>
+               <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+                  <h2 className="text-xl sm:text-2xl font-semibold mb-4">Your Subscriptions</h2>
+                  <SubscriptionList
+                     subscriptions={subscriptions}
+                     onUpdate={updateSubscription}
+                     onDelete={deleteSubscription}
+                     onSubscriptionsChange={setSubscriptions}
+                     onCalendarUpdate={handleCalendarUpdate}
+                  />
                </div>
             </div>
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>

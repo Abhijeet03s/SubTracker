@@ -1,8 +1,9 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { FaClock, FaChartLine, FaBell, FaDesktop } from 'react-icons/fa';
 import { plusJakartaSans, zillaSlab } from '@/app/fonts/fonts';
+import Image from 'next/image';
 
 const features = [
    {
@@ -13,7 +14,6 @@ const features = [
          'Centralized dashboard for all subscriptions',
          'Track 7-day trial periods and 1-month subscriptions',
          'Automatic categorization of subscriptions',
-         'Customizable tags for easy organization',
       ],
    },
    {
@@ -23,17 +23,15 @@ const features = [
       details: [
          'Monthly and yearly spending breakdowns',
          'Category-wise expense analysis',
-         'Trend predictions and recommendations',
       ],
    },
    {
       icon: FaBell,
       title: 'Smart Notifications',
-      description: 'Receive timely alerts through Google Calendar and email before subscription deadlines.',
+      description: 'Receive timely alerts through Google Calendar and Email before subscription deadlines.',
       details: [
-         'Seamless Google Calendar integration',
-         'Customizable email notifications',
-         'Adjustable reminder schedules',
+         'Subscriptions synced with Google Calendar for tracking',
+         'Email reminders sent a day before deadlines',
       ],
    },
    {
@@ -43,14 +41,13 @@ const features = [
       details: [
          'Optimized for desktop, tablet, and mobile',
          'Consistent experience across all devices',
-         'Real-time sync of your subscription data',
       ],
    },
 ];
 
 const FeatureCard = ({ icon: Icon, title, description, details }: { icon: React.ElementType, title: string, description: string, details: string[] }) => (
    <motion.div
-      className="bg-white p-4 sm:p-6 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300"
+      className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:scale-105"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
@@ -87,24 +84,44 @@ function getIconColor(title: string) {
 }
 
 export default function Features() {
+   const { scrollYProgress } = useScroll();
+   const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
+
    return (
-      <section className="py-12 sm:py-16 md:py-20 bg-white">
-         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section className="py-20 md:py-32 bg-gradient-to-b from-white to-gray-100 relative overflow-hidden">
+         <div className="absolute inset-0 z-0">
+            <Image
+               src="/path/to/background-pattern.svg"
+               alt="Background pattern"
+               layout="fill"
+               objectFit="cover"
+               className="opacity-5"
+            />
+         </div>
+         <motion.div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-purple-100 to-transparent" style={{ y }} />
+         <div className="container mx-auto sm:max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
             <motion.div
                initial={{ opacity: 0, y: 20 }}
                whileInView={{ opacity: 1, y: 0 }}
                viewport={{ once: true, margin: "-100px" }}
                transition={{ duration: 0.5 }}
-               className="text-center mb-10 sm:mb-16"
+               className="text-center mb-16 md:mb-24"
             >
-               <h2 className={`${zillaSlab.className} text-3xl sm:text-4xl font-bold text-gray-900 mb-4`}>
-                  Manage Your Subscriptions
+               <h2 className={`${zillaSlab.className} text-3xl sm:text-5xl font-bold text-gray-900 mb-6 leading-tight`}>
+                  Manage Your Subscriptions <span className="text-purple-600">Effortlessly</span>
                </h2>
-               <p className={`${plusJakartaSans.className} max-w-2xl mx-auto text-sm md:text-xl mb-10 sm:mb-12 md:mb-14 text-gray-600`}>
+               <p className={`${plusJakartaSans.className} max-w-3xl mx-auto text-sm sm:text-xl mb-10 text-gray-600`}>
                   SubTracker offers a comprehensive set of tools to help you stay on top of your subscriptions and save money.
                </p>
+               <motion.div
+                  className="w-24 h-0.5 sm:h-1 bg-purple-600 mx-auto"
+                  initial={{ width: 0 }}
+                  whileInView={{ width: 96 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+               />
             </motion.div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
                {features.map((feature, index) => (
                   <FeatureCard key={index} {...feature} />
                ))}

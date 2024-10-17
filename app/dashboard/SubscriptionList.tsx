@@ -87,7 +87,7 @@ export default function SubscriptionList({
    };
 
    return (
-      <div className="w-full max-w-4xl mx-auto space-y-4">
+      <div className="w-full mx-auto space-y-4">
          <div className="flex flex-col md:flex-row justify-between items-center mb-6 space-y-4 md:space-y-0 md:space-x-4">
             <div className="w-full md:w-1/2 relative">
                <input
@@ -157,8 +157,8 @@ export default function SubscriptionList({
                         <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
                            End Date
                         </th>
-                        <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-12">
-                           <span className="sr-only">Actions</span>
+                        <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">
+                           Actions
                         </th>
                      </tr>
                   </thead>
