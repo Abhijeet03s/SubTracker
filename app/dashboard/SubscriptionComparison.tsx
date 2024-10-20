@@ -6,35 +6,59 @@ import { useMemo, useState } from 'react';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
 interface SubscriptionComparisonProps {
-   subscriptions: Array<{ name: string; startDate: string; endDate: string; cost: number; billingCycle: string; category: string; subscriptionType: string }>;
+   subscriptions: Array<{
+      startDate: string;
+      endDate: string;
+      cost: number;
+      billingCycle: string;
+      category: string;
+      subscriptionType: string
+   }>;
+}
+
+interface CategoryMonthlyTotals {
+   [category: string]: number[];
 }
 
 export default function SubscriptionComparison({ subscriptions }: SubscriptionComparisonProps) {
-   const [showCategoryBar, setShowCategoryBar] = useState(false);
-   const months = useMemo(() => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], []);
+   const [showCategoryView, setShowCategoryView] = useState(false);
+   const monthNames = useMemo(() => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], []);
    const currentYear = new Date().getFullYear();
-   const currentMonth = new Date().getMonth();
 
-   const monthlyTotals = useMemo(() => months.map((_, index) => {
+   const monthlyTotalCosts = useMemo(() => monthNames.map((_, monthIndex) => {
       return subscriptions.reduce((total, sub) => {
          const startDate = new Date(sub.startDate);
          const endDate = new Date(sub.endDate);
          if (startDate.getFullYear() === currentYear && endDate.getFullYear() === currentYear &&
-            startDate.getMonth() <= index && endDate.getMonth() >= index) {
+            startDate.getMonth() <= monthIndex && endDate.getMonth() >= monthIndex) {
             const monthlyCost = sub.billingCycle === 'yearly' ? sub.cost / 12 : sub.cost;
             return total + monthlyCost;
          }
          return total;
       }, 0);
-   }), [subscriptions, currentYear, months]);
+   }), [subscriptions, currentYear, monthNames]);
 
-   const categoryTotals = useMemo(() => {
-      return subscriptions.reduce((acc, sub) => {
+   const categoryMonthlyTotals = useMemo<CategoryMonthlyTotals>(() => {
+      const totals: CategoryMonthlyTotals = {};
+
+      subscriptions.forEach(sub => {
+         const startDate = new Date(sub.startDate);
+         const endDate = new Date(sub.endDate);
          const monthlyCost = sub.billingCycle === 'yearly' ? sub.cost / 12 : sub.cost;
-         acc[sub.category] = (acc[sub.category] || 0) + monthlyCost;
-         return acc;
-      }, {} as Record<string, number>);
-   }, [subscriptions]);
+
+         for (let month = 0; month < 12; month++) {
+            if (startDate.getFullYear() === currentYear && endDate.getFullYear() === currentYear &&
+               startDate.getMonth() <= month && endDate.getMonth() >= month) {
+               if (!totals[sub.category]) {
+                  totals[sub.category] = Array(12).fill(0);
+               }
+               totals[sub.category][month] += monthlyCost;
+            }
+         }
+      });
+
+      return totals;
+   }, [subscriptions, currentYear]);
 
    const subscriptionTypeTotals = useMemo(() => {
       return subscriptions.reduce((acc, sub) => {
@@ -44,10 +68,10 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
       }, {} as Record<string, number>);
    }, [subscriptions]);
 
-   const handleExport = () => {
+   const handleExportCSV = () => {
       const csvContent = "data:text/csv;charset=utf-8,"
          + "Month,Cost\n"
-         + months.map((month, index) => `${month},${monthlyTotals[index].toFixed(2)}`).join("\n");
+         + monthNames.map((month, index) => `${month},${monthlyTotalCosts[index].toFixed(2)}`).join("\n");
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
@@ -57,85 +81,168 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
       link.remove();
    };
 
-   const barChartData = {
-      labels: showCategoryBar ? Object.keys(categoryTotals) : months,
-      datasets: [{
-         label: showCategoryBar ? 'Category Cost' : 'Monthly Cost',
-         data: showCategoryBar ? Object.values(categoryTotals) : monthlyTotals,
-         backgroundColor: 'rgba(79, 70, 229, 0.8)',
-         borderColor: 'rgba(79, 70, 229, 1)',
-         borderWidth: 1,
-         borderRadius: 8,
-         borderSkipped: false,
-      }],
-   };
-
-   const barChartOptions = {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-         y: {
-            beginAtZero: true,
-            ticks: {
-               callback: (value: number) => `$${value.toLocaleString()}`,
+   const barChartData = useMemo(() => {
+      if (showCategoryView) {
+         const categories = Object.keys(categoryMonthlyTotals);
+         const colors = generateCategoryColors(categories.length);
+         const datasets = categories.map((category, idx) => ({
+            label: category.charAt(0).toUpperCase() + category.slice(1),
+            data: categoryMonthlyTotals[category],
+            backgroundColor: colors[idx],
+            borderColor: colors[idx],
+            borderWidth: 1,
+            borderRadius: {
+               topLeft: 4,
+               topRight: 4,
+               bottomLeft: 0,
+               bottomRight: 0
             },
-            grid: {
-               color: 'rgba(0, 0, 0, 0.1)',
+            borderSkipped: false,
+         }));
+         return {
+            labels: monthNames,
+            datasets: datasets,
+         };
+      } else {
+         return {
+            labels: monthNames,
+            datasets: [{
+               label: 'Monthly Cost',
+               data: monthlyTotalCosts,
+               backgroundColor: 'rgba(79, 70, 229, 0.8)',
+               borderColor: 'rgba(79, 70, 229, 1)',
+               borderWidth: 1,
+               borderRadius: {
+                  topLeft: 4,
+                  topRight: 4,
+                  bottomLeft: 0,
+                  bottomRight: 0
+               },
+               borderSkipped: false,
+            }],
+         };
+      }
+   }, [showCategoryView, monthNames, monthlyTotalCosts, categoryMonthlyTotals]);
+
+   const barChartOptions = useMemo(() => {
+      return {
+         responsive: true,
+         maintainAspectRatio: false,
+         scales: {
+            y: {
+               beginAtZero: true,
+               ticks: {
+                  callback: (value: number) => `$${value.toLocaleString()}`,
+                  font: {
+                     size: 12,
+                  },
+               },
+               grid: {
+                  display: false,
+               },
+               border: {
+                  display: true,
+               },
+               stacked: showCategoryView,
+            },
+            x: {
+               grid: {
+                  display: false,
+               },
+               border: {
+                  display: true,
+               },
+               ticks: {
+                  font: {
+                     size: 12,
+                  },
+               },
+               stacked: showCategoryView,
             },
          },
-         x: {
-            grid: {
+         plugins: {
+            legend: {
                display: false,
             },
-         },
-      },
-      plugins: {
-         legend: {
-            display: false,
-         },
-         tooltip: {
-            callbacks: {
-               label: (context: any) => `$${context.parsed.y.toFixed(2)}`,
+            tooltip: {
+               backgroundColor: 'rgba(0, 0, 0, 0.8)',
+               titleFont: {
+                  size: 14,
+               },
+               bodyFont: {
+                  size: 12,
+               },
+               padding: 10,
+               cornerRadius: 4,
+               callbacks: {
+                  label: (context: any) => {
+                     if (showCategoryView) {
+                        return `${context.dataset.label}: $${context.parsed.y.toFixed(2)}`;
+                     }
+                     return `$${context.parsed.y.toFixed(2)}`;
+                  },
+               },
             },
          },
-      },
-   };
+      };
+   }, [showCategoryView]);
 
-   const pieChartData = {
-      labels: Object.keys(subscriptionTypeTotals).map(type => type.charAt(0).toUpperCase() + type.slice(1)),
-      datasets: [{
-         data: Object.values(subscriptionTypeTotals),
-         backgroundColor: [
-            'rgba(255, 99, 132, 0.8)',
-            'rgba(54, 162, 235, 0.8)',
-         ],
-         borderColor: 'white',
-         borderWidth: 2,
-      }],
-   };
+   const pieChartData = useMemo(() => {
+      return {
+         labels: Object.keys(subscriptionTypeTotals).map(type => type.charAt(0).toUpperCase() + type.slice(1)),
+         datasets: [{
+            data: Object.values(subscriptionTypeTotals),
+            backgroundColor: [
+               'rgba(255, 99, 132, 0.8)',
+               'rgba(54, 162, 235, 0.8)',
+               'rgba(255, 206, 86, 0.8)',
+               'rgba(75, 192, 192, 0.8)',
+               'rgba(153, 102, 255, 0.8)',
+               'rgba(255, 159, 64, 0.8)',
+            ],
+            borderColor: 'white',
+            borderWidth: 2,
+         }],
+      };
+   }, [subscriptionTypeTotals]);
 
-   const pieChartOptions = {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-         legend: {
-            position: 'right' as const,
-            labels: {
-               boxWidth: 20,
-               padding: 20,
+   const pieChartOptions = useMemo(() => {
+      return {
+         responsive: true,
+         maintainAspectRatio: false,
+         plugins: {
+            legend: {
+               position: 'right' as const,
+               labels: {
+                  boxWidth: 20,
+                  padding: 20,
+               },
+            },
+            tooltip: {
+               callbacks: {
+                  label: (context: any) => `$${context.parsed.toFixed(2)}`,
+               },
             },
          },
-         tooltip: {
-            callbacks: {
-               label: (context: any) => `$${context.parsed.toFixed(2)}`,
-            },
-         },
-      },
-   };
+      };
+   }, []);
 
-   const totalMonthly = monthlyTotals[currentMonth];
-   const averageMonthly = monthlyTotals.reduce((a, b) => a + b, 0) / 12;
-   const percentChange = ((totalMonthly - monthlyTotals[currentMonth - 1]) / monthlyTotals[currentMonth - 1]) * 100;
+   function generateCategoryColors(count: number): string[] {
+      const baseColors = [
+         'rgba(255, 99, 132, 0.8)',
+         'rgba(54, 162, 235, 0.8)',
+         'rgba(255, 206, 86, 0.8)',
+         'rgba(75, 192, 192, 0.8)',
+         'rgba(153, 102, 255, 0.8)',
+         'rgba(255, 159, 64, 0.8)',
+         'rgba(199, 199, 199, 0.8)',
+         'rgba(83, 102, 255, 0.8)',
+         'rgba(255, 102, 255, 0.8)',
+         'rgba(102, 255, 178, 0.8)',
+      ];
+
+      return baseColors.slice(0, count);
+   }
 
    return (
       <div className="w-full h-full flex flex-col">
@@ -143,14 +250,14 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
             <h2 className="text-xl sm:text-2xl font-semibold mb-4">Subscription Insights</h2>
             <div className="flex space-x-4">
                <button
-                  onClick={() => setShowCategoryBar(!showCategoryBar)}
+                  onClick={() => setShowCategoryView(!showCategoryView)}
                   className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm font-medium flex items-center"
                >
-                  {showCategoryBar ? <ChartBarIcon className="h-5 w-5 mr-2" /> : <ChartPieIcon className="h-5 w-5 mr-2" />}
-                  {showCategoryBar ? 'Show Monthly' : 'Show Categories'}
+                  {showCategoryView ? <ChartBarIcon className="h-5 w-5 mr-2" /> : <ChartPieIcon className="h-5 w-5 mr-2" />}
+                  {showCategoryView ? 'Show Monthly' : 'Show Categories'}
                </button>
                <button
-                  onClick={handleExport}
+                  onClick={handleExportCSV}
                   className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium flex items-center"
                >
                   <ArrowDownTrayIcon className="h-5 w-5 mr-2" />
@@ -159,31 +266,9 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
             </div>
          </div>
 
-         {/* Subscription Overview - Moved to the top for better visibility */}
-         <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-6 rounded-lg shadow-lg mb-6">
-            <h3 className="text-xl font-semibold text-white mb-4">Subscription Overview</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-               <OverviewCard title="Active Subscriptions" value={subscriptions.length} />
-               <OverviewCard
-                  title="Total Monthly Cost"
-                  value={`$${monthlyTotals[currentMonth].toFixed(2)}`}
-               />
-               <OverviewCard
-                  title="Highest Monthly Cost"
-                  value={`$${Math.max(...monthlyTotals).toFixed(2)}`}
-               />
-               <OverviewCard
-                  title="Average Monthly Cost"
-                  value={`$${(monthlyTotals.reduce((a, b) => a + b, 0) / monthlyTotals.length).toFixed(2)}`}
-               />
-            </div>
-         </div>
-
          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
             <div className="lg:col-span-2 bg-gray-50 p-4 rounded-lg shadow">
-               <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                  {showCategoryBar ? 'Category Costs' : 'Monthly Costs'}
-               </h3>
+               <h3 className="text-lg font-semibold text-gray-800 mb-4">Monthly Costs</h3>
                <div className="h-80">
                   <Bar data={barChartData} options={barChartOptions as any} />
                </div>
@@ -195,20 +280,6 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
                </div>
             </div>
          </div>
-      </div>
-   );
-}
-
-interface OverviewCardProps {
-   title: string;
-   value: string | number;
-}
-
-function OverviewCard({ title, value }: OverviewCardProps) {
-   return (
-      <div className="bg-white bg-opacity-20 p-4 rounded-lg backdrop-blur-lg">
-         <p className="text-sm font-medium text-indigo-100 mb-1">{title}</p>
-         <p className="text-2xl font-bold text-white">{value}</p>
       </div>
    );
 }
