@@ -30,14 +30,9 @@ export default function SubscriptionAnalytics({ subscriptions }: SubscriptionAna
    const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth());
 
    const getMonthlyData = (month: number, year: number): MonthlyData => {
-      const firstDayOfMonth = new Date(year, month, 1);
-      const lastDayOfMonth = new Date(year, month + 1, 0);
-
       return subscriptions.reduce<MonthlyData>((acc, sub) => {
          const startDate = new Date(sub.startDate);
-         const endDate = sub.endDate ? new Date(sub.endDate) : new Date(9999, 11, 31); // Far future date if no end date
-
-         if (startDate <= lastDayOfMonth && endDate >= firstDayOfMonth) {
+         if (startDate.getFullYear() === year && startDate.getMonth() === month) {
             acc.totalCost += sub.cost;
             acc.activeSubscriptions++;
             if (!acc.mostExpensiveSub || sub.cost > acc.mostExpensiveSub.cost) {
@@ -65,7 +60,7 @@ export default function SubscriptionAnalytics({ subscriptions }: SubscriptionAna
    const analyticsItems = [
       {
          title: 'Total Monthly Cost',
-         value: `$${totalMonthlyCost.toFixed(2)}`,
+         value: `₹${totalMonthlyCost.toFixed(2)}`,
          subtext: `${costChangePercentage}% from last month`,
          icon: CurrencyDollarIcon,
          color: 'bg-purple-200',
@@ -81,7 +76,7 @@ export default function SubscriptionAnalytics({ subscriptions }: SubscriptionAna
       },
       {
          title: 'Average Cost',
-         value: `$${averageCost.toFixed(2)}`,
+         value: `₹${averageCost.toFixed(2)}`,
          subtext: 'Per subscription',
          icon: ChartBarIcon,
          color: 'bg-green-200',
@@ -89,18 +84,21 @@ export default function SubscriptionAnalytics({ subscriptions }: SubscriptionAna
       },
       {
          title: 'Most Expensive',
-         value: currentMonthData.mostExpensiveSub?.serviceName ?? 'N/A',
+         value: currentMonthData.mostExpensiveSub
+            ? currentMonthData.mostExpensiveSub.serviceName.charAt(0).toUpperCase() +
+            currentMonthData.mostExpensiveSub.serviceName.slice(1)
+            : 'N/A',
          subtext: currentMonthData.mostExpensiveSub
-            ? `$${currentMonthData.mostExpensiveSub.cost.toFixed(2)}/month`
+            ? `₹${currentMonthData.mostExpensiveSub.cost.toFixed(2)}/month`
             : 'No subscriptions',
          icon: TrophyIcon,
-         color: 'bg-[#FFF7C0]',
+         color: 'bg-yellow-100',
          iconColor: 'text-yellow-600'
       },
    ];
 
    return (
-      <div className="space-y-4">
+      <div className="space-y-4 ">
          <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold text-gray-800">Subscription Analytics</h2>
             <div className="relative inline-block">

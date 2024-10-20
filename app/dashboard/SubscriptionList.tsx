@@ -36,12 +36,14 @@ export default function SubscriptionList({
    const [searchTerm, setSearchTerm] = useState('')
    const [categoryFilter, setCategoryFilter] = useState('')
    const [costFilter, setCostFilter] = useState('')
+   const [subscriptionTypeFilter, setSubscriptionTypeFilter] = useState('')
 
    const filteredSubscriptions = useMemo(() => {
       let filtered = subscriptions.filter(sub => {
          const matchesSearch = sub.serviceName.toLowerCase().includes(searchTerm.toLowerCase());
          const matchesCategory = categoryFilter === '' || sub.category.toLowerCase() === categoryFilter.toLowerCase();
-         return matchesSearch && matchesCategory;
+         const matchesType = subscriptionTypeFilter === '' || sub.subscriptionType.toLowerCase() === subscriptionTypeFilter.toLowerCase();
+         return matchesSearch && matchesCategory && matchesType;
       });
 
       if (costFilter === 'lowToHigh') {
@@ -51,7 +53,7 @@ export default function SubscriptionList({
       }
 
       return filtered;
-   }, [subscriptions, searchTerm, categoryFilter, costFilter]);
+   }, [subscriptions, searchTerm, categoryFilter, costFilter, subscriptionTypeFilter]);
 
    const handleOpenModal = (subscription: Subscription) => {
       setEditingSubscription(subscription)
@@ -101,7 +103,7 @@ export default function SubscriptionList({
             </div>
 
             <div className="w-full md:w-1/2 flex space-x-4">
-               <div className="relative w-3/5">
+               <div className="relative w-1/3">
                   <div className="relative">
                      <select
                         value={categoryFilter}
@@ -121,7 +123,23 @@ export default function SubscriptionList({
                      </div>
                   </div>
                </div>
-               <div className="relative w-2/5">
+               <div className="relative w-1/3">
+                  <div className="relative">
+                     <select
+                        value={subscriptionTypeFilter}
+                        onChange={(e) => setSubscriptionTypeFilter(e.target.value)}
+                        className="w-full p-2 pr-8 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-400 transition-all duration-200 appearance-none text-center cursor-pointer"
+                     >
+                        <option value="" className="text-center">All Types</option>
+                        <option value="trial">Trial</option>
+                        <option value="monthly">Monthly</option>
+                     </select>
+                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-700">
+                        <FaChevronDown className="h-3 w-3" />
+                     </div>
+                  </div>
+               </div>
+               <div className="relative w-1/3">
                   <select
                      value={costFilter}
                      onChange={(e) => setCostFilter(e.target.value)}
@@ -139,25 +157,31 @@ export default function SubscriptionList({
          </div>
 
          {filteredSubscriptions.length === 0 ? (
-            <p className="text-center text-gray-500 mt-4">No subscriptions found.</p>
+            <p className="text-center text-gray-500 mt-4">No subscriptions found</p>
          ) : (
             <div className="mt-8 overflow-x-auto">
                <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                      <tr>
-                        <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
+                        <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                            Service
                         </th>
-                        <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
+                        <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                            Category
                         </th>
-                        <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
+                        <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                            Cost
                         </th>
-                        <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
+                        <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                           Start Date
+                        </th>
+                        <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                            End Date
                         </th>
-                        <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">
+                        <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-52">
+                           Subscription Type
+                        </th>
+                        <th scope="col" className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
                            Actions
                         </th>
                      </tr>
@@ -166,17 +190,27 @@ export default function SubscriptionList({
                      {filteredSubscriptions.map((subscription) => (
                         <tr key={subscription.id} className="hover:bg-gray-100">
                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                              <div className="text-sm font-medium text-gray-900">{subscription.serviceName}</div>
+                              <div className="text-sm font-medium text-gray-900">{subscription.serviceName.charAt(0).toUpperCase() + subscription.serviceName.slice(1)}</div>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-center">
                               <div className="text-sm text-gray-500">{subscription.category}</div>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                              <div className="text-sm text-gray-500">${subscription.cost.toFixed(2)}</div>
+                              <div className="text-sm text-gray-500">₹{subscription.cost.toFixed(2)}</div>
+                           </td>
+                           <td className="px-6 py-4 whitespace-nowrap text-center">
+                              <div className="text-sm text-gray-500">
+                                 {formatDate(subscription.startDate)}
+                              </div>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-center">
                               <div className="text-sm text-gray-500">
                                  {subscription.endDate ? formatDate(subscription.endDate) : 'N/A'}
+                              </div>
+                           </td>
+                           <td className="px-4 py-4 whitespace-nowrap text-center w-24">
+                              <div className="text-sm text-gray-500">
+                                 {subscription.subscriptionType.charAt(0).toUpperCase() + subscription.subscriptionType.slice(1)}
                               </div>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
@@ -184,7 +218,7 @@ export default function SubscriptionList({
                                  onClick={() => handleOpenModal(subscription)}
                                  className="text-gray-600 hover:text-gray-900"
                               >
-                                 <FaEllipsisH className="h-4 w-4" />
+                                 <FaEllipsisH className="h-3 w-3 rotate-90" />
                               </button>
                            </td>
                         </tr>

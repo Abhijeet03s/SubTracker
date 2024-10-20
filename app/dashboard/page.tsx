@@ -161,9 +161,6 @@ export default function DashboardPage() {
                   <SubscriptionAnalytics subscriptions={subscriptions} />
                </div>
                <div className="bg-white rounded-lg shadow p-4 sm:p-6">
-                  <SubscriptionComparison subscriptions={subscriptions as any} />
-               </div>
-               <div className="bg-white rounded-lg shadow p-4 sm:p-6">
                   <h2 className="text-xl sm:text-2xl font-semibold mb-4">Your Subscriptions</h2>
                   <SubscriptionList
                      subscriptions={subscriptions}
@@ -172,6 +169,9 @@ export default function DashboardPage() {
                      onSubscriptionsChange={setSubscriptions}
                      onCalendarUpdate={handleCalendarUpdate}
                   />
+               </div>
+               <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+                  <SubscriptionComparison subscriptions={subscriptions as any} />
                </div>
             </div>
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
