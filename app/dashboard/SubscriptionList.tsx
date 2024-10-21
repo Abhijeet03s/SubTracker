@@ -1,28 +1,11 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import { FaSearch, FaEllipsisH, FaChevronDown } from 'react-icons/fa'
-import { EditSubscriptionsModal } from '../components/EditSubscriptionsModal'
-import { formatDate } from '../utils/dateUtils'
-
-interface Subscription {
-   id: string;
-   serviceName: string;
-   startDate: string;
-   endDate: string;
-   category: string;
-   cost: number;
-   subscriptionType: string;
-   calendarEventId?: string;
-}
-
-interface SubscriptionListProps {
-   subscriptions: Subscription[]
-   onUpdate: (id: string, data: Partial<Subscription>) => Promise<void>
-   onDelete: (id: string) => Promise<void>
-   onSubscriptionsChange: (updatedSubscriptions: Subscription[]) => void
-   onCalendarUpdate: (subscription: Subscription) => Promise<void>
-}
+import { EditSubscriptionsModal } from '@/app/components/EditSubscriptionsModal'
+import { formatDate } from '@/app/utils/dateUtils'
+import { useSubscriptionSuggestions } from '@/app/hooks/useSubscriptionSuggestions'
+import { SubscriptionListProps, Subscription } from '@/lib/types'
 
 export default function SubscriptionList({
    subscriptions,
@@ -33,26 +16,46 @@ export default function SubscriptionList({
 }: SubscriptionListProps) {
    const [editingSubscription, setEditingSubscription] = useState<Subscription | null>(null)
    const [isModalOpen, setIsModalOpen] = useState(false)
-   const [searchTerm, setSearchTerm] = useState('')
    const [categoryFilter, setCategoryFilter] = useState('')
    const [costFilter, setCostFilter] = useState('')
    const [subscriptionTypeFilter, setSubscriptionTypeFilter] = useState('')
+   const suggestionsRef = useRef<HTMLDivElement>(null)
+
+   const {
+      searchTerm,
+      suggestions,
+      showSuggestions,
+      setShowSuggestions,
+      handleSearchChange,
+      handleSuggestionClick,
+      handleKeyDown,
+      selectedSuggestionIndex
+   } = useSubscriptionSuggestions(subscriptions)
+
+   useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+         if (suggestionsRef.current && !suggestionsRef.current.contains(event.target as Node)) {
+            setShowSuggestions(false)
+         }
+      }
+
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => {
+         document.removeEventListener('mousedown', handleClickOutside)
+      }
+   }, [setShowSuggestions])
 
    const filteredSubscriptions = useMemo(() => {
-      let filtered = subscriptions.filter(sub => {
+      return subscriptions.filter(sub => {
          const matchesSearch = sub.serviceName.toLowerCase().includes(searchTerm.toLowerCase());
          const matchesCategory = categoryFilter === '' || sub.category.toLowerCase() === categoryFilter.toLowerCase();
          const matchesType = subscriptionTypeFilter === '' || sub.subscriptionType.toLowerCase() === subscriptionTypeFilter.toLowerCase();
          return matchesSearch && matchesCategory && matchesType;
+      }).sort((a, b) => {
+         if (costFilter === 'lowToHigh') return a.cost - b.cost;
+         if (costFilter === 'highToLow') return b.cost - a.cost;
+         return 0;
       });
-
-      if (costFilter === 'lowToHigh') {
-         filtered.sort((a, b) => a.cost - b.cost);
-      } else if (costFilter === 'highToLow') {
-         filtered.sort((a, b) => b.cost - a.cost);
-      }
-
-      return filtered;
    }, [subscriptions, searchTerm, categoryFilter, costFilter, subscriptionTypeFilter]);
 
    const handleOpenModal = (subscription: Subscription) => {
@@ -90,16 +93,33 @@ export default function SubscriptionList({
 
    return (
       <div className="w-full mx-auto space-y-4">
+         <h2 className="text-xl sm:text-2xl font-semibold mb-6">Manage Your Subscriptions</h2>
          <div className="flex flex-col md:flex-row justify-between items-center mb-6 space-y-4 md:space-y-0 md:space-x-4">
             <div className="w-full md:w-1/2 relative">
                <input
                   type="text"
                   placeholder="Search subscriptions..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={handleSearchChange}
+                  onKeyDown={handleKeyDown}
+                  onFocus={() => setShowSuggestions(true)}
                   className="w-full p-2 pl-8 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-400 transition-all duration-200"
                />
                <FaSearch className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm" />
+               {showSuggestions && suggestions.length > 0 && (
+                  <div ref={suggestionsRef} className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
+                     {suggestions.map((suggestion, index) => (
+                        <div
+                           key={index}
+                           className={`px-4 py-2 cursor-pointer ${index === selectedSuggestionIndex ? 'bg-gray-100' : 'hover:bg-gray-100'
+                              }`}
+                           onClick={() => handleSuggestionClick(suggestion)}
+                        >
+                           {suggestion}
+                        </div>
+                     ))}
+                  </div>
+               )}
             </div>
 
             <div className="w-full md:w-1/2 flex space-x-4">
