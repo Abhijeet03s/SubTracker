@@ -2,25 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Loader } from './ui/loader';
 import { FaTimes } from 'react-icons/fa';
 import { formatDate, parseDate } from '@/app/utils/dateUtils';
-
-interface Subscription {
-   id: string;
-   serviceName: string;
-   startDate: string;
-   endDate: string;
-   category: string;
-   cost: number;
-   subscriptionType: string;
-   calendarEventId?: string;
-}
-
-interface EditSubscriptionsModalProps {
-   isOpen: boolean;
-   onClose: () => void;
-   subscription: Subscription | null;
-   onUpdate: (updatedSubscription: Subscription) => Promise<void>;
-   onDelete: (id: string) => Promise<void>;
-}
+import { Subscription, EditSubscriptionsModalProps } from '@/lib/types';
 
 export const EditSubscriptionsModal: React.FC<EditSubscriptionsModalProps> = ({
    isOpen,

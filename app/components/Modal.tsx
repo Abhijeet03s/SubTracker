@@ -1,11 +1,6 @@
 import React, { useRef, useEffect } from 'react'
 import { FaTimes } from 'react-icons/fa'
-
-interface ModalProps {
-   isOpen: boolean
-   onClose: () => void
-   children: React.ReactNode
-}
+import { ModalProps } from '@/lib/types'
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
    const modalRef = useRef<HTMLDivElement>(null)

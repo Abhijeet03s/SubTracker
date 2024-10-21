@@ -93,13 +93,12 @@ export default function Features() {
             <Image
                src="/path/to/background-pattern.svg"
                alt="Background pattern"
-               layout="fill"
-               objectFit="cover"
-               className="opacity-5"
+               className="object-cover opacity-5"
+               fill
             />
          </div>
          <motion.div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-purple-100 to-transparent" style={{ y }} />
-         <div className="container mx-auto sm:max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+         <div className="container mx-auto sm:max-w-7xl px-4 sm:px-4 relative z-10">
             <motion.div
                initial={{ opacity: 0, y: 20 }}
                whileInView={{ opacity: 1, y: 0 }}

@@ -3,26 +3,16 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { plusJakartaSans } from '@/app/fonts/fonts';
-import { useAddToCalendar } from '../hooks/useAddToCalendar';
+import { useAddToCalendar } from '@/app/hooks/useAddToCalendar';
 import dynamic from 'next/dynamic'
 import SubscriptionAnalytics from './SubscriptionAnalytic'
 import SubscriptionComparison from './SubscriptionComparison'
 import { FaPlus } from 'react-icons/fa'
 import Modal from '@/app/components/Modal'
+import { Subscription } from '@/lib/types'
 
 const SubscriptionList = dynamic(() => import('./SubscriptionList'), { ssr: false })
-const SubscriptionForm = dynamic(() => import('../components/AddSubscriptionForm'), { ssr: false })
-
-interface Subscription {
-   id: string;
-   serviceName: string;
-   startDate: string;
-   endDate: string;
-   category: string;
-   cost: number;
-   subscriptionType: string;
-   calendarEventId?: string;
-}
+const SubscriptionForm = dynamic(() => import('@/app/components/AddSubscriptionForm'), { ssr: false })
 
 export default function DashboardPage() {
    const { user } = useUser()
@@ -51,7 +41,7 @@ export default function DashboardPage() {
       }
    }, [user, fetchSubscriptions])
 
-   const addSubscription = async (newSubscription: Omit<Subscription, 'id' | 'calendarEventId'>) => {
+   const addSubscription = async (newSubscription: Subscription) => {
       try {
          const response = await fetch('/api/subscriptions', {
             method: 'POST',
@@ -157,11 +147,10 @@ export default function DashboardPage() {
             </div>
 
             <div className="space-y-6">
-               <div className="my-10">
+               <div className='mt-10'>
                   <SubscriptionAnalytics subscriptions={subscriptions} />
                </div>
                <div className="bg-white rounded-lg shadow p-4 sm:p-6">
-                  <h2 className="text-xl sm:text-2xl font-semibold mb-4">Your Subscriptions</h2>
                   <SubscriptionList
                      subscriptions={subscriptions}
                      onUpdate={updateSubscription}
@@ -171,7 +160,7 @@ export default function DashboardPage() {
                   />
                </div>
                <div className="bg-white rounded-lg shadow p-4 sm:p-6">
-                  <SubscriptionComparison subscriptions={subscriptions as any} />
+                  <SubscriptionComparison subscriptions={subscriptions} />
                </div>
             </div>
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>

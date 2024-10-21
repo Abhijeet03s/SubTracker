@@ -5,10 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { plusJakartaSans, zillaSlab } from '../fonts/fonts';
 import { FaArrowRight } from "react-icons/fa";
-
-interface HeroProps {
-   userId: string | null;
-}
+import { HeroProps } from '@/lib/types';
 
 export default function Hero({ userId }: HeroProps) {
    return (

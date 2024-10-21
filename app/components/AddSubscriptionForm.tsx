@@ -1,12 +1,9 @@
 import { useState } from 'react';
 import { useAddToCalendar } from '../hooks/useAddToCalendar';
-import { FaCalendarPlus, FaChevronDown, FaPlus } from 'react-icons/fa';
+import { FaCalendarPlus, FaChevronDown } from 'react-icons/fa';
 import { Loader } from '@/app/components/ui/loader';
 import { parseDate } from '@/app/utils/dateUtils';
-
-interface SubscriptionFormProps {
-   onSubmit: (subscription: { serviceName: string; startDate: string; endDate: string; category: string; cost: number; subscriptionType: string }) => void
-}
+import { SubscriptionFormProps } from '@/lib/types';
 
 export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
    const [serviceName, setServiceName] = useState('')
