@@ -2,23 +2,9 @@ import { Bar, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 import { ArrowDownTrayIcon, ChartBarIcon, ChartPieIcon } from '@heroicons/react/20/solid';
 import { useMemo, useState } from 'react';
+import { SubscriptionComparisonProps, CategoryMonthlyTotals } from '@/lib/types';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
-
-interface SubscriptionComparisonProps {
-   subscriptions: Array<{
-      startDate: string;
-      endDate: string;
-      cost: number;
-      billingCycle: string;
-      category: string;
-      subscriptionType: string
-   }>;
-}
-
-interface CategoryMonthlyTotals {
-   [category: string]: number[];
-}
 
 export default function SubscriptionComparison({ subscriptions }: SubscriptionComparisonProps) {
    const [showCategoryView, setShowCategoryView] = useState(false);
@@ -31,7 +17,7 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
          const endDate = new Date(sub.endDate);
          if (startDate.getFullYear() === currentYear && endDate.getFullYear() === currentYear &&
             startDate.getMonth() <= monthIndex && endDate.getMonth() >= monthIndex) {
-            const monthlyCost = sub.billingCycle === 'yearly' ? sub.cost / 12 : sub.cost;
+            const monthlyCost = sub.subscriptionType === 'yearly' ? sub.cost / 12 : sub.cost;
             return total + monthlyCost;
          }
          return total;
@@ -44,7 +30,7 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
       subscriptions.forEach(sub => {
          const startDate = new Date(sub.startDate);
          const endDate = new Date(sub.endDate);
-         const monthlyCost = sub.billingCycle === 'yearly' ? sub.cost / 12 : sub.cost;
+         const monthlyCost = sub.subscriptionType === 'yearly' ? sub.cost / 12 : sub.cost;
 
          for (let month = 0; month < 12; month++) {
             if (startDate.getFullYear() === currentYear && endDate.getFullYear() === currentYear &&
@@ -62,7 +48,7 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
 
    const subscriptionTypeTotals = useMemo(() => {
       return subscriptions.reduce((acc, sub) => {
-         const monthlyCost = sub.billingCycle === 'yearly' ? sub.cost / 12 : sub.cost;
+         const monthlyCost = sub.subscriptionType === 'yearly' ? sub.cost / 12 : sub.cost;
          acc[sub.subscriptionType] = (acc[sub.subscriptionType] || 0) + monthlyCost;
          return acc;
       }, {} as Record<string, number>);
@@ -107,7 +93,7 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
          return {
             labels: monthNames,
             datasets: [{
-               label: 'Monthly Cost',
+               label: 'Total Subscription Expenses',
                data: monthlyTotalCosts,
                backgroundColor: 'rgba(79, 70, 229, 0.8)',
                borderColor: 'rgba(79, 70, 229, 1)',
@@ -246,35 +232,35 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
 
    return (
       <div className="w-full h-full flex flex-col">
-         <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0">
-            <h2 className="text-xl sm:text-2xl font-semibold mb-4">Subscription Insights</h2>
+         <div className="flex flex-row justify-between items-center mb-6">
+            <h2 className="text-xl sm:text-2xl font-semibold">Subscription Breakdown</h2>
             <div className="flex space-x-4">
                <button
                   onClick={() => setShowCategoryView(!showCategoryView)}
                   className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm font-medium flex items-center"
                >
                   {showCategoryView ? <ChartBarIcon className="h-5 w-5 mr-2" /> : <ChartPieIcon className="h-5 w-5 mr-2" />}
-                  {showCategoryView ? 'Show Monthly' : 'Show Categories'}
+                  {showCategoryView ? 'View Total Expenses' : 'View by Category'}
                </button>
                <button
                   onClick={handleExportCSV}
                   className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium flex items-center"
                >
                   <ArrowDownTrayIcon className="h-5 w-5 mr-2" />
-                  Export CSV
+                  Download Report
                </button>
             </div>
          </div>
 
          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
             <div className="lg:col-span-2 bg-gray-50 p-4 rounded-lg shadow">
-               <h3 className="text-lg font-semibold text-gray-800 mb-4">Monthly Costs</h3>
+               <h3 className="text-lg font-semibold text-gray-800 mb-4">Monthly Expense Trends</h3>
                <div className="h-80">
                   <Bar data={barChartData} options={barChartOptions as any} />
                </div>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg shadow">
-               <h3 className="text-lg font-semibold text-gray-800 mb-4">Subscription Type Breakdown</h3>
+               <h3 className="text-lg font-semibold text-gray-800 mb-4">Expense Distribution by Type</h3>
                <div className="h-80">
                   <Pie data={pieChartData} options={pieChartOptions as any} />
                </div>

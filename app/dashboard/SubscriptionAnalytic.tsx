@@ -1,26 +1,6 @@
 import { useState } from 'react';
 import { CurrencyDollarIcon, UsersIcon, ChartBarIcon, TrophyIcon } from '@heroicons/react/24/solid';
-
-interface Subscription {
-   id: string;
-   serviceName: string;
-   startDate: string;
-   endDate: string;
-   category: string;
-   cost: number;
-   subscriptionType: string;
-   calendarEventId?: string;
-}
-
-interface SubscriptionAnalyticsProps {
-   subscriptions: Subscription[];
-}
-
-interface MonthlyData {
-   totalCost: number;
-   activeSubscriptions: number;
-   mostExpensiveSub: Subscription | null;
-}
+import { SubscriptionAnalyticsProps, MonthlyData } from '@/lib/types';
 
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -83,7 +63,7 @@ export default function SubscriptionAnalytics({ subscriptions }: SubscriptionAna
          iconColor: 'text-green-600'
       },
       {
-         title: 'Most Expensive',
+         title: 'Top Spender',
          value: currentMonthData.mostExpensiveSub
             ? currentMonthData.mostExpensiveSub.serviceName.charAt(0).toUpperCase() +
             currentMonthData.mostExpensiveSub.serviceName.slice(1)
