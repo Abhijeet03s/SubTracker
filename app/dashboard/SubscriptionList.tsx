@@ -7,6 +7,43 @@ import { formatDate } from '@/app/utils/dateUtils'
 import { useSubscriptionSuggestions } from '@/app/hooks/useSubscriptionSuggestions'
 import { SubscriptionListProps, Subscription } from '@/lib/types'
 
+type SubscriptionType = 'trial' | 'monthly';
+type CategoryType = 'ecommerce' | 'entertainment' | 'gaming' | 'lifestyle' | 'music' | 'other';
+type DateStatus = 'expired' | 'ending-soon' | 'active' | 'not-applicable';
+
+const categoryColors: Record<CategoryType, string> = {
+   ecommerce: 'bg-purple-100 text-purple-800',
+   entertainment: 'bg-blue-100 text-blue-800',
+   gaming: 'bg-green-100 text-green-800',
+   lifestyle: 'bg-yellow-100 text-yellow-800',
+   music: 'bg-pink-100 text-pink-800',
+   other: 'bg-gray-100 text-gray-800'
+};
+
+const subscriptionTypeColors: Record<SubscriptionType, string> = {
+   trial: 'bg-red-100 text-red-800',
+   monthly: 'bg-emerald-100 text-emerald-800'
+};
+
+const dateStatusColors: Record<DateStatus, string> = {
+   expired: 'bg-red-50 text-red-700',
+   'ending-soon': 'bg-yellow-50 text-yellow-700',
+   active: 'bg-green-50 text-green-700',
+   'not-applicable': 'bg-gray-50 text-gray-600'
+};
+
+const getDateStatus = (endDate: string | null): DateStatus => {
+   if (!endDate) return 'not-applicable';
+
+   const end = new Date(endDate);
+   const now = new Date();
+   const daysUntilEnd = Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+   if (daysUntilEnd < 0) return 'expired';
+   if (daysUntilEnd <= 7) return 'ending-soon';
+   return 'active';
+};
+
 export default function SubscriptionList({
    subscriptions,
    onUpdate,
@@ -17,7 +54,6 @@ export default function SubscriptionList({
    const [editingSubscription, setEditingSubscription] = useState<Subscription | null>(null)
    const [isModalOpen, setIsModalOpen] = useState(false)
    const [categoryFilter, setCategoryFilter] = useState('')
-   const [costFilter, setCostFilter] = useState('')
    const [subscriptionTypeFilter, setSubscriptionTypeFilter] = useState('')
    const suggestionsRef = useRef<HTMLDivElement>(null)
 
@@ -52,11 +88,11 @@ export default function SubscriptionList({
          const matchesType = subscriptionTypeFilter === '' || sub.subscriptionType.toLowerCase() === subscriptionTypeFilter.toLowerCase();
          return matchesSearch && matchesCategory && matchesType;
       }).sort((a, b) => {
-         if (costFilter === 'lowToHigh') return a.cost - b.cost;
-         if (costFilter === 'highToLow') return b.cost - a.cost;
+         if (categoryFilter === 'lowToHigh') return a.cost - b.cost;
+         if (categoryFilter === 'highToLow') return b.cost - a.cost;
          return 0;
       });
-   }, [subscriptions, searchTerm, categoryFilter, costFilter, subscriptionTypeFilter]);
+   }, [subscriptions, searchTerm, categoryFilter, subscriptionTypeFilter]);
 
    const handleOpenModal = (subscription: Subscription) => {
       setEditingSubscription(subscription)
@@ -159,20 +195,6 @@ export default function SubscriptionList({
                      </div>
                   </div>
                </div>
-               <div className="relative w-1/3">
-                  <select
-                     value={costFilter}
-                     onChange={(e) => setCostFilter(e.target.value)}
-                     className="w-full p-2 pr-8 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-400 transition-all duration-200 appearance-none text-center cursor-pointer"
-                  >
-                     <option value="" className="text-center">All Costs</option>
-                     <option value="lowToHigh">Low to High</option>
-                     <option value="highToLow">High to Low</option>
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-700">
-                     <FaChevronDown className="h-3 w-3" />
-                  </div>
-               </div>
             </div>
          </div>
 
@@ -213,10 +235,17 @@ export default function SubscriptionList({
                               <div className="text-sm font-medium text-gray-900">{subscription.serviceName.charAt(0).toUpperCase() + subscription.serviceName.slice(1)}</div>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                              <div className="text-sm text-gray-500">{subscription.category}</div>
+                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${categoryColors[subscription.category.toLowerCase() as CategoryType] || 'bg-gray-100 text-gray-800'
+                                 }`}>
+                                 {subscription.category}
+                              </span>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                              <div className="text-sm text-gray-500">₹{subscription.cost.toFixed(2)}</div>
+                              <div className="inline-flex items-center justify-center">
+                                 <span className="text-sm font-medium text-gray-900">
+                                    ₹{subscription.cost.toFixed(2)}
+                                 </span>
+                              </div>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-center">
                               <div className="text-sm text-gray-500">
@@ -224,14 +253,16 @@ export default function SubscriptionList({
                               </div>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                              <div className="text-sm text-gray-500">
+                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${dateStatusColors[getDateStatus(subscription.endDate)]
+                                 }`}>
                                  {subscription.endDate ? formatDate(subscription.endDate) : 'N/A'}
-                              </div>
+                              </span>
                            </td>
                            <td className="px-4 py-4 whitespace-nowrap text-center w-24">
-                              <div className="text-sm text-gray-500">
+                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${subscriptionTypeColors[subscription.subscriptionType.toLowerCase() as SubscriptionType] || 'bg-gray-100 text-gray-800'
+                                 }`}>
                                  {subscription.subscriptionType.charAt(0).toUpperCase() + subscription.subscriptionType.slice(1)}
-                              </div>
+                              </span>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
                               <button

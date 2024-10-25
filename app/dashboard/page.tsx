@@ -11,8 +11,8 @@ import { FaPlus } from 'react-icons/fa'
 import Modal from '@/app/components/Modal'
 import { Subscription } from '@/lib/types'
 
-const SubscriptionList = dynamic(() => import('./SubscriptionList'), { ssr: false })
-const SubscriptionForm = dynamic(() => import('@/app/components/AddSubscriptionForm'), { ssr: false })
+const SubscriptionList = dynamic(() => import('./SubscriptionList'), { ssr: true })
+const SubscriptionForm = dynamic(() => import('@/app/components/AddSubscriptionForm'), { ssr: true })
 
 export default function DashboardPage() {
    const { user } = useUser()

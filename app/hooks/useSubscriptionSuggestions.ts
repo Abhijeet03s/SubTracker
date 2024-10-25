@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import { Subscription } from '@/lib/types';
 
 export function useSubscriptionSuggestions(

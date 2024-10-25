@@ -7,8 +7,8 @@ export default function Loading() {
             <Image
                src="/subtrack-logo.png"
                alt="Website Logo"
-               width={48}
-               height={48}
+               width={100}
+               height={100}
                className="mb-4"
             />
          </div>
