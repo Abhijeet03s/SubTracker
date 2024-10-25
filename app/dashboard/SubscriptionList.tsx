@@ -55,6 +55,7 @@ export default function SubscriptionList({
    const [isModalOpen, setIsModalOpen] = useState(false)
    const [categoryFilter, setCategoryFilter] = useState('')
    const [subscriptionTypeFilter, setSubscriptionTypeFilter] = useState('')
+   const [costFilter, setCostFilter] = useState('')
    const suggestionsRef = useRef<HTMLDivElement>(null)
 
    const {
@@ -104,7 +105,7 @@ export default function SubscriptionList({
       setIsModalOpen(false)
    }
 
-   const handleUpdate = async (updatedSubscription: Subscription) => {
+   const handleUpdateSubscription = async (updatedSubscription: Subscription) => {
       try {
          await onUpdate(updatedSubscription.id, updatedSubscription);
          const updatedSubscriptions = subscriptions.map(sub =>
@@ -117,7 +118,7 @@ export default function SubscriptionList({
       }
    };
 
-   const handleDelete = async (id: string) => {
+   const handleDeleteSubscription = async (id: string) => {
       try {
          await onDelete(id);
          const updatedSubscriptions = subscriptions.filter(sub => sub.id !== id);
@@ -193,6 +194,20 @@ export default function SubscriptionList({
                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-700">
                         <FaChevronDown className="h-3 w-3" />
                      </div>
+                  </div>
+               </div>
+               <div className="relative w-1/3">
+                  <select
+                     value={costFilter}
+                     onChange={(e) => setCostFilter(e.target.value)}
+                     className="w-full p-2 pr-8 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-400 transition-all duration-200 appearance-none text-center cursor-pointer"
+                  >
+                     <option value="" className="text-center">All Costs</option>
+                     <option value="lowToHigh">Low to High</option>
+                     <option value="highToLow">High to Low</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-700">
+                     <FaChevronDown className="h-3 w-3" />
                   </div>
                </div>
             </div>
@@ -283,8 +298,8 @@ export default function SubscriptionList({
             isOpen={isModalOpen}
             onClose={handleCloseModal}
             subscription={editingSubscription}
-            onUpdate={handleUpdate}
-            onDelete={handleDelete}
+            onUpdate={handleUpdateSubscription}
+            onDelete={handleDeleteSubscription}
          />
       </div>
    )
