@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth, clerkClient } from '@clerk/nextjs/server';
 import { upsertEventInCalendar } from '@/lib/googleCalendar';
 
+const client = clerkClient()
+
 export async function POST(request: NextRequest) {
    try {
       const { userId } = auth();
@@ -20,7 +22,7 @@ export async function POST(request: NextRequest) {
          return NextResponse.json({ error: 'Invalid parameters' }, { status: 400 });
       }
 
-      const tokens = await clerkClient().users.getUserOauthAccessToken(userId, 'oauth_google');
+      const tokens = await client.users.getUserOauthAccessToken(userId, 'oauth_google');
 
       if (!tokens || tokens.data.length === 0) {
          return NextResponse.json({ error: 'No Google access token found' }, { status: 400 });

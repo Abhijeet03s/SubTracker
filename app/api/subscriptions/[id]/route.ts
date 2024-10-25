@@ -4,6 +4,8 @@ import prisma from '@/lib/prisma'
 import { auth, clerkClient } from '@clerk/nextjs/server'
 import { upsertEventInCalendar, deleteEventInCalendar } from '@/lib/googleCalendar'
 
+const client = clerkClient()
+
 const updateSubscriptionSchema = z.object({
    serviceName: z.string().min(1).optional(),
    startDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
@@ -82,7 +84,7 @@ export async function PUT(
       })
 
       if (updatedSubscription.calendarEventId) {
-         const tokens = await clerkClient().users.getUserOauthAccessToken(userId, 'oauth_google')
+         const tokens = await client.users.getUserOauthAccessToken(userId, 'oauth_google')
          if (tokens && tokens.data.length > 0) {
             const googleAccessToken = tokens.data[0].token
 
@@ -143,7 +145,7 @@ export async function DELETE(
       const { calendarEventId } = subscription
 
       if (calendarEventId) {
-         const tokens = await clerkClient().users.getUserOauthAccessToken(userId, 'oauth_google')
+         const tokens = await client.users.getUserOauthAccessToken(userId, 'oauth_google')
          if (tokens && tokens.data.length > 0) {
             const googleAccessToken = tokens.data[0].token
             try {

@@ -4,6 +4,8 @@ import { z } from 'zod';
 import { auth, clerkClient } from '@clerk/nextjs/server';
 import { upsertEventInCalendar } from '@/lib/googleCalendar';
 
+const client = clerkClient()
+
 const subscriptionSchema = z.object({
    serviceName: z.string().min(1),
    startDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
@@ -56,7 +58,7 @@ export async function POST(request: NextRequest) {
          },
       });
 
-      const tokens = await clerkClient().users.getUserOauthAccessToken(userId, 'oauth_google');
+      const tokens = await client.users.getUserOauthAccessToken(userId, 'oauth_google');
       if (!tokens || tokens.data.length === 0) {
          return NextResponse.json({ error: 'No Google access token found' }, { status: 400 });
       }

@@ -3,7 +3,6 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { FaClock, FaChartLine, FaBell, FaDesktop } from 'react-icons/fa';
 import { plusJakartaSans, zillaSlab } from '@/app/fonts/fonts';
-import Image from 'next/image';
 
 const features = [
    {
@@ -89,14 +88,6 @@ export default function Features() {
 
    return (
       <section className="py-20 md:py-32 bg-gradient-to-b from-white to-gray-100 relative overflow-hidden">
-         <div className="absolute inset-0 z-0">
-            <Image
-               src="/path/to/background-pattern.svg"
-               alt="Background pattern"
-               className="object-cover opacity-5"
-               fill
-            />
-         </div>
          <motion.div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-purple-100 to-transparent" style={{ y }} />
          <div className="container mx-auto sm:max-w-7xl px-4 sm:px-4 relative z-10">
             <motion.div
