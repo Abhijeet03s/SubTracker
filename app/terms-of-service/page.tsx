@@ -6,7 +6,7 @@ export default function TermsOfService() {
       <main className="bg-white min-h-screen">
          <div className="container mx-auto px-4 max-w-4xl py-12">
             <h1 className={`${zillaSlab.className} text-4xl font-bold text-rich-black mb-8 text-center`}>
-               Terms and Conditions
+               Terms Of Service
             </h1>
 
             <div className={`${plusJakartaSans.className} prose prose-lg max-w-none`}>
