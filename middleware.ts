@@ -2,7 +2,17 @@ import { authMiddleware } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
 export default authMiddleware({
-   publicRoutes: ['/sign-in(.*)', '/', '/api/auth/google', '/api/auth/google/callback'],
+   publicRoutes: [
+      '/sign-in(.*)',
+      '/',
+      '/api/auth/google',
+      '/api/auth/google/callback',
+      '/about',
+      '/features',
+      '/privacy-policy',
+      '/terms-of-service',
+      '/cookie-policy'
+   ],
    ignoredRoutes: ['/api/webhooks(.*)'],
    afterAuth(auth: { userId: any; isPublicRoute: any; }, req: { url: string | URL | undefined; nextUrl: { pathname: string; }; }) {
       if (!auth.userId && !auth.isPublicRoute) {
