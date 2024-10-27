@@ -1,4 +1,4 @@
-import { plusJakartaSans, zillaSlab } from '../fonts/fonts';
+import { plusJakartaSans, zillaSlab } from '../../fonts/fonts';
 import Link from 'next/link';
 
 export default function TermsOfService() {

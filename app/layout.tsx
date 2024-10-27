@@ -1,6 +1,5 @@
 import './globals.css';
 import { Analytics } from "@vercel/analytics/react"
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
 import Header from './components/Header';
@@ -33,7 +32,6 @@ export default function RootLayout({
           <Footer />
           <Toaster position="top-center" />
           <Analytics />
-          <SpeedInsights />
         </ClerkProvider>
       </body>
     </html>

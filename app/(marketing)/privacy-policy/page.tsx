@@ -1,4 +1,4 @@
-import { plusJakartaSans, zillaSlab } from '../fonts/fonts';
+import { plusJakartaSans, zillaSlab } from '../../fonts/fonts';
 
 export default function PrivacyPolicy() {
    return (

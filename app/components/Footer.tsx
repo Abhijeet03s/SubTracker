@@ -16,7 +16,6 @@ export default function Footer() {
                   <h4 className={`${zillaSlab.className} text-lg font-semibold mb-4`}>Quick Links</h4>
                   <ul className={`${plusJakartaSans.className} text-sm space-y-2`}>
                      <li><Link href="/" className="text-gray-400 hover:text-white transition-colors">Home</Link></li>
-                     <li><Link href="/about" className="text-gray-400 hover:text-white transition-colors">About Us</Link></li>
                      <li><Link href="/features" className="text-gray-400 hover:text-white transition-colors">Features</Link></li>
                   </ul>
                </div>
@@ -25,7 +24,6 @@ export default function Footer() {
                   <ul className={`${plusJakartaSans.className} text-sm space-y-2`}>
                      <li><Link href="/privacy-policy" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</Link></li>
                      <li><Link href="/terms-of-service" className="text-gray-400 hover:text-white transition-colors">Terms of Service</Link></li>
-                     <li><Link href="/cookie-policy" className="text-gray-400 hover:text-white transition-colors">Cookie Policy</Link></li>
                   </ul>
                </div>
                <div>
