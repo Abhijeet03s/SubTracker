@@ -126,6 +126,57 @@ export default function PrivacyPolicy() {
                               </ul>
                            </div>
                         </div>
+                        <div>
+                           <h4 className="text-lg font-semibold mb-3">Sharing and Transfer of Google User Data</h4>
+                           <div className="space-y-4">
+                              <p>When you use Google Sign-In with our Service, we collect only the necessary information required for authentication and basic profile details. Specifically:</p>
+                              <ul className="list-disc pl-6 space-y-2">
+                                 <li>Basic profile information (name and email)</li>
+                                 <li>Google Account ID for authentication purposes</li>
+                              </ul>
+
+                              <p>We want to be clear about how we handle your Google user data:</p>
+                              <ul className="list-disc pl-6 space-y-2">
+                                 <li>We do not share your Google user data with third parties except where necessary to provide our service or as required by law.</li>
+                                 <li>Any service providers we use must comply with our data protection requirements and can only use the data to provide services to us.</li>
+                                 <li>We do not sell your Google user data to any third parties.</li>
+                                 <li>We may transfer data to servers located in different countries, always ensuring appropriate safeguards are in place.</li>
+                              </ul>
+                           </div>
+                        </div>
+
+                        <div>
+                           <h4 className="text-lg font-semibold mb-3">Data Protection Mechanisms</h4>
+                           <div className="space-y-4">
+                              <p>We implement several security measures to protect your data, including:</p>
+                              <ul className="list-disc pl-6 space-y-2">
+                                 <li>Encryption of data in transit using SSL/TLS protocols</li>
+                                 <li>Secure storage of passwords using industry-standard hashing algorithms</li>
+                                 <li>Regular security audits and updates</li>
+                                 <li>Access controls and authentication mechanisms to prevent unauthorized access</li>
+                                 <li>Monitoring systems to detect and prevent potential security breaches</li>
+                              </ul>
+
+                              <p>For sensitive data, including Google user data, we implement additional protections:</p>
+                              <ul className="list-disc pl-6 space-y-2">
+                                 <li>End-to-end encryption for sensitive communications</li>
+                                 <li>Strict access controls limited to authorized personnel only</li>
+                                 <li>Regular security training for our team members</li>
+                                 <li>Immediate action on any suspected security incidents</li>
+                              </ul>
+                           </div>
+                        </div>
+
+                        <div>
+                           <h4 className="text-lg font-semibold mb-3">Data Retention and Deletion</h4>
+                           <div className="space-y-4">
+                              <p>Regarding Google user data specifically:</p>
+                              <ul className="list-disc pl-6 space-y-2">
+                                 <li>We retain Google user data only as long as necessary to provide our services. Users may request deletion of their data by contacting us at <a href="mailto:abhijeetsharma476@gmail.com" className="text-blue-600 hover:text-blue-800">abhijeetsharma476@gmail.com</a>. Upon termination of the user&apos;s account, all associated data is permanently deleted within 30 days, in line with Google&apos;s data retention policies.</li>
+                              </ul>
+                              <p>Please note that some information may be retained for legal, security, or business requirements, but we will inform you of any such retention when you request deletion.</p>
+                           </div>
+                        </div>
                      </div>
                   </section>
                </div>
