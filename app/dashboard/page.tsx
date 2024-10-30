@@ -10,6 +10,7 @@ import SubscriptionComparison from './SubscriptionComparison'
 import { FaPlus } from 'react-icons/fa'
 import Modal from '@/app/components/Modal'
 import { Subscription } from '@/lib/types'
+import DashboardLoading from './loading'
 
 const SubscriptionList = dynamic(() => import('./SubscriptionList'), { ssr: true })
 const SubscriptionForm = dynamic(() => import('@/app/components/AddSubscriptionForm'), { ssr: true })
@@ -18,10 +19,12 @@ export default function DashboardPage() {
    const { user } = useUser()
    const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
    const [isModalOpen, setIsModalOpen] = useState(false)
+   const [isLoading, setIsLoading] = useState(true)
 
    const { upsertCalendarEvent } = useAddToCalendar();
 
    const fetchSubscriptions = useCallback(async () => {
+      setIsLoading(true)
       try {
          const response = await fetch(`/api/subscriptions?userId=${user?.id}`)
          if (response.ok) {
@@ -32,6 +35,8 @@ export default function DashboardPage() {
          }
       } catch (error) {
          console.error('Error fetching subscriptions:', error)
+      } finally {
+         setIsLoading(false)
       }
    }, [user?.id])
 
@@ -40,6 +45,10 @@ export default function DashboardPage() {
          fetchSubscriptions()
       }
    }, [user, fetchSubscriptions])
+
+   if (isLoading) {
+      return <DashboardLoading />
+   }
 
    const addSubscription = async (newSubscription: Subscription) => {
       try {
