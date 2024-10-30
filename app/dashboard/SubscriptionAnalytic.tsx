@@ -63,7 +63,7 @@ export default function SubscriptionAnalytics({ subscriptions }: SubscriptionAna
          iconColor: 'text-green-600'
       },
       {
-         title: 'Top Spender',
+         title: 'Most Expensive',
          value: currentMonthData.mostExpensiveSub
             ? currentMonthData.mostExpensiveSub.serviceName.charAt(0).toUpperCase() +
             currentMonthData.mostExpensiveSub.serviceName.slice(1)

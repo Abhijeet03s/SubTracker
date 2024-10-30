@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useRef, useEffect } from 'react'
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { FaSearch, FaEllipsisH, FaChevronDown } from 'react-icons/fa'
 import { EditSubscriptionsModal } from '@/app/components/EditSubscriptionsModal'
 import { formatDate } from '@/app/utils/dateUtils'
@@ -14,17 +14,26 @@ import {
    subscriptionTypeColors,
    dateStatusColors
 } from '@/lib/constants';
+import { ConfirmationDialog } from '@/app/components/ConfirmationDialog';
+import { toast } from 'sonner';
 
 const getDateStatus = (endDate: string | null): DateStatus => {
    if (!endDate) return 'not-applicable';
 
-   const end = new Date(endDate);
-   const now = new Date();
-   const daysUntilEnd = Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+   try {
+      const end = new Date(endDate);
+      if (isNaN(end.getTime())) return 'not-applicable';
 
-   if (daysUntilEnd < 0) return 'expired';
-   if (daysUntilEnd <= 7) return 'ending-soon';
-   return 'active';
+      const now = new Date();
+      const daysUntilEnd = Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+      if (daysUntilEnd < 0) return 'expired';
+      if (daysUntilEnd <= 7) return 'ending-soon';
+      return 'active';
+   } catch (error) {
+      console.error('Error parsing date:', error);
+      return 'not-applicable';
+   }
 };
 
 export default function SubscriptionList({
@@ -40,6 +49,8 @@ export default function SubscriptionList({
    const [subscriptionTypeFilter, setSubscriptionTypeFilter] = useState('')
    const [costFilter, setCostFilter] = useState('')
    const suggestionsRef = useRef<HTMLDivElement>(null)
+   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+   const [subscriptionToDelete, setSubscriptionToDelete] = useState<Subscription | null>(null);
 
    const {
       searchTerm,
@@ -67,21 +78,21 @@ export default function SubscriptionList({
 
    const filteredSubscriptions = useMemo(() => {
       return subscriptions.filter(sub => {
-         const matchesSearch = sub.serviceName.toLowerCase().includes(searchTerm.toLowerCase());
-         const matchesCategory = categoryFilter === '' || sub.category.toLowerCase() === categoryFilter.toLowerCase();
-         const matchesType = subscriptionTypeFilter === '' || sub.subscriptionType.toLowerCase() === subscriptionTypeFilter.toLowerCase();
+         const matchesSearch = sub.serviceName?.toLowerCase().includes(searchTerm.toLowerCase());
+         const matchesCategory = !categoryFilter || sub.category?.toLowerCase() === categoryFilter.toLowerCase();
+         const matchesType = !subscriptionTypeFilter || sub.subscriptionType?.toLowerCase() === subscriptionTypeFilter.toLowerCase();
          return matchesSearch && matchesCategory && matchesType;
       }).sort((a, b) => {
-         if (categoryFilter === 'lowToHigh') return a.cost - b.cost;
-         if (categoryFilter === 'highToLow') return b.cost - a.cost;
+         if (costFilter === 'lowToHigh') return a.cost - b.cost;
+         if (costFilter === 'highToLow') return b.cost - a.cost;
          return 0;
       });
-   }, [subscriptions, searchTerm, categoryFilter, subscriptionTypeFilter]);
+   }, [subscriptions, searchTerm, categoryFilter, subscriptionTypeFilter, costFilter]);
 
-   const handleOpenModal = (subscription: Subscription) => {
+   const handleOpenModal = useCallback((subscription: Subscription) => {
       setEditingSubscription(subscription)
       setIsModalOpen(true)
-   }
+   }, []);
 
    const handleCloseModal = () => {
       setEditingSubscription(null)
@@ -96,8 +107,10 @@ export default function SubscriptionList({
          );
          onSubscriptionsChange(updatedSubscriptions);
          await onCalendarUpdate(updatedSubscription);
+         toast.success('Subscription updated successfully');
       } catch (error) {
          console.error('Error updating subscription:', error);
+         toast.error('Failed to update subscription');
       }
    };
 
@@ -106,8 +119,20 @@ export default function SubscriptionList({
          await onDelete(id);
          const updatedSubscriptions = subscriptions.filter(sub => sub.id !== id);
          onSubscriptionsChange(updatedSubscriptions);
+         toast.success('Subscription deleted successfully');
+         setIsDeleteConfirmOpen(false);
+         handleCloseModal()
       } catch (error) {
          console.error('Error deleting subscription:', error);
+         toast.error('Failed to delete subscription');
+      }
+   };
+
+   const handleDeleteClick = async (id: string): Promise<void> => {
+      const subscription = subscriptions.find(sub => sub.id === id);
+      if (subscription) {
+         setSubscriptionToDelete(subscription);
+         setIsDeleteConfirmOpen(true);
       }
    };
 
@@ -118,6 +143,8 @@ export default function SubscriptionList({
             <div className="w-full md:w-1/2 relative">
                <input
                   type="text"
+                  aria-label="Search subscriptions"
+                  role="searchbox"
                   placeholder="Search subscriptions..."
                   value={searchTerm}
                   onChange={handleSearchChange}
@@ -146,6 +173,7 @@ export default function SubscriptionList({
                <div className="relative w-1/3">
                   <div className="relative">
                      <select
+                        aria-label="Filter by category"
                         value={categoryFilter}
                         onChange={(e) => setCategoryFilter(e.target.value)}
                         className="w-full p-2 pr-8 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-400 transition-all duration-200 appearance-none text-center cursor-pointer"
@@ -166,6 +194,7 @@ export default function SubscriptionList({
                <div className="relative w-1/3">
                   <div className="relative">
                      <select
+                        aria-label="Filter by subscription type"
                         value={subscriptionTypeFilter}
                         onChange={(e) => setSubscriptionTypeFilter(e.target.value)}
                         className="w-full p-2 pr-8 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-400 transition-all duration-200 appearance-none text-center cursor-pointer"
@@ -181,6 +210,7 @@ export default function SubscriptionList({
                </div>
                <div className="relative w-1/3">
                   <select
+                     aria-label="Filter by cost"
                      value={costFilter}
                      onChange={(e) => setCostFilter(e.target.value)}
                      className="w-full p-2 pr-8 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-400 transition-all duration-200 appearance-none text-center cursor-pointer"
@@ -282,7 +312,23 @@ export default function SubscriptionList({
             onClose={handleCloseModal}
             subscription={editingSubscription}
             onUpdate={handleUpdateSubscription}
-            onDelete={handleDeleteSubscription}
+            onDelete={handleDeleteClick}
+         />
+
+         <ConfirmationDialog
+            isOpen={isDeleteConfirmOpen}
+            onClose={() => setIsDeleteConfirmOpen(false)}
+            onConfirm={async () => {
+               if (subscriptionToDelete) {
+                  await handleDeleteSubscription(subscriptionToDelete.id);
+               }
+            }}
+            title={`Delete ${subscriptionToDelete?.serviceName} Subscription`}
+            message={
+               <span>
+                  Are you sure you want to delete your <span className="font-bold">{subscriptionToDelete?.serviceName}</span> subscription?
+               </span>
+            }
          />
       </div>
    )

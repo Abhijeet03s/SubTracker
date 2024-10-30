@@ -4,6 +4,7 @@ import { FaCalendarPlus, FaChevronDown } from 'react-icons/fa';
 import { Loader } from '@/app/components/ui/loader';
 import { parseDate } from '@/app/utils/dateUtils';
 import { SubscriptionFormProps } from '@/lib/types';
+import { toast } from 'sonner';
 
 export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
    const [serviceName, setServiceName] = useState('')
@@ -15,7 +16,10 @@ export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
 
    const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
-      if (!startDate) return;
+      if (!startDate) {
+         toast.error('Please select a start date');
+         return;
+      }
       const startDateISO = parseDate(startDate);
       const endDateISO = parseDate(new Date(new Date(startDate).getTime() + (subscriptionType === 'trial' ? 6 : 29) * 24 * 60 * 60 * 1000).toISOString());
       const newSubscription = {
@@ -26,12 +30,18 @@ export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
          cost: parseFloat(cost) || 0,
          subscriptionType,
       }
-      await onSubmit(newSubscription)
-      setServiceName('')
-      setStartDate('')
-      setCategory('')
-      setCost('')
-      setSubscriptionType('trial')
+      try {
+         await onSubmit(newSubscription);
+         toast.success('Subscription added successfully');
+         setServiceName('')
+         setStartDate('')
+         setCategory('')
+         setCost('')
+         setSubscriptionType('trial')
+      } catch (error) {
+         console.error('Error adding subscription:', error);
+         toast.error('Failed to add subscription');
+      }
    }
 
    return (

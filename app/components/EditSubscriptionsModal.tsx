@@ -3,6 +3,7 @@ import { Loader } from './ui/loader';
 import { FaTimes } from 'react-icons/fa';
 import { formatDate, parseDate } from '@/app/utils/dateUtils';
 import { Subscription, EditSubscriptionsModalProps } from '@/lib/types';
+import { toast } from 'sonner';
 
 export const EditSubscriptionsModal: React.FC<EditSubscriptionsModalProps> = ({
    isOpen,
@@ -41,9 +42,11 @@ export const EditSubscriptionsModal: React.FC<EditSubscriptionsModalProps> = ({
                endDate: endDate.toISOString(),
             };
             await onUpdate(updatedSubscription);
+            toast.success('Subscription updated successfully');
             onClose();
          } catch (error) {
             console.error('Error updating subscription:', error);
+            toast.error('Failed to update subscription');
             setError('Failed to update subscription. Please try again.');
          } finally {
             setIsUpdating(false);
@@ -51,21 +54,11 @@ export const EditSubscriptionsModal: React.FC<EditSubscriptionsModalProps> = ({
       }
    }, [editingSubscription, onUpdate, onClose]);
 
-   const handleDelete = useCallback(async () => {
+   const handleDelete = useCallback(() => {
       if (editingSubscription) {
-         setIsDeleting(true);
-         setError(null);
-         try {
-            await onDelete(editingSubscription.id);
-            onClose();
-         } catch (error) {
-            console.error('Error deleting subscription:', error);
-            setError('Failed to delete subscription. Please try again.');
-         } finally {
-            setIsDeleting(false);
-         }
+         onDelete(editingSubscription.id);
       }
-   }, [editingSubscription, onDelete, onClose]);
+   }, [editingSubscription, onDelete]);
 
    if (!isOpen || !editingSubscription) return null;
 
