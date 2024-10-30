@@ -95,7 +95,11 @@ export async function deleteEventInCalendar(eventId: string, accessToken: string
          eventId,
       });
       console.log(`Deleted Google Calendar event with ID: ${eventId}`);
-   } catch (error) {
+   } catch (error: any) {
+      if (error.status === 410) {
+         console.log(`Event ${eventId} was already deleted from Google Calendar`);
+         return;
+      }
       console.error('Error deleting calendar event:', error);
       throw error;
    }

@@ -1,3 +1,5 @@
+import { loaderSizes } from '@/lib/constants';
+
 interface LoaderProps {
    size?: 'small' | 'medium' | 'large';
    color?: string;
@@ -5,15 +7,9 @@ interface LoaderProps {
 }
 
 export const Loader: React.FC<LoaderProps> = ({ size = 'medium', color = 'currentColor' }) => {
-   const sizeMap = {
-      small: 'w-4 h-4',
-      medium: 'w-6 h-6',
-      large: 'w-8 h-8',
-   };
-
    return (
       <svg
-         className={`animate-spin ${sizeMap[size]}`}
+         className={`animate-spin ${loaderSizes[size]}`}
          xmlns="http://www.w3.org/2000/svg"
          fill="none"
          viewBox="0 0 24 24"

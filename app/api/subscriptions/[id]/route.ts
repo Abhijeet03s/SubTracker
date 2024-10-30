@@ -20,10 +20,7 @@ const updateSubscriptionSchema = z.object({
    calendarEventId: z.string().optional(),
 })
 
-export async function GET(
-   request: NextRequest,
-   { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
    try {
       const { userId } = auth()
       if (!userId) {
@@ -88,7 +85,6 @@ export async function PUT(
          if (tokens && tokens.data.length > 0) {
             const googleAccessToken = tokens.data[0].token
 
-            // Prepare event details
             const summary = `Subscription Alert: ${updatedSubscription.serviceName} ${updatedSubscription.subscriptionType === 'trial' ? 'Trial' : 'Subscription'} Ending Soon`
             const description = `Your ${updatedSubscription.subscriptionType === 'trial' ? 'free trial' : 'subscription'} for ${updatedSubscription.serviceName} ends tomorrow. Please review your subscription status and decide whether to cancel or continue your plan.\n\nCategory: ${updatedSubscription.category}\nMonthly Cost: $${updatedSubscription.cost.toFixed(2)}\n\nRemember to make your decision before the ${updatedSubscription.subscriptionType === 'trial' ? 'trial' : 'subscription'} ends to avoid any unexpected charges.`
             const reminderDateTime = new Date(updatedSubscription.endDate.getTime() - 24 * 60 * 60 * 1000)

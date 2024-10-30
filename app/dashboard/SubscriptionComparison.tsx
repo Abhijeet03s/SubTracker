@@ -3,12 +3,12 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 import { ArrowDownTrayIcon, ChartBarIcon, ChartPieIcon } from '@heroicons/react/20/solid';
 import { useMemo, useState } from 'react';
 import { SubscriptionComparisonProps, CategoryMonthlyTotals } from '@/lib/types';
+import { baseChartColors, monthNames } from '@/lib/constants';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
 export default function SubscriptionComparison({ subscriptions }: SubscriptionComparisonProps) {
    const [showCategoryView, setShowCategoryView] = useState(false);
-   const monthNames = useMemo(() => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], []);
    const currentYear = new Date().getFullYear();
 
    const monthlyTotalCosts = useMemo(() => monthNames.map((_, monthIndex) => {
@@ -22,7 +22,7 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
          }
          return total;
       }, 0);
-   }), [subscriptions, currentYear, monthNames]);
+   }), [subscriptions, currentYear]);
 
    const categoryMonthlyTotals = useMemo<CategoryMonthlyTotals>(() => {
       const totals: CategoryMonthlyTotals = {};
@@ -108,7 +108,7 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
             }],
          };
       }
-   }, [showCategoryView, monthNames, monthlyTotalCosts, categoryMonthlyTotals]);
+   }, [showCategoryView, monthlyTotalCosts, categoryMonthlyTotals]);
 
    const barChartOptions = useMemo(() => {
       return {
@@ -214,20 +214,7 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
    }, []);
 
    function generateCategoryColors(count: number): string[] {
-      const baseColors = [
-         'rgba(255, 99, 132, 0.8)',
-         'rgba(54, 162, 235, 0.8)',
-         'rgba(255, 206, 86, 0.8)',
-         'rgba(75, 192, 192, 0.8)',
-         'rgba(153, 102, 255, 0.8)',
-         'rgba(255, 159, 64, 0.8)',
-         'rgba(199, 199, 199, 0.8)',
-         'rgba(83, 102, 255, 0.8)',
-         'rgba(255, 102, 255, 0.8)',
-         'rgba(102, 255, 178, 0.8)',
-      ];
-
-      return baseColors.slice(0, count);
+      return baseChartColors.slice(0, count);
    }
 
    return (
