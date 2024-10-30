@@ -32,7 +32,7 @@ export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
       }
       try {
          await onSubmit(newSubscription);
-         toast.success('Subscription added successfully');
+         toast.success(`Subscription for "${newSubscription.serviceName}" has been added successfully.`);
          setServiceName('')
          setStartDate('')
          setCategory('')

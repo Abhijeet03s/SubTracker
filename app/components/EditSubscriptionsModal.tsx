@@ -3,7 +3,6 @@ import { Loader } from './ui/loader';
 import { FaTimes } from 'react-icons/fa';
 import { formatDate, parseDate } from '@/app/utils/dateUtils';
 import { Subscription, EditSubscriptionsModalProps } from '@/lib/types';
-import { toast } from 'sonner';
 
 export const EditSubscriptionsModal: React.FC<EditSubscriptionsModalProps> = ({
    isOpen,
@@ -42,11 +41,9 @@ export const EditSubscriptionsModal: React.FC<EditSubscriptionsModalProps> = ({
                endDate: endDate.toISOString(),
             };
             await onUpdate(updatedSubscription);
-            toast.success('Subscription updated successfully');
             onClose();
          } catch (error) {
             console.error('Error updating subscription:', error);
-            toast.error('Failed to update subscription');
             setError('Failed to update subscription. Please try again.');
          } finally {
             setIsUpdating(false);

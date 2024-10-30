@@ -67,8 +67,6 @@ export const useAddToCalendar = () => {
             throw new Error(`Failed to upsert event in calendar: ${data.error}`);
          }
 
-         toast.success(`Successfully upserted calendar event for ${serviceName}!`);
-
          return data.eventId;
       } catch (error) {
          console.error('Error upserting calendar event:', error);

@@ -43,12 +43,12 @@ export default function SubscriptionList({
    onSubscriptionsChange,
    onCalendarUpdate
 }: SubscriptionListProps) {
-   const [editingSubscription, setEditingSubscription] = useState<Subscription | null>(null)
-   const [isModalOpen, setIsModalOpen] = useState(false)
-   const [categoryFilter, setCategoryFilter] = useState('')
-   const [subscriptionTypeFilter, setSubscriptionTypeFilter] = useState('')
-   const [costFilter, setCostFilter] = useState('')
-   const suggestionsRef = useRef<HTMLDivElement>(null)
+   const [editingSubscription, setEditingSubscription] = useState<Subscription | null>(null);
+   const [isModalOpen, setIsModalOpen] = useState(false);
+   const [categoryFilter, setCategoryFilter] = useState('');
+   const [subscriptionTypeFilter, setSubscriptionTypeFilter] = useState('');
+   const [costFilter, setCostFilter] = useState('');
+   const suggestionsRef = useRef<HTMLDivElement>(null);
    const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
    const [subscriptionToDelete, setSubscriptionToDelete] = useState<Subscription | null>(null);
 
@@ -61,43 +61,45 @@ export default function SubscriptionList({
       handleSuggestionClick,
       handleKeyDown,
       selectedSuggestionIndex
-   } = useSubscriptionSuggestions(subscriptions)
+   } = useSubscriptionSuggestions(subscriptions);
 
    useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
          if (suggestionsRef.current && !suggestionsRef.current.contains(event.target as Node)) {
-            setShowSuggestions(false)
+            setShowSuggestions(false);
          }
-      }
+      };
 
-      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('mousedown', handleClickOutside);
       return () => {
-         document.removeEventListener('mousedown', handleClickOutside)
-      }
-   }, [setShowSuggestions])
+         document.removeEventListener('mousedown', handleClickOutside);
+      };
+   }, [setShowSuggestions]);
 
    const filteredSubscriptions = useMemo(() => {
-      return subscriptions.filter(sub => {
-         const matchesSearch = sub.serviceName?.toLowerCase().includes(searchTerm.toLowerCase());
-         const matchesCategory = !categoryFilter || sub.category?.toLowerCase() === categoryFilter.toLowerCase();
-         const matchesType = !subscriptionTypeFilter || sub.subscriptionType?.toLowerCase() === subscriptionTypeFilter.toLowerCase();
-         return matchesSearch && matchesCategory && matchesType;
-      }).sort((a, b) => {
-         if (costFilter === 'lowToHigh') return a.cost - b.cost;
-         if (costFilter === 'highToLow') return b.cost - a.cost;
-         return 0;
-      });
+      return subscriptions
+         .filter(sub => {
+            const matchesSearch = sub.serviceName?.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesCategory = !categoryFilter || sub.category?.toLowerCase() === categoryFilter.toLowerCase();
+            const matchesType = !subscriptionTypeFilter || sub.subscriptionType?.toLowerCase() === subscriptionTypeFilter.toLowerCase();
+            return matchesSearch && matchesCategory && matchesType;
+         })
+         .sort((a, b) => {
+            if (costFilter === 'lowToHigh') return a.cost - b.cost;
+            if (costFilter === 'highToLow') return b.cost - a.cost;
+            return 0;
+         });
    }, [subscriptions, searchTerm, categoryFilter, subscriptionTypeFilter, costFilter]);
 
    const handleOpenModal = useCallback((subscription: Subscription) => {
-      setEditingSubscription(subscription)
-      setIsModalOpen(true)
+      setEditingSubscription(subscription);
+      setIsModalOpen(true);
    }, []);
 
    const handleCloseModal = () => {
-      setEditingSubscription(null)
-      setIsModalOpen(false)
-   }
+      setEditingSubscription(null);
+      setIsModalOpen(false);
+   };
 
    const handleUpdateSubscription = async (updatedSubscription: Subscription) => {
       try {
@@ -107,24 +109,25 @@ export default function SubscriptionList({
          );
          onSubscriptionsChange(updatedSubscriptions);
          await onCalendarUpdate(updatedSubscription);
-         toast.success('Subscription updated successfully');
+         toast.success(`Subscription for "${updatedSubscription.serviceName}" has been updated successfully.`);
       } catch (error) {
          console.error('Error updating subscription:', error);
-         toast.error('Failed to update subscription');
+         toast.error(`Failed to update subscription for "${updatedSubscription.serviceName}". Please try again.`);
       }
    };
 
    const handleDeleteSubscription = async (id: string) => {
       try {
          await onDelete(id);
+         const deletedSubscription = subscriptions.find(sub => sub.id === id);
          const updatedSubscriptions = subscriptions.filter(sub => sub.id !== id);
          onSubscriptionsChange(updatedSubscriptions);
-         toast.success('Subscription deleted successfully');
+         toast.success(`Subscription for "${deletedSubscription?.serviceName}" has been deleted successfully.`);
          setIsDeleteConfirmOpen(false);
-         handleCloseModal()
+         handleCloseModal();
       } catch (error) {
          console.error('Error deleting subscription:', error);
-         toast.error('Failed to delete subscription');
+         toast.error('Failed to delete subscription. Please try again.');
       }
    };
 
@@ -260,7 +263,9 @@ export default function SubscriptionList({
                      {filteredSubscriptions.map((subscription) => (
                         <tr key={subscription.id} className="hover:bg-gray-100">
                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                              <div className="text-sm font-medium text-gray-900">{subscription.serviceName.charAt(0).toUpperCase() + subscription.serviceName.slice(1)}</div>
+                              <div className="text-sm font-medium text-gray-900">
+                                 {subscription.serviceName.charAt(0).toUpperCase() + subscription.serviceName.slice(1)}
+                              </div>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-center">
                               <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${categoryColors[subscription.category.toLowerCase() as CategoryType] || 'bg-gray-100 text-gray-800'
@@ -323,13 +328,13 @@ export default function SubscriptionList({
                   await handleDeleteSubscription(subscriptionToDelete.id);
                }
             }}
-            title={`Delete ${subscriptionToDelete?.serviceName} Subscription`}
+            title={`Delete "${subscriptionToDelete?.serviceName}" Subscription`}
             message={
                <span>
-                  Are you sure you want to delete your <span className="font-bold">{subscriptionToDelete?.serviceName}</span> subscription?
+                  Are you sure you want to delete your <span className="font-bold">{subscriptionToDelete?.serviceName}</span> subscription? This action cannot be undone.
                </span>
             }
          />
       </div>
-   )
+   );
 }
