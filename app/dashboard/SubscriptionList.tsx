@@ -268,9 +268,11 @@ export default function SubscriptionList({
                               </div>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${categoryColors[subscription.category.toLowerCase() as CategoryType] || 'bg-gray-100 text-gray-800'
-                                 }`}>
-                                 {subscription.category}
+                              <span
+                                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                    ${categoryColors[subscription.category?.toLowerCase() as CategoryType] || 'bg-gray-100 text-gray-800'}`}
+                              >
+                                 {subscription.category?.charAt(0).toUpperCase() + subscription.category?.slice(1) || 'Other'}
                               </span>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-center">
@@ -286,13 +288,15 @@ export default function SubscriptionList({
                               </div>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${dateStatusColors[getDateStatus(subscription.endDate)]
-                                 }`}>
+                              <span
+                                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                    ${dateStatusColors[getDateStatus(subscription.endDate)] || 'bg-gray-100 text-gray-800'}`}
+                              >
                                  {subscription.endDate ? formatDate(subscription.endDate) : 'N/A'}
                               </span>
                            </td>
                            <td className="px-4 py-4 whitespace-nowrap text-center w-24">
-                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${subscriptionTypeColors[subscription.subscriptionType.toLowerCase() as SubscriptionType] || 'bg-gray-100 text-gray-800'
+                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${subscriptionTypeColors[subscription.subscriptionType.toLowerCase() as SubscriptionType]
                                  }`}>
                                  {subscription.subscriptionType.charAt(0).toUpperCase() + subscription.subscriptionType.slice(1)}
                               </span>

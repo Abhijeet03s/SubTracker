@@ -118,7 +118,7 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
             y: {
                beginAtZero: true,
                ticks: {
-                  callback: (value: number) => `$${value.toLocaleString()}`,
+                  callback: (value: number) => `₹${value.toLocaleString()}`,
                   font: {
                      size: 12,
                   },
@@ -163,9 +163,9 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
                callbacks: {
                   label: (context: any) => {
                      if (showCategoryView) {
-                        return `${context.dataset.label}: $${context.parsed.y.toFixed(2)}`;
+                        return `${context.dataset.label}: ₹${context.parsed.y.toFixed(2)}`;
                      }
-                     return `$${context.parsed.y.toFixed(2)}`;
+                     return `₹${context.parsed.y.toFixed(2)}`;
                   },
                },
             },
@@ -206,7 +206,7 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
             },
             tooltip: {
                callbacks: {
-                  label: (context: any) => `$${context.parsed.toFixed(2)}`,
+                  label: (context: any) => `₹${context.parsed.toFixed(2)}`,
                },
             },
          },

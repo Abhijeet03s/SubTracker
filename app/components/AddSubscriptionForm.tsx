@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useAddToCalendar } from '../hooks/useAddToCalendar';
 import { FaCalendarPlus, FaChevronDown } from 'react-icons/fa';
 import { Loader } from '@/app/components/ui/loader';
 import { parseDate } from '@/app/utils/dateUtils';
@@ -12,10 +11,11 @@ export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
    const [category, setCategory] = useState('')
    const [cost, setCost] = useState('')
    const [subscriptionType, setSubscriptionType] = useState('trial')
-   const { isAddingToCalendar } = useAddToCalendar()
+   const [isSubmitting, setIsSubmitting] = useState(false)
 
    const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
+      setIsSubmitting(true)
       if (!startDate) {
          toast.error('Please select a start date');
          return;
@@ -41,6 +41,8 @@ export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
       } catch (error) {
          console.error('Error adding subscription:', error);
          toast.error('Failed to add subscription');
+      } finally {
+         setIsSubmitting(false)
       }
    }
 
@@ -124,11 +126,11 @@ export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
          <div className="mt-8">
             <button
                type="submit"
-               disabled={isAddingToCalendar}
-               className="w-full px-6 py-3 bg-blue-600 text-white text-base font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center"
+               disabled={isSubmitting}
+               className="w-full px-6 py-3 bg-blue-600 text-white text-base font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:ring-offset-1 transition-colors duration-200 flex items-center justify-center gap-2 disabled:opacity-70"
             >
-               {isAddingToCalendar ? <Loader size="small" className="animate-spin mr-2" /> : <FaCalendarPlus className="mr-2" />}
-               {isAddingToCalendar ? 'Adding to Calendar...' : 'Add Subscription'}
+               {isSubmitting ? <Loader size="small" className="animate-spin" /> : <FaCalendarPlus />}
+               {isSubmitting ? 'Adding Subscription...' : 'Add Subscription'}
             </button>
          </div>
       </form>

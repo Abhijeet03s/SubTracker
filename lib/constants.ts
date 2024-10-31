@@ -1,7 +1,9 @@
+import { FaClock, FaChartLine, FaBell, FaDesktop } from 'react-icons/fa';
+
 // Subscription Types
 export type SubscriptionType = 'trial' | 'monthly';
 export type CategoryType = 'ecommerce' | 'entertainment' | 'gaming' | 'lifestyle' | 'music' | 'other';
-export type DateStatus = 'expired' | 'ending-soon' | 'active' | 'not-applicable';
+export type DateStatus = 'active' | 'ending-soon' | 'expired' | 'not-applicable';
 
 // Color mappings
 export const categoryColors: Record<CategoryType, string> = {
@@ -48,3 +50,44 @@ export const loaderSizes = {
 
 // Month Names
 export const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+// Features
+export const features = [
+   {
+      icon: FaClock,
+      title: 'Smart Subscription Tracking',
+      description: 'Effortlessly monitor all your subscriptions, including trial periods and short-term plans.',
+      details: [
+         'Centralized dashboard for all subscriptions',
+         'Track 7-day trial periods and 1-month subscriptions',
+         'Automatic categorization of subscriptions',
+      ],
+   },
+   {
+      icon: FaChartLine,
+      title: 'Insightful Analytics',
+      description: 'Gain valuable insights into your spending habits with detailed charts and reports.',
+      details: [
+         'Monthly and yearly spending breakdowns',
+         'Category-wise expense analysis',
+      ],
+   },
+   {
+      icon: FaBell,
+      title: 'Smart Notifications',
+      description: 'Receive timely alerts through Google Calendar and Email before subscription deadlines.',
+      details: [
+         'Subscriptions synced with Google Calendar for tracking',
+         'Email reminders sent a day before deadlines',
+      ],
+   },
+   {
+      icon: FaDesktop,
+      title: 'Responsive Design',
+      description: 'Access SubTracker seamlessly across all your devices with our responsive web application.',
+      details: [
+         'Optimized for desktop, tablet, and mobile',
+         'Consistent experience across all devices',
+      ],
+   },
+];

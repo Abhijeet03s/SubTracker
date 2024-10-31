@@ -1,48 +1,8 @@
 'use client';
 
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { FaClock, FaChartLine, FaBell, FaDesktop } from 'react-icons/fa';
 import { plusJakartaSans, zillaSlab } from '@/app/fonts/fonts';
-
-const features = [
-   {
-      icon: FaClock,
-      title: 'Smart Subscription Tracking',
-      description: 'Effortlessly monitor all your subscriptions, including trial periods and short-term plans.',
-      details: [
-         'Centralized dashboard for all subscriptions',
-         'Track 7-day trial periods and 1-month subscriptions',
-         'Automatic categorization of subscriptions',
-      ],
-   },
-   {
-      icon: FaChartLine,
-      title: 'Insightful Analytics',
-      description: 'Gain valuable insights into your spending habits with detailed charts and reports.',
-      details: [
-         'Monthly and yearly spending breakdowns',
-         'Category-wise expense analysis',
-      ],
-   },
-   {
-      icon: FaBell,
-      title: 'Smart Notifications',
-      description: 'Receive timely alerts through Google Calendar and Email before subscription deadlines.',
-      details: [
-         'Subscriptions synced with Google Calendar for tracking',
-         'Email reminders sent a day before deadlines',
-      ],
-   },
-   {
-      icon: FaDesktop,
-      title: 'Responsive Design',
-      description: 'Access SubTracker seamlessly across all your devices with our responsive web application.',
-      details: [
-         'Optimized for desktop, tablet, and mobile',
-         'Consistent experience across all devices',
-      ],
-   },
-];
+import { features } from '@/lib/constants';
 
 const FeatureCard = ({ icon: Icon, title, description, details }: { icon: React.ElementType, title: string, description: string, details: string[] }) => (
    <motion.div
@@ -87,7 +47,7 @@ export default function Features() {
    const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
 
    return (
-      <section className="py-20 md:py-32 bg-gradient-to-b from-white to-gray-100 relative overflow-hidden">
+      <section id="features" className="py-20 md:py-32 bg-gradient-to-b from-white to-gray-100 relative overflow-hidden">
          <motion.div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-purple-100 to-transparent" style={{ y }} />
          <div className="container mx-auto sm:max-w-7xl px-4 sm:px-4 relative z-10">
             <motion.div

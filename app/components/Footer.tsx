@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { plusJakartaSans, zillaSlab } from '../fonts/fonts';
 
@@ -16,7 +18,10 @@ export default function Footer() {
                   <h4 className={`${zillaSlab.className} text-lg font-semibold mb-4`}>Quick Links</h4>
                   <ul className={`${plusJakartaSans.className} text-sm space-y-2`}>
                      <li><Link href="/" className="text-gray-400 hover:text-white transition-colors">Home</Link></li>
-                     <li><Link href="/features" className="text-gray-400 hover:text-white transition-colors">Features</Link></li>
+                     <li><a href="#features" className="text-gray-400 hover:text-white transition-colors" onClick={(e) => {
+                        e.preventDefault();
+                        document.querySelector('#features')?.scrollIntoView({ behavior: 'smooth' });
+                     }}>Features</a></li>
                   </ul>
                </div>
                <div>
