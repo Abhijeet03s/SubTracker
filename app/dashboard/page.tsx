@@ -10,9 +10,9 @@ import SubscriptionComparison from './SubscriptionComparison'
 import { FaPlus } from 'react-icons/fa'
 import Modal from '@/app/components/Modal'
 import { Subscription } from '@/lib/types'
-import DashboardLoading from './loading'
+import DashboardLoading from './ui/loading'
 
-const SubscriptionList = dynamic(() => import('./SubscriptionList'), { ssr: true })
+const SubscriptionList = dynamic(() => import('@/app/dashboard/SubscriptionList'), { ssr: true })
 const SubscriptionForm = dynamic(() => import('@/app/components/AddSubscriptionForm'), { ssr: true })
 
 export default function DashboardPage() {

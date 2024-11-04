@@ -10,8 +10,8 @@ import { HeroProps } from '@/lib/types';
 export default function Hero({ userId }: HeroProps) {
    return (
       <section className="flex flex-col overflow-hidden">
-         <div className="bg-rich-black text-white flex-grow flex flex-col justify-start md:justify-center items-center px-8 sm:px-6 lg:px-8 relative overflow-hidden w-full py-12 sm:py-16 md:py-20 lg:py-24 bg-grid bg-grid-mask">
-            <div className="w-full max-w-md sm:max-w-7xl mx-auto text-center relative z-10">
+         <div className="bg-rich-black text-white flex-grow flex flex-col justify-start md:justify-center items-center relative overflow-hidden w-full py-12 sm:py-16 md:py-20 lg:py-24 bg-grid bg-grid-mask">
+            <div className="w-full max-w-md sm:max-w-7xl mx-auto text-center relative z-10 px-8 sm:px-6 lg:px-8">
                <motion.h1
                   className={`${zillaSlab.className} text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 sm:mb-10 md:mb-12 mt-8 md:mt-0`}
                   initial={{ opacity: 0, y: 20 }}
@@ -60,7 +60,7 @@ export default function Hero({ userId }: HeroProps) {
                </motion.div>
             </div>
             <motion.div
-               className="relative w-full max-w-xl sm:max-w-7xl mx-auto overflow-hidden mt-8 sm:mt-12"
+               className="px-2 relative w-full sm:max-w-7xl mx-auto overflow-hidden mt-8 sm:mt-12"
                initial={{ opacity: 0, y: 50 }}
                animate={{ opacity: 1, y: 0 }}
                transition={{ duration: 0.8, delay: 0.8 }}

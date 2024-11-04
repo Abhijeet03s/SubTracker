@@ -39,7 +39,7 @@ export default function DashboardLoading() {
                {/* Subscription List Section */}
                <div className="bg-white rounded-lg shadow p-6">
                   <div className="w-full mx-auto space-y-4">
-                     <div className="skeleton w-48 h-8 rounded mb-6" /> {/* "Manage Your Subscriptions" title */}
+                     <div className="skeleton w-48 h-8 rounded mb-6" />
 
                      {/* Search and Filters Row */}
                      <div className="flex flex-col md:flex-row justify-between items-center mb-6 space-y-4 md:space-y-0 md:space-x-4">

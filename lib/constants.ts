@@ -3,7 +3,7 @@ import { FaClock, FaChartLine, FaBell, FaDesktop } from 'react-icons/fa';
 // Subscription Types
 export type SubscriptionType = 'trial' | 'monthly';
 export type CategoryType = 'ecommerce' | 'entertainment' | 'gaming' | 'lifestyle' | 'music' | 'other';
-export type DateStatus = 'active' | 'ending-soon' | 'expired' | 'not-applicable';
+export type DateStatus = 'expired' | 'ending-soon' | 'active' | 'not-applicable';
 
 // Color mappings
 export const categoryColors: Record<CategoryType, string> = {
@@ -16,8 +16,8 @@ export const categoryColors: Record<CategoryType, string> = {
 };
 
 export const subscriptionTypeColors: Record<SubscriptionType, string> = {
-   trial: 'bg-orange-100 text-orange-800',
-   monthly: 'bg-blue-100 text-blue-800'
+   trial: 'bg-red-100 text-red-800',
+   monthly: 'bg-emerald-100 text-emerald-800'
 };
 
 export const dateStatusColors: Record<DateStatus, string> = {

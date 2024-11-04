@@ -80,9 +80,9 @@ export default function SubscriptionList({
       return subscriptions
          .filter(sub => {
             const matchesSearch = sub.serviceName?.toLowerCase().includes(searchTerm.toLowerCase());
-            const matchesCategory = !categoryFilter || sub.category?.toLowerCase() === categoryFilter.toLowerCase();
-            const matchesType = !subscriptionTypeFilter || sub.subscriptionType?.toLowerCase() === subscriptionTypeFilter.toLowerCase();
-            return matchesSearch && matchesCategory && matchesType;
+            const matchesSubscriptionCategory = !categoryFilter || sub.category?.toLowerCase() === categoryFilter.toLowerCase();
+            const matchesSubscriptionType = !subscriptionTypeFilter || sub.subscriptionType?.toLowerCase() === subscriptionTypeFilter.toLowerCase();
+            return matchesSearch && matchesSubscriptionCategory && matchesSubscriptionType;
          })
          .sort((a, b) => {
             if (costFilter === 'lowToHigh') return a.cost - b.cost;
@@ -289,8 +289,7 @@ export default function SubscriptionList({
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-center">
                               <span
-                                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                    ${dateStatusColors[getDateStatus(subscription.endDate)] || 'bg-gray-100 text-gray-800'}`}
+                                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${dateStatusColors[getDateStatus(subscription.endDate)]}`}
                               >
                                  {subscription.endDate ? formatDate(subscription.endDate) : 'N/A'}
                               </span>
