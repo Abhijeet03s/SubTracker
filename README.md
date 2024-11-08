@@ -1,6 +1,6 @@
-# 📌 SubTracker
+# <img src="./public/subtrack-logo.png" alt="SubTracker Logo" width="30" height="30" style="vertical-align:middle; margin-right: 10px;"> SubTracker
 
-SubTracker is a modern web application designed to simplify subscription management. With a sleek interface, it allows users to track subscriptions, gain insights through analytics, and seamlessly integrate with Google Calendar for reminders—all built with the power of Next.js.
+SubTracker is a modern web application designed to simplify subscription management. With a sleek interface, it allows users to track subscriptions, gain insights through analytics, and seamlessly integrate with Google Calendar for reminder.
 
 ---
 
