@@ -2,13 +2,13 @@ import { FaClock, FaChartLine, FaBell, FaDesktop } from 'react-icons/fa';
 
 // Subscription Types
 export type SubscriptionType = 'trial' | 'monthly';
-export type CategoryType = 'ecommerce' | 'entertainment' | 'gaming' | 'lifestyle' | 'music' | 'other';
+export type CategoryType = 'ecommerce' | 'streaming' | 'gaming' | 'lifestyle' | 'music' | 'other';
 export type DateStatus = 'expired' | 'ending-soon' | 'active' | 'not-applicable';
 
 // Color mappings
 export const categoryColors: Record<CategoryType, string> = {
    ecommerce: 'bg-purple-100 text-purple-800',
-   entertainment: 'bg-blue-100 text-blue-800',
+   streaming: 'bg-blue-100 text-blue-800',
    gaming: 'bg-green-100 text-green-800',
    lifestyle: 'bg-yellow-100 text-yellow-800',
    music: 'bg-pink-100 text-pink-800',

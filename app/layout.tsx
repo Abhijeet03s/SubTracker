@@ -1,10 +1,17 @@
 import './globals.css';
-import { Analytics } from "@vercel/analytics/react"
 import type { Metadata } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
 import Header from './components/Header';
 import { Toaster } from 'sonner';
-import Footer from './components/Footer';
+import dynamic from 'next/dynamic'
+
+const Footer = dynamic(() => import('./components/Footer'), {
+  loading: () => <div></div>
+})
+
+const Analytics = dynamic(() => import('@vercel/analytics/react').then(mod => mod.Analytics), {
+  ssr: false
+})
 
 export const metadata: Metadata = {
   title: 'SubTracker',

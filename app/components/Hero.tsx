@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { plusJakartaSans, zillaSlab } from '../fonts/fonts';
+import { plusJakartaSans, zillaSlab } from '@/app/fonts/fonts';
 import { FaArrowRight } from "react-icons/fa";
 import { HeroProps } from '@/lib/types';
 
