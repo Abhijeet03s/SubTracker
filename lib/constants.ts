@@ -1,9 +1,5 @@
 import { FaClock, FaChartLine, FaBell, FaDesktop } from 'react-icons/fa';
-
-// Subscription Types
-export type SubscriptionType = 'trial' | 'monthly';
-export type CategoryType = 'ecommerce' | 'streaming' | 'gaming' | 'lifestyle' | 'music' | 'other';
-export type DateStatus = 'expired' | 'ending-soon' | 'active' | 'not-applicable';
+import { CategoryType, SubscriptionType, DateStatus } from '@/lib/types';
 
 // Color mappings
 export const categoryColors: Record<CategoryType, string> = {
@@ -26,6 +22,8 @@ export const dateStatusColors: Record<DateStatus, string> = {
    active: 'bg-green-50 text-green-700',
    'not-applicable': 'bg-gray-50 text-gray-600'
 };
+
+
 
 // Chart Colors
 export const baseChartColors = [

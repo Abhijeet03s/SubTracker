@@ -71,3 +71,7 @@ export interface MonthlyData {
    activeSubscriptions: number;
    mostExpensiveSub: Subscription | null;
 }
+
+export type SubscriptionType = 'trial' | 'monthly';
+export type CategoryType = 'ecommerce' | 'streaming' | 'gaming' | 'lifestyle' | 'music' | 'other';
+export type DateStatus = 'expired' | 'ending-soon' | 'active' | 'not-applicable';

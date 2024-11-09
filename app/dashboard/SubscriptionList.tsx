@@ -6,16 +6,10 @@ import { EditSubscriptionsModal } from '@/app/components/EditSubscriptionsModal'
 import { formatDate } from '@/app/utils/dateUtils'
 import { useSubscriptionSuggestions } from '@/app/hooks/useSubscriptionSuggestions'
 import { SubscriptionListProps, Subscription } from '@/lib/types'
-import {
-   SubscriptionType,
-   CategoryType,
-   DateStatus,
-   categoryColors,
-   subscriptionTypeColors,
-   dateStatusColors
-} from '@/lib/constants';
 import { ConfirmationDialog } from '@/app/components/ConfirmationDialog';
 import { toast } from 'sonner';
+import { CategoryType, SubscriptionType, DateStatus } from '@/lib/types';
+import { categoryColors, subscriptionTypeColors, dateStatusColors } from '@/lib/constants';
 
 const getDateStatus = (endDate: string | null): DateStatus => {
    if (!endDate) return 'not-applicable';
@@ -232,7 +226,7 @@ export default function SubscriptionList({
          {filteredSubscriptions.length === 0 ? (
             <p className="text-center text-gray-500 mt-4">No subscriptions found</p>
          ) : (
-            <div className="mt-8 overflow-x-auto">
+            <div className="mt-8 overflow-x-auto rounded-lg border border-gray-200">
                <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                      <tr>
