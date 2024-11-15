@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { getGoogleAuthUrl, getTokens, upsertEventInCalendar } from '@/lib/googleCalendar'
+import { getSubscriptionAlertSummary, getSubscriptionAlertDescription } from '@/app/utils/subscription-alert'
 
 export async function GET(request: NextRequest) {
    const { userId } = auth()
@@ -31,11 +32,19 @@ export async function POST(request: NextRequest) {
       }
 
       const tokens = await getTokens(authCode)
+
+      const summary = getSubscriptionAlertSummary(subscriptionDetails.serviceName, subscriptionDetails.subscriptionType);
+      const description = getSubscriptionAlertDescription(subscriptionDetails);
+
+      const reminderDateTime = new Date(subscriptionDetails.trialEndDate);
+      reminderDateTime.setUTCHours(12, 0, 0, 0);
+      const endDateTime = new Date(reminderDateTime.getTime() + 60 * 60 * 1000);
+
       const event = await upsertEventInCalendar(
-         `Free Trial Reminder: ${subscriptionDetails.serviceName}`,
-         `Your free trial is ending soon. Remember to cancel if you don't want to continue.`,
-         new Date(subscriptionDetails.trialEndDate).toISOString(),
-         new Date(new Date(subscriptionDetails.trialEndDate).getTime() + 24 * 60 * 60 * 1000).toISOString(),
+         summary,
+         description,
+         reminderDateTime.toISOString(),
+         endDateTime.toISOString(),
          tokens.access_token!,
          subscriptionDetails.calendarEventId
       )

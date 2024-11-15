@@ -3,6 +3,7 @@ import { Loader } from './ui/loader';
 import { FaTimes } from 'react-icons/fa';
 import { formatDate, parseDate } from '@/app/utils/dateUtils';
 import { Subscription, EditSubscriptionsModalProps } from '@/lib/types';
+import { showToast } from '@/app/utils/toast';
 
 export const EditSubscriptionsModal: React.FC<EditSubscriptionsModalProps> = ({
    isOpen,
@@ -42,6 +43,10 @@ export const EditSubscriptionsModal: React.FC<EditSubscriptionsModalProps> = ({
             };
             await onUpdate(updatedSubscription);
             onClose();
+            showToast.info({
+               message: 'Subscription Updated',
+               description: `${updatedSubscription.serviceName} has been updated successfully.`
+            });
          } catch (error) {
             console.error('Error updating subscription:', error);
             setError('Failed to update subscription. Please try again.');

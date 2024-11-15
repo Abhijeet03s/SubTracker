@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { z } from 'zod';
 import { auth, clerkClient } from '@clerk/nextjs/server';
 import { upsertEventInCalendar } from '@/lib/googleCalendar';
+import { getSubscriptionAlertSummary, getSubscriptionAlertDescription } from '@/app/utils/subscription-alert';
 
 const client = clerkClient()
 
@@ -65,8 +66,8 @@ export async function POST(request: NextRequest) {
 
       const googleAccessToken = tokens.data[0].token;
 
-      const summary = `Subscription Alert: ${subscription.serviceName} ${subscription.subscriptionType === 'trial' ? 'Trial' : 'Subscription'} Ending Soon`;
-      const description = `Your ${subscription.subscriptionType === 'trial' ? 'free trial' : 'subscription'} for ${subscription.serviceName} ends tomorrow. Please review your subscription status and decide whether to cancel or continue your plan.\n\nCategory: ${subscription.category}\nMonthly Cost: $${subscription.cost.toFixed(2)}\n\nRemember to make your decision before the ${subscription.subscriptionType === 'trial' ? 'trial' : 'subscription'} ends to avoid any unexpected charges.`;
+      const description = getSubscriptionAlertDescription(subscription as { subscriptionType: 'trial' | 'monthly', serviceName: string, category: string, cost: number });
+      const summary = getSubscriptionAlertSummary(subscription.serviceName, subscription.subscriptionType as 'trial' | 'monthly');
       const reminderDateTime = new Date(subscription.endDate.getTime());
       reminderDateTime.setUTCHours(12, 0, 0, 0);
       const endDateTime = new Date(reminderDateTime.getTime() + 60 * 60 * 1000);

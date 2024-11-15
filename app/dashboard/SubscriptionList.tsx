@@ -7,9 +7,9 @@ import { formatDate } from '@/app/utils/dateUtils'
 import { useSubscriptionSuggestions } from '@/app/hooks/useSubscriptionSuggestions'
 import { SubscriptionListProps, Subscription } from '@/lib/types'
 import { ConfirmationDialog } from '@/app/components/ConfirmationDialog';
-import { toast } from 'sonner';
 import { CategoryType, SubscriptionType, DateStatus } from '@/lib/types';
 import { categoryColors, subscriptionTypeColors, dateStatusColors } from '@/lib/constants';
+import { showToast } from '@/app/utils/toast';
 
 const getDateStatus = (endDate: string | null): DateStatus => {
    if (!endDate) return 'not-applicable';
@@ -103,10 +103,8 @@ export default function SubscriptionList({
          );
          onSubscriptionsChange(updatedSubscriptions);
          await onCalendarUpdate(updatedSubscription);
-         toast.success(`Subscription for "${updatedSubscription.serviceName}" has been updated successfully.`);
       } catch (error) {
          console.error('Error updating subscription:', error);
-         toast.error(`Failed to update subscription for "${updatedSubscription.serviceName}". Please try again.`);
       }
    };
 
@@ -116,12 +114,16 @@ export default function SubscriptionList({
          const deletedSubscription = subscriptions.find(sub => sub.id === id);
          const updatedSubscriptions = subscriptions.filter(sub => sub.id !== id);
          onSubscriptionsChange(updatedSubscriptions);
-         toast.success(`Subscription for "${deletedSubscription?.serviceName}" has been deleted successfully.`);
+         showToast.delete({
+            message: `${deletedSubscription?.serviceName} deleted successfully`,
+         });
          setIsDeleteConfirmOpen(false);
          handleCloseModal();
       } catch (error) {
          console.error('Error deleting subscription:', error);
-         toast.error('Failed to delete subscription. Please try again.');
+         showToast.error({
+            message: 'Failed to delete subscription. Please try again.',
+         });
       }
    };
 

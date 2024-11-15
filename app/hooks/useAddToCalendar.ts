@@ -1,16 +1,8 @@
 import { useState } from 'react';
 import { useAuth } from '@clerk/nextjs';
-import { toast } from 'sonner';
-
-interface AddToCalendarParams {
-   serviceName: string;
-   startDate: string;
-   endDate: string;
-   category: string;
-   cost: number;
-   subscriptionType: string;
-   calendarEventId?: string;
-}
+import { AddToCalendarParams } from '@/lib/types';
+import { getSubscriptionAlertSummary, getSubscriptionAlertDescription } from '@/app/utils/subscription-alert';
+import { showToast } from '@/app/utils/toast';
 
 export const useAddToCalendar = () => {
    const [isAddingToCalendar, setIsAddingToCalendar] = useState(false);
@@ -51,8 +43,8 @@ export const useAddToCalendar = () => {
                Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-               summary: `Subscription Alert: ${serviceName} ${subscriptionType === 'trial' ? 'Trial' : 'Subscription'} Ending Soon`,
-               description: `Your ${subscriptionType === 'trial' ? 'free trial' : 'subscription'} for ${serviceName} ends tomorrow. Please review your subscription status and decide whether to cancel or continue your plan.\n\nCategory: ${category}\nMonthly Cost: $${cost.toFixed(2)}\n\nRemember to make your decision before the ${subscriptionType === 'trial' ? 'trial' : 'subscription'} ends to avoid any unexpected charges.`,
+               summary: getSubscriptionAlertSummary(serviceName, subscriptionType as 'trial' | 'monthly'),
+               description: getSubscriptionAlertDescription({ subscriptionType: subscriptionType as 'trial' | 'monthly', serviceName, category, cost }),
                startDateTime: reminderDateTime.toISOString(),
                endDateTime: endDateTime.toISOString(),
                eventId: calendarEventId,
@@ -63,7 +55,9 @@ export const useAddToCalendar = () => {
 
          if (!response.ok) {
             console.error('Error upserting calendar event:', data.error);
-            toast.error(`Failed to upsert event in calendar: ${data.error}`);
+            showToast.error({
+               message: `Failed to upsert event in calendar: ${data.error}`,
+            });
             throw new Error(`Failed to upsert event in calendar: ${data.error}`);
          }
 
@@ -71,10 +65,14 @@ export const useAddToCalendar = () => {
       } catch (error) {
          console.error('Error upserting calendar event:', error);
          if (error instanceof Error) {
-            toast.error(`Failed to upsert reminder in Google Calendar: ${error.message}`);
+            showToast.error({
+               message: `Failed to upsert reminder in Google Calendar: ${error.message}`,
+            });
             throw error;
          } else {
-            toast.error('Failed to upsert reminder in Google Calendar. Please try again later.');
+            showToast.error({
+               message: 'Failed to upsert reminder in Google Calendar. Please try again later.',
+            });
             throw new Error('Failed to upsert reminder in Google Calendar.');
          }
       } finally {

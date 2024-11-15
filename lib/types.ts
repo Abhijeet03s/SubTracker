@@ -9,6 +9,16 @@ export interface Subscription {
    calendarEventId?: string;
 }
 
+export interface AddToCalendarParams {
+   serviceName: string;
+   startDate: string;
+   endDate: string;
+   category: string;
+   cost: number;
+   subscriptionType: string;
+   calendarEventId?: string;
+}
+
 export interface ModalProps {
    isOpen: boolean;
    onClose: () => void;
