@@ -7,28 +7,7 @@ import { formatDate } from '@/app/utils/dateUtils'
 import { useSubscriptionSuggestions } from '@/app/hooks/useSubscriptionSuggestions'
 import { SubscriptionListProps, Subscription } from '@/lib/types'
 import { ConfirmationDialog } from '@/app/components/ConfirmationDialog';
-import { CategoryType, SubscriptionType, DateStatus } from '@/lib/types';
-import { categoryColors, subscriptionTypeColors, dateStatusColors } from '@/lib/constants';
 import { showToast } from '@/app/utils/toast';
-
-const getDateStatus = (endDate: string | null): DateStatus => {
-   if (!endDate) return 'not-applicable';
-
-   try {
-      const end = new Date(endDate);
-      if (isNaN(end.getTime())) return 'not-applicable';
-
-      const now = new Date();
-      const daysUntilEnd = Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-
-      if (daysUntilEnd < 0) return 'expired';
-      if (daysUntilEnd <= 7) return 'ending-soon';
-      return 'active';
-   } catch (error) {
-      console.error('Error parsing date:', error);
-      return 'not-applicable';
-   }
-};
 
 export default function SubscriptionList({
    subscriptions,
@@ -264,10 +243,7 @@ export default function SubscriptionList({
                               </div>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                              <span
-                                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                    ${categoryColors[subscription.category?.toLowerCase() as CategoryType] || 'bg-gray-100 text-gray-800'}`}
-                              >
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                                  {subscription.category?.charAt(0).toUpperCase() + subscription.category?.slice(1) || 'Other'}
                               </span>
                            </td>
@@ -284,15 +260,12 @@ export default function SubscriptionList({
                               </div>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                              <span
-                                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${dateStatusColors[getDateStatus(subscription.endDate)]}`}
-                              >
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                                  {subscription.endDate ? formatDate(subscription.endDate) : 'N/A'}
                               </span>
                            </td>
                            <td className="px-4 py-4 whitespace-nowrap text-center w-24">
-                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${subscriptionTypeColors[subscription.subscriptionType.toLowerCase() as SubscriptionType]
-                                 }`}>
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                                  {subscription.subscriptionType.charAt(0).toUpperCase() + subscription.subscriptionType.slice(1)}
                               </span>
                            </td>
