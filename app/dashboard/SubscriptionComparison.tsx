@@ -143,7 +143,7 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
             tooltip: {
                backgroundColor: 'rgba(0, 0, 0, 0.8)',
                titleFont: {
-                  size: 14,
+                  size: 16,
                },
                bodyFont: {
                   size: 12,
@@ -169,12 +169,8 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
          datasets: [{
             data: Object.values(subscriptionTypeTotals),
             backgroundColor: [
-               'rgba(255, 99, 132, 0.8)',
-               'rgba(54, 162, 235, 0.8)',
-               'rgba(255, 206, 86, 0.8)',
-               'rgba(75, 192, 192, 0.8)',
-               'rgba(153, 102, 255, 0.8)',
-               'rgba(255, 159, 64, 0.8)',
+               'rgba(59, 130, 246, 0.8)',
+               'rgba(147, 51, 234, 0.8)',
             ],
             borderColor: 'white',
             borderWidth: 2,

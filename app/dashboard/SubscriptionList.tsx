@@ -8,6 +8,7 @@ import { useSubscriptionSuggestions } from '@/app/hooks/useSubscriptionSuggestio
 import { SubscriptionListProps, Subscription } from '@/lib/types'
 import { ConfirmationDialog } from '@/app/components/ConfirmationDialog';
 import { showToast } from '@/app/utils/toast';
+import { baseChartColors } from '@/lib/constants';
 
 export default function SubscriptionList({
    subscriptions,
@@ -112,6 +113,16 @@ export default function SubscriptionList({
          setSubscriptionToDelete(subscription);
          setIsDeleteConfirmOpen(true);
       }
+   };
+
+   const getCategoryColor = (category: string) => {
+      const categoryIndex = ['ecommerce', 'streaming', 'gaming', 'lifestyle', 'music', 'other'].indexOf(category.toLowerCase());
+      const defaultColor = 'rgba(156, 163, 175, 0.8)';
+      const color = categoryIndex >= 0 ? baseChartColors[categoryIndex] : defaultColor;
+      return {
+         background: color.replace('0.8', '0.2'),
+         text: color.replace('0.8', '1')
+      };
    };
 
    return (
@@ -243,7 +254,13 @@ export default function SubscriptionList({
                               </div>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                              <span
+                                 className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                                 style={{
+                                    backgroundColor: getCategoryColor(subscription.category || 'other').background,
+                                    color: getCategoryColor(subscription.category || 'other').text
+                                 }}
+                              >
                                  {subscription.category?.charAt(0).toUpperCase() + subscription.category?.slice(1) || 'Other'}
                               </span>
                            </td>
@@ -260,12 +277,28 @@ export default function SubscriptionList({
                               </div>
                            </td>
                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                 {subscription.endDate ? formatDate(subscription.endDate) : 'N/A'}
-                              </span>
+                              {subscription.endDate ? (
+                                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${new Date(subscription.endDate) < new Date()
+                                    ? 'bg-red-100 text-red-800'
+                                    : new Date(subscription.endDate) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+                                       ? 'bg-yellow-100 text-yellow-800'
+                                       : 'bg-green-100 text-green-800'
+                                    }`}>
+                                    {formatDate(subscription.endDate)}
+                                 </span>
+                              ) : (
+                                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                    N/A
+                                 </span>
+                              )}
                            </td>
                            <td className="px-4 py-4 whitespace-nowrap text-center w-24">
-                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${subscription.subscriptionType === 'monthly'
+                                 ? 'bg-blue-100 text-blue-800'
+                                 : subscription.subscriptionType === 'trial'
+                                    ? 'bg-purple-100 text-purple-800'
+                                    : 'bg-gray-100 text-gray-800'
+                                 }`}>
                                  {subscription.subscriptionType.charAt(0).toUpperCase() + subscription.subscriptionType.slice(1)}
                               </span>
                            </td>
