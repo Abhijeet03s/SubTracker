@@ -20,7 +20,7 @@ export const showToast = {
          description,
          icon: <FaExclamationCircle className="text-red-500" />,
          className: 'border-l-4 border-red-500',
-         duration: 4000,
+         duration: 3000,
       });
    },
    warning: ({ message, description }: ToastOptions) => {
@@ -28,7 +28,7 @@ export const showToast = {
          description,
          icon: <FaExclamationCircle className="text-yellow-500" />,
          className: 'border-l-4 border-yellow-500',
-         duration: 3500,
+         duration: 3000,
       });
    },
    info: ({ message, description }: ToastOptions) => {

@@ -14,9 +14,8 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
    const monthlyTotalCosts = useMemo(() => monthNames.map((_, monthIndex) => {
       return subscriptions.reduce((total, sub) => {
          const startDate = new Date(sub.startDate);
-         const endDate = new Date(sub.endDate);
-         if (startDate.getFullYear() === currentYear && endDate.getFullYear() === currentYear &&
-            startDate.getMonth() <= monthIndex && endDate.getMonth() >= monthIndex) {
+         if (startDate.getFullYear() === currentYear &&
+            startDate.getMonth() === monthIndex) {
             const monthlyCost = sub.subscriptionType === 'yearly' ? sub.cost / 12 : sub.cost;
             return total + monthlyCost;
          }
@@ -29,17 +28,14 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
 
       subscriptions.forEach(sub => {
          const startDate = new Date(sub.startDate);
-         const endDate = new Date(sub.endDate);
          const monthlyCost = sub.subscriptionType === 'yearly' ? sub.cost / 12 : sub.cost;
 
-         for (let month = 0; month < 12; month++) {
-            if (startDate.getFullYear() === currentYear && endDate.getFullYear() === currentYear &&
-               startDate.getMonth() <= month && endDate.getMonth() >= month) {
-               if (!totals[sub.category]) {
-                  totals[sub.category] = Array(12).fill(0);
-               }
-               totals[sub.category][month] += monthlyCost;
+         if (startDate.getFullYear() === currentYear) {
+            const month = startDate.getMonth();
+            if (!totals[sub.category]) {
+               totals[sub.category] = Array(12).fill(0);
             }
+            totals[sub.category][month] += monthlyCost;
          }
       });
 
@@ -77,12 +73,6 @@ export default function SubscriptionComparison({ subscriptions }: SubscriptionCo
             backgroundColor: colors[idx],
             borderColor: colors[idx],
             borderWidth: 1,
-            borderRadius: {
-               topLeft: 4,
-               topRight: 4,
-               bottomLeft: 0,
-               bottomRight: 0
-            },
             borderSkipped: false,
          }));
          return {
