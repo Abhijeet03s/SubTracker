@@ -1,6 +1,5 @@
 "use client";
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { plusJakartaSans, zillaSlab } from '@/app/fonts/fonts';
@@ -10,10 +9,10 @@ import { HeroProps } from '@/lib/types';
 export default function Hero({ userId }: HeroProps) {
    return (
       <section className="flex flex-col overflow-hidden">
-         <div className="bg-rich-black text-white flex-grow flex flex-col justify-start md:justify-center items-center relative overflow-hidden w-full py-12 sm:py-16 md:py-20 lg:py-24 bg-grid bg-grid-mask">
-            <div className="w-full max-w-md sm:max-w-7xl mx-auto text-center relative z-10 px-8 sm:px-6 lg:px-8">
+         <div className="bg-rich-black text-white flex flex-col items-center relative w-full py-12 md:py-20 bg-grid bg-grid-mask">
+            <div className="w-full max-w-7xl mx-auto text-center relative z-10 px-8">
                <motion.h1
-                  className={`${zillaSlab.className} text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 sm:mb-10 md:mb-12 mt-8 md:mt-0`}
+                  className={`${zillaSlab.className} text-4xl md:text-6xl font-bold mb-8 md:mb-12 mt-8 md:mt-0`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.1 }}
@@ -33,7 +32,7 @@ export default function Hero({ userId }: HeroProps) {
                   </motion.span>
                </motion.h1>
                <motion.p
-                  className={`${plusJakartaSans.className} text-sm md:text-xl sm:max-w-3xl mb-10 sm:mb-12 md:mb-14 text-gray-300 mx-auto`}
+                  className={`${plusJakartaSans.className} sm:max-w-3xl text-sm md:text-xl mb-10 md:mb-14 text-gray-300 mx-auto`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.6 }}
@@ -41,18 +40,18 @@ export default function Hero({ userId }: HeroProps) {
                   Effortlessly track, manage, and control your subscriptions with SubTracker, keeping you informed about all your recurring expenses
                </motion.p>
                <motion.div
-                  className="flex flex-col sm:flex-row justify-center items-center gap-6 sm:gap-4 mb-12 sm:mb-14 md:mb-16"
+                  className="flex flex-col sm:flex-row justify-center items-center gap-6 mb-12 md:mb-16"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.7 }}
                >
                   {userId ? (
-                     <Link href="/dashboard" className={`${plusJakartaSans.className} inline-flex items-center justify-center whitespace-nowrap rounded-md ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-purple-700 text-white hover:bg-purple-800 px-12 py-2 h-12 md:h-14 text-base md:text-lg font-semibold group`}>
+                     <Link href="/dashboard" className={`${plusJakartaSans.className} inline-flex items-center rounded-md bg-purple-700 text-white hover:bg-purple-800 px-12 py-2 h-12 md:h-14 text-base md:text-lg font-semibold group`}>
                         Dashboard
-                        <FaArrowRight className="ml-3 transform translate-x-0 group-hover:translate-x-0.5 transition-transform duration-300 ease-in-out" />
+                        <FaArrowRight className="ml-3 group-hover:translate-x-0.5 transition-transform duration-300" />
                      </Link>
                   ) : (
-                     <Link href="/sign-up" className={`${plusJakartaSans.className} inline-flex items-center justify-center whitespace-nowrap rounded-md ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-purple-700 text-white hover:bg-purple-800 px-12 py-2 h-12 md:h-14 text-base md:text-lg font-semibold group`}>
+                     <Link href="/sign-up" className={`${plusJakartaSans.className} inline-flex items-center rounded-md bg-purple-700 text-white hover:bg-purple-800 px-12 py-2 h-12 md:h-14 text-base md:text-lg font-semibold`}>
                         Start Tracking
                         <FaArrowRight className="ml-2" />
                      </Link>
@@ -60,20 +59,26 @@ export default function Hero({ userId }: HeroProps) {
                </motion.div>
             </div>
             <motion.div
-               className="px-2 relative w-full sm:max-w-7xl mx-auto overflow-hidden mt-8 sm:mt-12"
+               className="px-2 relative w-full max-w-7xl mx-auto mt-8 sm:mt-12"
                initial={{ opacity: 0, y: 50 }}
                animate={{ opacity: 1, y: 0 }}
                transition={{ duration: 0.8, delay: 0.8 }}
             >
-               <div className="relative w-full aspect-video">
-                  <Image
-                     src="/subtracker-dashboard.png"
-                     alt="SubTracker Dashboard"
-                     className="rounded-lg shadow-2xl object-cover object-center"
-                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1200px"
-                     fill
-                     priority
-                  />
+               <div className="relative w-full aspect-video rounded-lg shadow-2xl bg-gradient-to-r from-purple-600 to-blue-600 p-1">
+                  <div className="relative w-full h-full rounded-lg overflow-hidden">
+                     <video
+                        className="w-full h-full object-cover"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        poster="/SubTracker.mp4"
+                     >
+                        <source src="/SubTracker.mp4" type="video/mp4" />
+                        <source src="/SubTracker.webm" type="video/webm" />
+                        Your browser does not support the video tag.
+                     </video>
+                  </div>
                </div>
             </motion.div>
          </div>

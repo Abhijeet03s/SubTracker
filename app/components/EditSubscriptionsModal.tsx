@@ -88,7 +88,7 @@ export const EditSubscriptionsModal: React.FC<EditSubscriptionsModalProps> = ({
                      <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
                      <select
                         id="category"
-                        value={editingSubscription.category}
+                        value={editingSubscription.category.toLowerCase()}
                         onChange={(e) => setEditingSubscription({ ...editingSubscription, category: e.target.value })}
                         className="w-full p-2 bg-slate-50 rounded-t border-b border-gray-300 focus:outline-none focus:border-blue-500 transition-colors duration-300"
                      >
