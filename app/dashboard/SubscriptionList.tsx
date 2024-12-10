@@ -169,7 +169,7 @@ export default function SubscriptionList({
                      >
                         <option value="" className="text-center">All Categories</option>
                         <option value="ecommerce">Ecommerce</option>
-                        <option value="entertainment">Streaming</option>
+                        <option value="streaming">Streaming</option>
                         <option value="gaming">Gaming</option>
                         <option value="lifestyle">Lifestyle</option>
                         <option value="music">Music</option>

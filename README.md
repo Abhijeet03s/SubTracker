@@ -46,6 +46,13 @@ SubTracker is a modern web application designed to simplify subscription managem
 
 ---
 
+## 📸 Screenshots
+
+![Dashboard View](./public/subtracker-dashboard.png)
+
+![Add Subscription](./public/subtrack-add-subscription.png) 
+
+
 ## 🚀 Getting Started
 
 ### Prerequisites
