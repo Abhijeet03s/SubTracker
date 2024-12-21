@@ -35,7 +35,7 @@ export default function Footer() {
                   <h4 className={`${zillaSlab.className} text-lg font-semibold mb-4`}>Connect</h4>
                   <ul className={`${plusJakartaSans.className} text-sm space-y-2`}>
                      <li><a href="https://github.com/Abhijeet03s" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">GitHub</a></li>
-                     <li><a href="https://x.com/iabhi43" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">X</a></li>
+                     <li><a href="https://x.com/iabhi43" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">Twitter</a></li>
                   </ul>
                </div>
             </div>
