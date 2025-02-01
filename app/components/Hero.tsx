@@ -46,12 +46,12 @@ export default function Hero({ userId }: HeroProps) {
                   transition={{ duration: 0.6, delay: 0.7 }}
                >
                   {userId ? (
-                     <Link href="/dashboard" className={`${plusJakartaSans.className} inline-flex items-center rounded-md bg-purple-700 text-white hover:bg-purple-800 px-12 py-2 h-12 md:h-14 text-base md:text-lg font-semibold group`}>
+                     <Link href="/dashboard" className={`${plusJakartaSans.className} bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-5 py-2 sm:px-6 sm:py-2.5 lg:px-6 lg:py-3 rounded-full hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 ease-in-out font-medium text-sm sm:text-base lg:text-base flex items-center justify-center shadow-lg hover:shadow-2xl`}>
                         Dashboard
                         <FaArrowRight className="ml-3 group-hover:translate-x-0.5 transition-transform duration-300" />
                      </Link>
                   ) : (
-                     <Link href="/sign-up" className={`${plusJakartaSans.className} inline-flex items-center rounded-md bg-purple-700 text-white hover:bg-purple-800 px-12 py-2 h-12 md:h-14 text-base md:text-lg font-semibold`}>
+                     <Link href="/sign-up" className={`${plusJakartaSans.className} bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-5 py-2 sm:px-6 sm:py-2.5 lg:px-6 lg:py-3 rounded-full hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 ease-in-out font-medium text-sm sm:text-base lg:text-base flex items-center justify-center shadow-lg hover:shadow-2xl`}>
                         Start Tracking
                         <FaArrowRight className="ml-2" />
                      </Link>
