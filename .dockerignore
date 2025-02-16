@@ -1,6 +1,10 @@
-.git
-.gitignore
 node_modules
 .next
+.env*
 .env.local
-.env.production
+.env
+npm-debug.log*
+.git
+.gitignore
+README.md
+.vscode
