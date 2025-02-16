@@ -85,18 +85,74 @@ SubTracker is a modern web application designed to simplify subscription managem
       npm run dev
    ```
 
-## 🐳 Docker Support
+## 🐳 Docker Setup
 
-### Development Environment
-
+1. **Using Pre-built Image**
 ```bash
-docker-compose up
+# Pull the image from Docker Hub
+docker pull abhijet12/subtracker-app:latest
 ```
 
-### Production Environment
 ```bash
-docker-compose -f docker-compose.yml up --build
+# Run the container
+docker run -d -p 3000:3000 \
+  -e DATABASE_URL="your-database-url" \
+  -e CLERK_SECRET_KEY="your-clerk-secret" \
+  -e NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="your-clerk-key" \
+  -e NEXT_PUBLIC_CLERK_FRONTEND_API="your-frontend-api" \
+  abhijet12/subtracker-app:latest
 ```
+
+2. **Using Docker Compose**
+```bash
+# Start the application
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop the application
+docker-compose down
+```
+
+### Development with Docker
+
+1. **Build and Start**
+```bash
+# Build and start containers
+docker-compose up --build
+
+# Start in background
+docker-compose up -d
+```
+
+2. **Rebuild After Changes**
+```bash
+# Rebuild with new changes
+docker-compose up --build
+```
+
+3. **Clean Up**
+```bash
+# Stop and remove containers
+docker-compose down
+
+# Clean up unused resources
+docker system prune
+```
+
+### Environment Variables
+Create a `.env` file with the following variables:
+```env
+DATABASE_URL=your-database-url
+CLERK_SECRET_KEY=your-clerk-secret
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your-clerk-key
+NEXT_PUBLIC_CLERK_FRONTEND_API=your-frontend-api
+```
+
+### Available Docker Tags
+- `latest`: Most recent stable build
+- `prod`: Production-ready version
 
 ## 📦 Database Management
 ### Initialize Prisma
