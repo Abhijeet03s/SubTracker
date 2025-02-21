@@ -24,21 +24,27 @@ export default function DashboardPage() {
    const { upsertCalendarEvent } = useAddToCalendar();
 
    const fetchSubscriptions = useCallback(async () => {
-      setIsLoading(true)
+      setIsLoading(true);
       try {
-         const response = await fetch(`/api/subscriptions?userId=${user?.id}`)
+         // The cache is handled by the server-side API
+         const response = await fetch('/api/subscriptions', {
+            headers: {
+               'Cache-Control': 'no-cache', // Ensure we don't use browser cache
+            }
+         });
+
          if (response.ok) {
-            const data: Subscription[] = await response.json()
-            setSubscriptions(data)
+            const data: Subscription[] = await response.json();
+            setSubscriptions(data);
          } else {
-            console.error('Failed to fetch subscriptions')
+            console.error('Failed to fetch subscriptions');
          }
       } catch (error) {
-         console.error('Error fetching subscriptions:', error)
+         console.error('Error fetching subscriptions:', error);
       } finally {
-         setIsLoading(false)
+         setIsLoading(false);
       }
-   }, [user?.id])
+   }, []);
 
    useEffect(() => {
       if (user) {
@@ -56,18 +62,21 @@ export default function DashboardPage() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newSubscription),
-         })
+         });
+
          if (response.ok) {
             const createdSubscription: Subscription = await response.json();
             setSubscriptions([...subscriptions, createdSubscription]);
-            setIsModalOpen(false)
+            setIsModalOpen(false);
+            // Fetch fresh data to ensure cache is updated
+            await fetchSubscriptions();
          } else {
-            console.error('Failed to add subscription', await response.text())
+            console.error('Failed to add subscription', await response.text());
          }
       } catch (error) {
-         console.error('Error adding subscription:', error)
+         console.error('Error adding subscription:', error);
       }
-   }
+   };
 
    const updateSubscription = async (id: string, updatedData: Partial<Subscription>) => {
       try {
@@ -75,37 +84,41 @@ export default function DashboardPage() {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedData),
-         })
+         });
+
          if (response.ok) {
             const updatedSubscription: Subscription = await response.json();
-            const updatedSubscriptions = subscriptions.map(sub =>
-               sub.id === updatedSubscription.id ? updatedSubscription : sub
+            setSubscriptions(prev =>
+               prev.map(sub => sub.id === updatedSubscription.id ? updatedSubscription : sub)
             );
-            setSubscriptions(updatedSubscriptions);
+            // Fetch fresh data to ensure cache is updated
+            await fetchSubscriptions();
          } else {
-            const errorData = await response.json()
-            console.error('Failed to update subscription', errorData)
+            const errorData = await response.json();
+            console.error('Failed to update subscription', errorData);
          }
       } catch (error) {
-         console.error('Error updating subscription:', error)
+         console.error('Error updating subscription:', error);
       }
-   }
+   };
 
    const deleteSubscription = async (id: string) => {
       try {
          const response = await fetch(`/api/subscriptions/${id}`, {
             method: 'DELETE',
-         })
+         });
+
          if (response.ok) {
-            const updatedSubscriptions = subscriptions.filter(sub => sub.id !== id);
-            setSubscriptions(updatedSubscriptions);
+            setSubscriptions(prev => prev.filter(sub => sub.id !== id));
+            // Fetch fresh data to ensure cache is updated
+            await fetchSubscriptions();
          } else {
-            console.error('Failed to delete subscription', await response.text())
+            console.error('Failed to delete subscription', await response.text());
          }
       } catch (error) {
-         console.error('Error deleting subscription:', error)
+         console.error('Error deleting subscription:', error);
       }
-   }
+   };
 
    const handleCalendarUpdate = async (subscription: Subscription) => {
       try {

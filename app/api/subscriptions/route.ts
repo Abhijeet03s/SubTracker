@@ -4,6 +4,9 @@ import { z } from 'zod';
 import { auth, clerkClient } from '@clerk/nextjs/server';
 import { upsertEventInCalendar } from '@/lib/googleCalendar';
 import { getSubscriptionAlertSummary, getSubscriptionAlertDescription } from '@/app/utils/subscription-alert';
+import { withCache } from '@/lib/cacheMiddleware';
+import { CACHE_KEYS } from '@/lib/redis';
+import { redis } from '@/lib/redis';
 
 const client = clerkClient()
 
@@ -21,29 +24,30 @@ const subscriptionSchema = z.object({
 });
 
 export async function GET(request: NextRequest) {
-   try {
-      const { userId } = auth();
-      if (!userId) {
-         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-      }
-
-      const subscriptions = await prisma.subscription.findMany({
-         where: { userId },
-      });
-      return NextResponse.json(subscriptions);
-   } catch (error) {
-      console.error('Error in GET /api/subscriptions:', error);
-      return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+   const { userId } = auth();
+   if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
    }
+
+   return withCache(
+      request,
+      CACHE_KEYS.USER_SUBSCRIPTIONS(userId),
+      async () => {
+         const subscriptions = await prisma.subscription.findMany({
+            where: { userId },
+         });
+         return subscriptions;
+      }
+   );
 }
 
 export async function POST(request: NextRequest) {
-   try {
-      const { userId } = auth();
-      if (!userId) {
-         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-      }
+   const { userId } = auth();
+   if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+   }
 
+   try {
       const body = await request.json();
       const validatedData = subscriptionSchema.parse(body);
 
@@ -58,6 +62,9 @@ export async function POST(request: NextRequest) {
             subscriptionType: validatedData.subscriptionType,
          },
       });
+
+      // Invalidate user's subscription cache
+      await redis.del(CACHE_KEYS.USER_SUBSCRIPTIONS(userId));
 
       const tokens = await client.users.getUserOauthAccessToken(userId, 'oauth_google');
       if (!tokens || tokens.data.length === 0) {

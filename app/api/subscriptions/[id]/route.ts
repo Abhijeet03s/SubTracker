@@ -4,6 +4,9 @@ import prisma from '@/lib/prisma'
 import { auth, clerkClient } from '@clerk/nextjs/server'
 import { upsertEventInCalendar, deleteEventInCalendar } from '@/lib/googleCalendar'
 import { getSubscriptionAlertSummary, getSubscriptionAlertDescription } from '@/app/utils/subscription-alert'
+import { withCache } from '@/lib/cacheMiddleware'
+import { CACHE_KEYS } from '@/lib/redis'
+import { cacheUtils } from '@/lib/cacheUtils'
 
 const client = clerkClient()
 
@@ -22,35 +25,36 @@ const updateSubscriptionSchema = z.object({
 })
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-   try {
-      const { userId } = auth()
-      if (!userId) {
-         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-      }
-
-      const subscription = await prisma.subscription.findUnique({
-         where: { id: params.id, userId },
-      })
-      if (!subscription) {
-         return NextResponse.json({ error: 'Subscription not found' }, { status: 404 })
-      }
-      return NextResponse.json(subscription)
-   } catch (error) {
-      console.error(error)
-      return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+   const { userId } = auth()
+   if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
    }
+
+   return withCache(
+      request,
+      CACHE_KEYS.SUBSCRIPTION_DETAIL(params.id),
+      async () => {
+         const subscription = await prisma.subscription.findUnique({
+            where: { id: params.id, userId },
+         })
+         if (!subscription) {
+            return NextResponse.json({ error: 'Subscription not found' }, { status: 404 })
+         }
+         return subscription
+      }
+   )
 }
 
 export async function PUT(
    request: NextRequest,
    { params }: { params: { id: string } }
 ) {
-   try {
-      const { userId } = auth()
-      if (!userId) {
-         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-      }
+   const { userId } = auth()
+   if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+   }
 
+   try {
       const body = await request.json()
       const validatedData = updateSubscriptionSchema.parse(body);
 
@@ -110,6 +114,9 @@ export async function PUT(
          }
       }
 
+      // Invalidate both subscription detail and user subscriptions cache
+      await cacheUtils.invalidateSubscriptionCache(params.id, userId);
+
       return NextResponse.json(updatedSubscription)
 
    } catch (error) {
@@ -125,12 +132,12 @@ export async function DELETE(
    request: NextRequest,
    { params }: { params: { id: string } }
 ) {
-   try {
-      const { userId } = auth()
-      if (!userId) {
-         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-      }
+   const { userId } = auth()
+   if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+   }
 
+   try {
       const subscription = await prisma.subscription.findUnique({
          where: { id: params.id },
       })
@@ -158,6 +165,9 @@ export async function DELETE(
       await prisma.subscription.delete({
          where: { id: params.id },
       })
+
+      // Invalidate both subscription detail and user subscriptions cache
+      await cacheUtils.invalidateSubscriptionCache(params.id, userId);
 
       return NextResponse.json({ message: 'Subscription deleted successfully' })
    } catch (error) {
