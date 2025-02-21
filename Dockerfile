@@ -4,7 +4,7 @@ FROM node:20.18.3-alpine3.21 AS builder
 WORKDIR /app
 
 # Install dependencies required for node-gyp
-RUN apk add --no-cache python3 make g++
+RUN apk add --no-cache python3 make g++ redis
 
 # First copy only files needed for npm install
 COPY package*.json ./
