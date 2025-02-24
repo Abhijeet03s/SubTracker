@@ -25,7 +25,7 @@ export const cacheUtils = {
       });
       await redis.setex(
          CACHE_KEYS.USER_SUBSCRIPTIONS(userId),
-         CACHE_TTL.SUBSCRIPTIONS,
+         CACHE_TTL,
          JSON.stringify(subscriptions)
       );
    },
