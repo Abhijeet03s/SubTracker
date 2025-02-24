@@ -22,10 +22,7 @@ redis.on('error', (err) => console.error('Redis Client Error', err));
 redis.on('connect', () => console.log('Redis Client Connected'));
 
 // Cache TTL in seconds
-export const CACHE_TTL = {
-   SUBSCRIPTIONS: 60 * 5, // 5 minutes
-   ANALYTICS: 60 * 15,    // 15 minutes
-};
+export const CACHE_TTL = 60 * 5;
 
 // Cache keys
 export const CACHE_KEYS = {

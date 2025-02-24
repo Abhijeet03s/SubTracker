@@ -12,7 +12,7 @@ export async function withCache(
    fetchData: () => Promise<any>,
    options: CacheOptions = {}
 ) {
-   const { ttl = CACHE_TTL.SUBSCRIPTIONS, invalidateOn = [] } = options;
+   const { ttl = CACHE_TTL, invalidateOn = [] } = options;
 
    // Skip cache for non-GET requests
    if (req.method !== 'GET') {
